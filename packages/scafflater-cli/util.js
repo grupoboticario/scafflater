@@ -1,6 +1,6 @@
 const inquirer = require('inquirer')
 const ora = require('ora')
-const logger = require('logger')
+const logger = require('scafflater/logger')
 const chalk = require('chalk')
 
 const parseParametersFlags = parameters => {

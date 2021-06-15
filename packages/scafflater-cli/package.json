@@ -1,7 +1,7 @@
 {
   "name": "scafflater-cli",
   "description": "The Scafflater Cli",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "author": "chicoribas @chicoribas",
   "bin": "./bin/run",
   "bugs": "https://github.com/chicoribas/scafflater/issues",
@@ -22,7 +22,8 @@
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json",
     "/commands",
-    "/index.js"
+    "/index.js",
+    "/util.js"
   ],
   "homepage": "https://github.com/chicoribas/scafflater",
   "keywords": [
@@ -32,7 +33,7 @@
   "main": "index.js",
   "oclif": {
     "commands": "./commands",
-    "bin": "scf-cli",
+    "bin": "scafflater-cli",
     "plugins": [
       "@oclif/plugin-help"
     ]

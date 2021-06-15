@@ -1,5 +1,5 @@
 const {Command} = require('@oclif/command')
-const TemplateManager = require('template-manager')
+const TemplateManager = require('scafflater/template-manager')
 
 class GetTemplate extends Command {
   async run() {

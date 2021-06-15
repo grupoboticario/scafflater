@@ -16,29 +16,29 @@ The Scafflater Cli
 <!-- usage -->
 ```sh-session
 $ npm install -g scafflater-cli
-$ scf-cli COMMAND
+$ scafflater-cli COMMAND
 running command...
-$ scf-cli (-v|--version|version)
-scafflater-cli/0.0.1 darwin-x64 node-v15.7.0
-$ scf-cli --help [COMMAND]
+$ scafflater-cli (-v|--version|version)
+scafflater-cli/0.0.4 darwin-x64 node-v15.7.0
+$ scafflater-cli --help [COMMAND]
 USAGE
-  $ scf-cli COMMAND
+  $ scafflater-cli COMMAND
 ...
 ```
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`scf-cli add`](#scf-cli-add)
-* [`scf-cli help [COMMAND]`](#scf-cli-help-command)
-* [`scf-cli init [GIT_HUB_REPOSITORY]`](#scf-cli-init-git_hub_repository)
+* [`scafflater-cli add`](#scafflater-cli-add)
+* [`scafflater-cli help [COMMAND]`](#scafflater-cli-help-command)
+* [`scafflater-cli init [GIT_HUB_REPOSITORY]`](#scafflater-cli-init-git_hub_repository)
 
-## `scf-cli add`
+## `scafflater-cli add`
 
 Adds a template partial in a output folder
 
 ```
 USAGE
-  $ scf-cli add
+  $ scafflater-cli add
 
 OPTIONS
   -n, --partialName=partialName  The partial name
@@ -49,15 +49,15 @@ DESCRIPTION
   ...
 ```
 
-_See code: [commands/add.js](https://github.com/chicoribas/scafflater/blob/v0.0.1/commands/add.js)_
+_See code: [commands/add.js](https://github.com/chicoribas/scafflater/blob/v0.0.4/commands/add.js)_
 
-## `scf-cli help [COMMAND]`
+## `scafflater-cli help [COMMAND]`
 
-display help for scf-cli
+display help for scafflater-cli
 
 ```
 USAGE
-  $ scf-cli help [COMMAND]
+  $ scafflater-cli help [COMMAND]
 
 ARGUMENTS
   COMMAND  command to show help for
@@ -68,13 +68,13 @@ OPTIONS
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.2/src/commands/help.ts)_
 
-## `scf-cli init [GIT_HUB_REPOSITORY]`
+## `scafflater-cli init [GIT_HUB_REPOSITORY]`
 
 Initializes the template in a output folder
 
 ```
 USAGE
-  $ scf-cli init [GIT_HUB_REPOSITORY]
+  $ scafflater-cli init [GIT_HUB_REPOSITORY]
 
 OPTIONS
   -o, --output=output          [default: ./] The output folder
@@ -84,5 +84,5 @@ DESCRIPTION
   ...
 ```
 
-_See code: [commands/init.js](https://github.com/chicoribas/scafflater/blob/v0.0.1/commands/init.js)_
+_See code: [commands/init.js](https://github.com/chicoribas/scafflater/blob/v0.0.4/commands/init.js)_
 <!-- commandsstop -->

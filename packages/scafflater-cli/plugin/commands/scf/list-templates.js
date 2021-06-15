@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 const {Command} = require('@oclif/command')
-const TemplateManager = require('template-manager')
+const TemplateManager = require('scafflater/template-manager')
 const chalk = require('chalk')
 const chalkTable = require('chalk-table')
 

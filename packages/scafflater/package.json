@@ -1,8 +1,28 @@
 {
   "name": "scafflater",
+  "version": "0.0.2",
+  "description": "Scafflater - Scaffold using templates",
   "main": "scafflater.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chicoribas/scafflater.git"
+  },
+  "keywords": [
+    "scaffold",
+    "templaters",
+    "templates"
+  ],
+  "author": "Chico Ribas (chicoribas)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chicoribas/scafflater/issues"
+  },
+  "homepage": "https://github.com/chicoribas/scafflater#readme",
   "engines": {
-    "node": ">=15.0.0"
+    "node": ">=8.0.0"
   },
   "dependencies": {
     "chalk": "^4.1.1",

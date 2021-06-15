@@ -1,5 +1,4 @@
 const {spawn} = require('child_process')
-const logger = require('logger')
 
 /**
  *
