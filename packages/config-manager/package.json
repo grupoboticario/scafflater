@@ -1,9 +1,0 @@
-{
-  "name": "config-manager",
-  "engines": {
-    "node": ">=15.0.0"
-  },
-  "dependencies": {
-    "fs-util": "workspace:*"
-  }
-}
