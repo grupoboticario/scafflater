@@ -10,14 +10,9 @@
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^3",
     "chalk": "^4.1.1",
-    "fs-util": "workspace:*",
     "inquirer": "^8.1.0",
-    "logger": "workspace:*",
     "ora": "^5.4.1",
-    "scafflater": "workspace:*",
-    "template-cache": "workspace:*",
-    "template-manager": "workspace:*",
-    "template-source": "workspace:*"
+    "scafflater": "workspace:*"
   },
   "engines": {
     "node": ">=13.0.0"
@@ -46,7 +41,7 @@
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "prepack": "oclif-dev manifest && oclif-dev readme",
-    "test": "echo NO TESTS",
+    "test": "jest",
     "version": "oclif-dev readme && git add README.md"
   },
   "devDependencies": {

@@ -1,12 +1,12 @@
 /* eslint-disable node/no-unpublished-require */
 /* eslint-disable no-undef */
-const FileSystemUtils = require('fs-util')
-const TemplateCache = require('template-cache')
-const TemplateSource = require('template-source')
-const TemplateManager = require('./template-manager')
+const FileSystemUtils = require('../fs-util')
+const TemplateCache = require('../template-cache')
+const TemplateSource = require('../template-source')
+const TemplateManager = require('./')
 
-jest.mock('fs-util')
-jest.mock('template-cache')
+jest.mock('../fs-util')
+jest.mock('../template-cache')
 
 describe('Template Manager tests', () => {
   afterEach(() => {

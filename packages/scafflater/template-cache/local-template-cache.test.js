@@ -1,9 +1,9 @@
 /* eslint-disable no-undef */
 const LocalTemplateCache = require('./local-template-cache')
-const FileSystemUtils = require('fs-util')
+const FileSystemUtils = require('../fs-util')
 const path = require('path')
 
-jest.mock('fs-util')
+jest.mock('../fs-util')
 
 describe('Github template source', () => {
   afterEach(() => {

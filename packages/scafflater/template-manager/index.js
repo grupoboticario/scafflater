@@ -1,5 +1,5 @@
 const path = require('path')
-const FileSystemUtils = require('fs-util')
+const FileSystemUtils = require('../fs-util')
 
 /**
 * Template Manager factory.

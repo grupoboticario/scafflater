@@ -1,4 +1,4 @@
-const { RegionProvider } = require('../region-provider/region-provider')
+const { RegionProvider } = require('../region-provider')
 const Appender = require('./appender')
 
 class RegionAppender extends Appender {
@@ -35,7 +35,6 @@ class RegionAppender extends Appender {
           destContent + 
           destStr.substring(destRegion.endRegionTag.startPosition)
       }else{
-        var t = regionProvider.appendRegion(srcRegion, destContent)
         destStr = regionProvider.appendRegion(srcRegion, destStr)
       }
 

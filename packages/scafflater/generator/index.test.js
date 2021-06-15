@@ -1,9 +1,9 @@
 /* eslint-disable no-undef */
-const FileSystemUtils = require('fs-util')
-const ConfigProvider = require('config-provider')
-const Generator = require('./generator')
+const FileSystemUtils = require('../fs-util')
+const ConfigProvider = require('../config-provider')
+const Generator = require('./')
 
-jest.mock('fs-util')
+jest.mock('../fs-util')
 
 describe('Generator Tests', () => {
   afterEach(() => {

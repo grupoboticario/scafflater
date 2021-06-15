@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-const FileSystemUtils = require('./fs-util')
+const FileSystemUtils = require('../fs-util')
 const path = require('path')
 const fs = require('fs-extra')
 const {EOL} = require('os')

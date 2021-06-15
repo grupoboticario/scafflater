@@ -1,7 +1,7 @@
-const ConfigManager = require('./config-manager')
+const ConfigManager = require('./')
 const os = require('os')
 const path = require('path')
-const FileSystemUtils = require('fs-util')
+const FileSystemUtils = require('../fs-util')
 
 const defaultConfig = {
   localStorageConfigFile: path.join(os.homedir(), '.scafflater', 'scf.json'),

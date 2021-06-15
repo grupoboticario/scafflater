@@ -6,5 +6,7 @@
 /tmp
 node_modules
 .yarn/*
-!.yarn/yarn-berry.js
+.yarn/install-state.gz
+!.yarn/releases
+!.yarn/plugins
 .DS_Store

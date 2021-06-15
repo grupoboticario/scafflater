@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-const ConfigManager = require('./config-manager')
+const ConfigManager = require('./')
 const LocalConfigManager = require('./local-config-manager')
 
 test('Throws an exception when the storage does not exists', () => {

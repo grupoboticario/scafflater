@@ -1,6 +1,6 @@
 const path = require('path')
 const Handlebars = require('handlebars')
-const FileSystemUtils = require('fs-util')
+const FileSystemUtils = require('../fs-util')
 const HandlebarsProcessor = require('./processors/handlebars-processor')
 const Processor = require('./processors/processor')
 const Appender = require('./appenders/appender')

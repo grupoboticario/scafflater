@@ -1,7 +1,7 @@
-const TemplateCache = require('./template-cache')
+const TemplateCache = require('./')
 const os = require('os')
 const path = require('path')
-const FileSystemUtils = require('fs-util')
+const FileSystemUtils = require('../fs-util')
 const sort = require('version-sort')
 
 const defaultConfig = {

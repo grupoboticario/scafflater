@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
-const ConfigProvider = require('config-provider')
-const {RegionProvider, Region, RegionTag, RegionTagType} = require('./region-provider')
+const ConfigProvider = require('../../config-provider')
+const {RegionProvider, Region, RegionTag, RegionTagType} = require('.')
 
 test('List regions in a well formatted content', () => {
   // ARRANJE

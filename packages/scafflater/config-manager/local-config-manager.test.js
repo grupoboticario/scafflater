@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
-const LocalConfigManager = require('./local-config-manager')
-const FileSystemUtils = require('fs-util')
+const LocalConfigManager = require('./')
+const FileSystemUtils = require('../fs-util')
 
-jest.mock('fs-util')
+jest.mock('../fs-util')
 
 describe('Local config Manager', () => {
   afterEach(() => {

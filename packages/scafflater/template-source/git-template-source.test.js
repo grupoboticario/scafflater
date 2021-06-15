@@ -1,10 +1,10 @@
 /* eslint-disable no-undef */
-const GitTemplateSource = require('./git-template-source')
-const GitUtil = require('git-util')
-const FileSystemUtils = require('fs-util')
+const GitTemplateSource = require('./')
+const GitUtil = require('../git-util')
+const FileSystemUtils = require('../fs-util')
 
-jest.mock('git-util')
-jest.mock('fs-util')
+jest.mock('../git-util')
+jest.mock('../fs-util')
 
 describe('Github template source', () => {
   afterEach(() => {

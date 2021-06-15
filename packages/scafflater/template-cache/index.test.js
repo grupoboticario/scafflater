@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-const TemplateCache = require('./template-cache')
+const TemplateCache = require('./')
 const LocalTemplateCache = require('./local-template-cache')
 
 test('Throws an exception when the storage does not exists', () => {

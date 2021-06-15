@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-const FileSystemUtils = require('./fs-util')
+const FileSystemUtils = require('.')
 const path = require('path')
 
 test('Should return the directory tree without files', () => {

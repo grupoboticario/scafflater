@@ -1,6 +1,6 @@
-const ConfigProvider = require('config-provider')
+const ConfigProvider = require('../../config-provider')
 const { annotate } = require('../annotator/annotator')
-const { RegionProvider } = require('../region-provider/region-provider')
+const { RegionProvider } = require('../region-provider')
 const RegionAppender = require('./region-appender')
 
 test('Append to an existing region', () => {

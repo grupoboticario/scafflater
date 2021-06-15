@@ -1,10 +1,10 @@
-const TemplateSource = require('template-source')
-const TemplateCache = require('template-cache')
-const TemplateManager = require('template-manager')
-const Generator = require('generator')
-const FileSystemUtils = require('fs-util')
+const TemplateSource = require('./template-source')
+const TemplateCache = require('./template-cache')
+const TemplateManager = require('./template-manager')
+const Generator = require('./generator')
+const FileSystemUtils = require('./fs-util')
 const path = require('path')
-const ConfigProvider = require('config-provider')
+const ConfigProvider = require('./config-provider')
 
 /**
 * Scafflater class

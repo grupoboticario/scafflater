@@ -1,5 +1,3 @@
-const ConfigProvider = require('config-provider')
-
 const RegionTagType = {
   Unknown: 0,
   Start: 1,

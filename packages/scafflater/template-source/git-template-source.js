@@ -1,6 +1,6 @@
-const TemplateSource = require('./template-source')
-const GitUtil = require('git-util')
-const FileSystemUtils = require('fs-util')
+const TemplateSource = require('./')
+const GitUtil = require('../git-util')
+const FileSystemUtils = require('../fs-util')
 const path = require('path')
 
 const defaultConfig = {

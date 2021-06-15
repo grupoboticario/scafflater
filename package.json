@@ -5,6 +5,9 @@
   "author": "Chico Ribas",
   "bugs": "https://github.com/chicoribas/scafflater/issues",
   "type": "commonjs",
+  "scripts": {
+    "test": "jest"
+  },
   "workspaces": [
     "packages/*"
   ],
