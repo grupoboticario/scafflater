@@ -8,7 +8,7 @@ class RegionAppender extends Appender {
   * @param {Context} context The context of generation
   * @param {string} srcStr The string to be appended
   * @param {string} destStr The string where srcStr must be appended
-  * @return {ProccessResult} The process result
+  * @return {ProcessResult} The process result
   */
   append(context, srcStr, destStr) {
 

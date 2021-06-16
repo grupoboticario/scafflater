@@ -1180,6 +1180,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"argparse@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "argparse@npm:2.0.1"
+  checksum: 160b7a25d2a7097fd5fdf25eb8a99e037340078f70e6c7cfdef305837ed14d54570b2b13261bcae26c8cd44ad6e9a7136a0110d815ac65a7891c69c7bf2f4afd
+  languageName: node
+  linkType: hard
+
 "arr-diff@npm:^4.0.0":
   version: 4.0.0
   resolution: "arr-diff@npm:4.0.0"
@@ -4231,6 +4238,17 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
+"js-yaml@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "js-yaml@npm:4.1.0"
+  dependencies:
+    argparse: ^2.0.1
+  bin:
+    js-yaml: bin/js-yaml.js
+  checksum: 8973cf4296c944cc2551d1e3d3d064e7de0d0a6db3f7bafe40339ee9e5e0329560b52c4b8492b9b22365404c9be0822b62340ab49884e1dedfcc7ff80158abe0
+  languageName: node
+  linkType: hard
+
 "jsdom@npm:^16.4.0":
   version: 16.6.0
   resolution: "jsdom@npm:16.6.0"
@@ -5815,10 +5833,12 @@ fsevents@^2.1.2:
   resolution: "scafflater@workspace:packages/scafflater"
   dependencies:
     chalk: ^4.1.1
+    deepmerge: ^4.2.2
     directory-tree: ^2.2.9
     fs-extra: ^10.0.0
     glob: ^7.1.7
     handlebars: ^4.7.7
+    js-yaml: ^4.1.0
     version-sort: ^0.1.1
     winston: ^3.3.3
   languageName: unknown
