@@ -1,12 +1,12 @@
-const RegionProcessor = require('./handlebars-processor')
-
  /**
-  * @typedef {object} ProccessResult
+  * @typedef {object} ProcessResult
   * @property {Context} context The context of generation. The processor can change context output to next steps.
-  * @property {string} result The result string of proccess.
+  * @property {string} result The result string of process.
   */
 
 class Processor {
+  constructor(){}
+
   static getProcessor(name){
     switch ('region-processor') {
       case value:
@@ -21,7 +21,7 @@ class Processor {
   * Process the input.
   * @param {Context} context The context of generation
   * @param {string} input The string to be processed
-  * @return {ProccessResult} The process result
+  * @return {ProcessResult} The process result
   */
   process(context, input) {
     return {
@@ -35,15 +35,15 @@ class Processor {
   * @param {Array<Processor>} processors - Processors to be executed
   * @param {Context} context The context of generation
   * @param {string} input The string to be processed
-  * @return {string} The pipeline proccess result
+  * @return {string} The pipeline process result
   */
   static runProcessorsPipeline(processors, context, input){
     let generationContext = { ...context }
 
     for (const processor of processors) {
-      const proccessorResult = processor.process(generationContext, input)
-      generationContext = proccessorResult.context
-      input = proccessorResult.result.trim()
+      const processorResult = processor.process(generationContext, input)
+      generationContext = processorResult.context
+      input = processorResult.result.trim()
     }
 
     return input

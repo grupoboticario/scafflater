@@ -16,19 +16,10 @@ class Scafflater {
   * @param {string} sourceKey - The source key
   */
   constructor(config = {}, sourceKey = null) {
-    this.config = config
+    this.config = { ...new ConfigProvider(), ...config }
     this.templateSource = new TemplateSource(this.config, sourceKey)
     this.templateCache = new TemplateCache(this.config)
     this.templateManager = new TemplateManager(this.templateSource, this.templateCache)
-  }
-
-  buildContext(config, parameters, sourcePath, targetPath) {
-    return {
-      config,
-      parameters,
-      sourcePath,
-      targetPath,
-    }
   }
 
   /**
@@ -46,19 +37,18 @@ class Scafflater {
       partials: [],
     }
 
-    FileSystemUtils.saveJson(path.join(targetPath, '_scf.json'), scfConfig)
+    FileSystemUtils.saveJson(path.join(targetPath, this.config.scfFileName), scfConfig)
 
     await this.runPartial('_init', parameters, targetPath, templateConfig,)
   }
 
   async runPartial(partialPath, parameters, targetPath = './') {
-    const scfConfig = await FileSystemUtils.getJson(path.join(targetPath, '_scf.json'))
+    const scfConfig = await FileSystemUtils.getJson(path.join(targetPath, this.config.scfFileName))
 
     const partialInfo = await this.templateManager.getPartial(partialPath, scfConfig.template.name, scfConfig.template.version)
 
     const templatePath = await this.templateManager.getTemplatePath(scfConfig.template.name, scfConfig.template.version)
-    const templateScf = FileSystemUtils.getJson(path.join(templatePath, '_scf.json'))
-    // const ctx = this.buildContext(partialInfo.config, parameters, partialInfo.path, targetPath)
+    const templateScf = FileSystemUtils.getJson(path.join(templatePath, this.config.scfFileName))
 
     const ctx = {
       partial: partialInfo.config,
@@ -77,7 +67,7 @@ class Scafflater {
       parameters: parameters,
     })
 
-    FileSystemUtils.saveJson(path.join(targetPath, '_scf.json'), scfConfig)
+    FileSystemUtils.saveJson(path.join(targetPath, this.config.scfFileName), scfConfig)
   }
 }
 

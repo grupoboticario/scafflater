@@ -1,16 +1,8 @@
 const path = require('path')
 const Handlebars = require('handlebars')
 const FileSystemUtils = require('../fs-util')
-const HandlebarsProcessor = require('./processors/handlebars-processor')
 const Processor = require('./processors/processor')
 const Appender = require('./appenders/appender')
-
-// TODO: mover para configurações
-
-const ignoredFiles = ['_scf.json']
-const ignoredFolders = ['_partials, _hooks']
-const processors = [ new HandlebarsProcessor() ]
-const appenders = [ new Appender() ]
 
 /**
  * @typedef {object} Context
@@ -43,11 +35,15 @@ class Generator {
   */
   constructor(context){
     this.context = context
+    this.ignoredFiles = [context.config.scfFileName]
+    this.ignoredFolders = [context.config.partialsFolderName, context.config.hooksFolderName]
+    this.processors = context.config.processors.map(p => new (require(p))())
+    this.appenders =  context.config.appenders.map(a => new (require(a))())
   }
 
   async generate() {
     // Loading handlebars js custom helper
-    const helpersPath = path.join(this.context.templatePath, '_helpers')
+    const helpersPath = path.join(this.context.templatePath, this.context.config.helpersFolderName)
     if (FileSystemUtils.pathExists(helpersPath)) {
       for (const js of await FileSystemUtils.listJsTreeInPath(helpersPath)) {
         const helperFunction = require(js)
@@ -58,31 +54,31 @@ class Generator {
 
     const tree = FileSystemUtils.getDirTree(this.context.partialPath)
 
-    const promisses = []
+    const promises = []
     if (tree.type === 'file') {
-      promisses.push(this._generate(this.context, tree))
+      promises.push(this._generate(this.context, tree))
     }
 
-    if (tree.type === 'directory' && ignoredFolders.indexOf(tree.name) < 0) {
+    if (tree.type === 'directory' && this.ignoredFolders.indexOf(tree.name) < 0) {
       for (const child of tree.children) {
-        promisses.push(this._generate(this.context, child))
+        promises.push(this._generate(this.context, child))
       }
     }
 
-    await Promise.all(promisses)
+    await Promise.all(promises)
   }
 
   async _generate(ctx = {}, tree = null) {
     if (!tree)
       tree = FileSystemUtils.getDirTree(ctx.partialPath)
 
-    const targetName = Processor.runProcessorsPipeline(processors, ctx, tree.name)
+    const targetName = Processor.runProcessorsPipeline(this.processors, ctx, tree.name)
     if (targetName === '') {
       return
     }
 
-    const promisses = []
-    if (tree.type === 'directory' && ignoredFolders.indexOf(tree.name) < 0) {
+    const promises = []
+    if (tree.type === 'directory' && this.ignoredFolders.indexOf(tree.name) < 0) {
       for (const child of tree.children) {
         const _ctx = {
           ...ctx,
@@ -91,14 +87,14 @@ class Generator {
             targetPath: path.join(ctx.targetPath, targetName),
           },
         }
-        promisses.push(this._generate(_ctx, child))
+        promises.push(this._generate(_ctx, child))
       }
     }
 
-    if (tree.type === 'file' && ignoredFiles.indexOf(tree.name) < 0) {
+    if (tree.type === 'file' && this.ignoredFiles.indexOf(tree.name) < 0) {
       let srcContent = FileSystemUtils.getFile(path.join(ctx.partialPath, tree.name))
 
-      srcContent = Processor.runProcessorsPipeline(processors, ctx, srcContent)
+      srcContent = Processor.runProcessorsPipeline(this.processors, ctx, srcContent)
 
       const targetPath = path.join(ctx.targetPath, targetName);
       let targetContent = ''
@@ -106,12 +102,12 @@ class Generator {
         targetContent = FileSystemUtils.getFile(targetPath)
       }
 
-      const result = Appender.runAppendersPipeline(appenders, ctx, srcContent, targetContent)
+      const result = Appender.runAppendersPipeline(this.appenders, ctx, srcContent, targetContent)
 
       FileSystemUtils.saveFile(targetPath, result, false)
     }
 
-    await Promise.all(promisses)
+    await Promise.all(promises)
   }
 
   static compileAndApply(ctx, templateStr) {
