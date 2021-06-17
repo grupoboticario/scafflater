@@ -1,5 +1,4 @@
 const HandlebarsProcessor = require('../processors/handlebars-processor')
-const processors = [ new HandlebarsProcessor() ]
 
 class Annotator {
   static annotate(context, content){

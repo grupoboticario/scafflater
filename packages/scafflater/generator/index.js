@@ -3,6 +3,7 @@ const Handlebars = require('handlebars')
 const FileSystemUtils = require('../fs-util')
 const Processor = require('./processors/processor')
 const Appender = require('./appenders/appender')
+const ConfigProvider = require('../config-provider')
 
 /**
  * @typedef {object} Context
@@ -79,12 +80,15 @@ class Generator {
 
     const promises = []
     if (tree.type === 'directory' && this.ignoredFolders.indexOf(tree.name) < 0) {
+      const dirPath = path.join(ctx.partialPath, tree.name) 
+      const dirConfig = ConfigProvider.mergeFolderConfig(dirPath, this.context.config)
       for (const child of tree.children) {
         const _ctx = {
           ...ctx,
           ...{
-            partialPath: path.join(ctx.partialPath, tree.name),
+            partialPath: path.join(dirPath),
             targetPath: path.join(ctx.targetPath, targetName),
+            config: dirConfig
           },
         }
         promises.push(this._generate(_ctx, child))
@@ -92,9 +96,15 @@ class Generator {
     }
 
     if (tree.type === 'file' && this.ignoredFiles.indexOf(tree.name) < 0) {
-      let srcContent = FileSystemUtils.getFile(path.join(ctx.partialPath, tree.name))
+      const filePath = path.join(ctx.partialPath, tree.name) 
+      let srcContent = FileSystemUtils.getFile(filePath)
+      const configFromFile = ConfigProvider.mergeConfigFromFileContent(srcContent, this.context.config)
+      const _ctx = {
+        ...ctx,
+        ...configFromFile.config
+      }
 
-      srcContent = Processor.runProcessorsPipeline(this.processors, ctx, srcContent)
+      srcContent = Processor.runProcessorsPipeline(this.processors, _ctx, configFromFile.fileContent)
 
       const targetPath = path.join(ctx.targetPath, targetName);
       let targetContent = ''
@@ -102,16 +112,12 @@ class Generator {
         targetContent = FileSystemUtils.getFile(targetPath)
       }
 
-      const result = Appender.runAppendersPipeline(this.appenders, ctx, srcContent, targetContent)
+      const result = Appender.runAppendersPipeline(this.appenders, _ctx, srcContent, targetContent)
 
       FileSystemUtils.saveFile(targetPath, result, false)
     }
 
     await Promise.all(promises)
-  }
-
-  static compileAndApply(ctx, templateStr) {
-    return Handlebars.compile(templateStr)(ctx)
   }
 }
 
