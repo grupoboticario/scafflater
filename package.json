@@ -10,7 +10,8 @@
   "type": "commonjs",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/scafflater",
+    "packages/scafflater-cli"
   ],
   "engines": {
     "node": ">=13.0.0"
