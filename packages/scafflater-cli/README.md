@@ -1,12 +1,10 @@
-scafflater-cli
+Scafflater Cli
 =======
 
-The Scafflater Cli
-
+[![Scafflater Cli](https://img.shields.io/badge/dynamic/json?color=green&label=scafflater-cli&query=%24.collected.metadata.version&url=https%3A%2F%2Fapi.npms.io%2Fv2%2Fpackage%2Fscafflater-cli)](https://npmjs.org/package/scafflater-cli)
+[![Downloads/week](https://img.shields.io/npm/dw/scafflater-cli.svg)](https://npmjs.org/package/scafflater-cli)
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
-[![Version](https://img.shields.io/npm/v/scf-cli.svg)](https://npmjs.org/package/scf-cli)
-[![Downloads/week](https://img.shields.io/npm/dw/scf-cli.svg)](https://npmjs.org/package/scf-cli)
-[![License](https://img.shields.io/npm/l/scf-cli.svg)](https://github.com/chicoribas/scf-cli/blob/master/package.json)
+[![License](https://img.shields.io/npm/l/scafflater-cli.svg)](https://github.com/chicoribas/scafflater-cli/blob/main/package.json)
 
 <!-- toc -->
 * [Usage](#usage)

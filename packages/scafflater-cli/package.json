@@ -27,7 +27,9 @@
   ],
   "homepage": "https://github.com/chicoribas/scafflater",
   "keywords": [
-    "oclif"
+    "oclif",
+    "scaffold",
+    "templater"
   ],
   "license": "MIT",
   "main": "index.js",

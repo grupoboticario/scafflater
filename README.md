@@ -1,8 +1,11 @@
 Scafflater
 ===
 
-[![Version](https://img.shields.io/npm/v/scafflater.svg)](https://npmjs.org/package/scafflater)
-[![Version](https://img.shields.io/npm/v/scafflater-cli.svg)](https://npmjs.org/package/scafflater-cli)
+[![npm version](https://badge.fury.io/js/scafflater.svg)](https://badge.fury.io/js/scafflater)
+[![Scafflater Cli](https://img.shields.io/badge/dynamic/json?color=green&label=scafflater-cli&query=%24.collected.metadata.version&url=https%3A%2F%2Fapi.npms.io%2Fv2%2Fpackage%2Fscafflater-cli)](https://npmjs.org/package/scafflater-cli)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=chicoribas_scafflater&metric=alert_status)](https://sonarcloud.io/dashboard?id=chicoribas_scafflater)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=chicoribas_scafflater&metric=code_smells)](https://sonarcloud.io/dashboard?id=chicoribas_scafflater)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=chicoribas_scafflater&metric=coverage)](https://sonarcloud.io/dashboard?id=chicoribas_scafflater)
 [![License](https://img.shields.io/npm/l/scafflater.svg)](https://github.com/chicoribas/scafflater/blob/master/package.json)
 
 Scafflater is a solution to turn scaffold easier, through a small pieces of code templates, that can appended to the solution in a way the developer wants, building a new and customized solution for every single project.
