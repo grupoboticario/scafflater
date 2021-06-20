@@ -1,7 +1,6 @@
 {
   "name": "scafflater-project",
   "description": "Scafflater",
-  "version": "0.0.15",
   "author": "Chico Ribas (chicoribas)",
   "bugs": "https://github.com/chicoribas/scafflater/issues",
   "homepage": "https://github.com/chicoribas/scafflater",
@@ -10,8 +9,7 @@
   "type": "commonjs",
   "private": true,
   "workspaces": [
-    "packages/scafflater",
-    "packages/scafflater-cli"
+    "packages/*"
   ],
   "engines": {
     "node": ">=13.0.0"
@@ -19,7 +17,8 @@
   "scripts": {
     "test": "jest --detectOpenHandles --collectCoverage --runInBand --verbose --forceExit",
     "lint": "eslint \"**/*.js\" --ignore-pattern node_modules/",
-    "lint:fix": "eslint --fix \"**/*.js\" --ignore-pattern node_modules/"
+    "lint:fix": "eslint --fix \"**/*.js\" --ignore-pattern node_modules/",
+    "version": "lerna version patch"
   },
   "devDependencies": {
     "@types/jest": "^26.0.23",
@@ -32,6 +31,7 @@
     "eslint-plugin-promise": "^5.1.0",
     "fs-extra": "^10.0.0",
     "globby": "^11.0.4",
-    "jest": "^27.0.4"
+    "jest": "^27.0.4",
+    "lerna": "^4.0.0"
   }
 }

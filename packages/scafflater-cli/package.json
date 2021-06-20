@@ -1,7 +1,6 @@
 {
   "name": "scafflater-cli",
   "description": "The Scafflater Cli",
-  "version": "0.0.13",
   "author": "chicoribas @chicoribas",
   "bin": "./bin/run",
   "bugs": "https://github.com/chicoribas/scafflater/issues",
@@ -13,9 +12,6 @@
     "inquirer": "^8.1.1",
     "ora": "^5.4.1",
     "scafflater": "*"
-  },
-  "engines": {
-    "node": ">=13.0.0"
   },
   "files": [
     "/bin",

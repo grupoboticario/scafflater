@@ -1,6 +1,5 @@
 {
   "name": "scafflater",
-  "version": "0.0.13",
   "description": "Scafflater - Scaffold using templates",
   "main": "scafflater.js",
   "scripts": {
@@ -22,9 +21,6 @@
     "url": "https://github.com/chicoribas/scafflater/issues"
   },
   "homepage": "https://github.com/chicoribas/scafflater#readme",
-  "engines": {
-    "node": ">=8.3.0"
-  },
   "types": "./types/scafflater.d.js",
   "dependencies": {
     "chalk": "^4.1.1",
