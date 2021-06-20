@@ -12,7 +12,7 @@
     "packages/*"
   ],
   "engines": {
-    "node": ">=13.0.0"
+    "node": ">=8.3.0"
   },
   "scripts": {
     "test": "jest --detectOpenHandles --collectCoverage --runInBand --verbose --forceExit",

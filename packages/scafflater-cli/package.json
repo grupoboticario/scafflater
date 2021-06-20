@@ -27,6 +27,9 @@
   ],
   "license": "MIT",
   "main": "index.js",
+  "engines": {
+    "node": ">=8.3.0"
+  },
   "oclif": {
     "commands": "./commands",
     "bin": "scafflater-cli",

@@ -22,6 +22,9 @@
   },
   "homepage": "https://github.com/chicoribas/scafflater#readme",
   "types": "./types/scafflater.d.js",
+  "engines": {
+    "node": ">=8.3.0"
+  },
   "dependencies": {
     "chalk": "^4.1.1",
     "deepmerge": "^4.2.2",
