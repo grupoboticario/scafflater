@@ -1,0 +1,57 @@
+name: "[CD] Scafflater"
+
+on:
+  # push:
+  #   tags:
+  #     - "*"
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning'
+
+jobs:
+  npm-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: "Automated Version Bump"
+        id: version-bump
+        uses: "phips28/gh-action-bump-version@master"
+        with:
+          tag-prefix: 'v'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGEJSON_DIR:  'packages/scafflater'
+          target-branch: 'main'
+          commit-message: 'CD: bumps version to {{version}} [skip ci]'
+
+      - name: "Automated Version Bump"
+        id: version-bump
+        uses: "phips28/gh-action-bump-version@master"
+        with:
+          tag-prefix: 'v'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGEJSON_DIR:  'packages/scafflater-cli'
+          target-branch: 'main'
+          commit-message: 'CD: bumps version to {{version}} [skip ci]'
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 15.x
+      - run: npm install
+      - run: npm run lint
+      - run: npm test
+      - id: "publish"
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_AUTH_TOKEN }}
+
+      - if: steps.publish.type != 'none'
+        run: |
+          echo "Version changed: ${{ steps.publish.old-version }} => ${{ steps.publish.version }}"
+      - if: steps.publish.type == 'none'
+        run: |
+          echo "Version not changed."
