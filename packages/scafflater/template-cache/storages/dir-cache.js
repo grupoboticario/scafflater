@@ -73,18 +73,20 @@ class DirCache extends TemplateCache {
   * List stored templates and their versions.
   */
   listCachedTemplates() {
-    const dirTree = fsUtil.getDirTreeSync(this.storagePath, false)
+    return new Promise((resolve, reject) => {
+      const dirTree = fsUtil.getDirTreeSync(this.storagePath, false)
 
-    if (!dirTree)
-      return null
+      if (!dirTree)
+        resolve(null)
 
-    return dirTree.children.map(folder => {
-      return {
-        name: folder.name,
-        versions: folder.children.map(v => {
-          return { version: v.name }
-        }),
-      }
+      resolve(dirTree.children.map(folder => {
+        return {
+          name: folder.name,
+          versions: folder.children.map(v => {
+            return { version: v.name }
+          }),
+        }
+      }))
     })
   }
 }
