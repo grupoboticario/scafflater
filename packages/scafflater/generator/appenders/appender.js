@@ -1,4 +1,5 @@
 const Annotator = require('../annotator/annotator')
+const { EOL } = require('os')
 
 class Appender {
 
@@ -17,9 +18,13 @@ class Appender {
   */
   append(context, srcStr, destStr) {
     const annotated = Annotator.annotate(context, srcStr)
+    let result = destStr
+    if (srcStr && srcStr.trim().length > 0) {
+      result += `${EOL}${EOL}${annotated}` 
+    }
     return {
       context,
-      result: `${destStr}${annotated}` ,
+      result,
       notAppended: ''
     }
   }

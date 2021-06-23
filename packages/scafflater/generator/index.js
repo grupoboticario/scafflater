@@ -36,7 +36,7 @@ class Generator {
   async generate() {
     // Loading handlebars js custom helper
     const helpersPath = path.join(this.context.templatePath, this.context.config.helpersFolderName)
-    if (fsUtil.pathExistsSync(helpersPath)) {
+    if (fsUtil.pathExists(helpersPath)) {
       for (const js of await fsUtil.listFilesByExtensionDeeply(helpersPath, 'js')) {
         const helperFunction = require(js)
         const helperName = path.basename(js, '.js')
@@ -60,9 +60,7 @@ class Generator {
     await Promise.all(promises)
   }
 
-  async _generate(ctx = {}, tree = null) {
-    if (!tree)
-      tree = fsUtil.getDirTreeSync(ctx.partialPath)
+  async _generate(ctx, tree) {
 
     const targetName = Processor.runProcessorsPipeline([HandlebarsProcessor], ctx, tree.name)
     if (targetName === '') {
@@ -72,7 +70,7 @@ class Generator {
     const promises = []
     if (tree.type === 'directory' && this.ignoredFolders.indexOf(tree.name) < 0) {
       const dirPath = path.join(ctx.partialPath, tree.name)
-      const dirConfig = ConfigProvider.mergeFolderConfig(dirPath, this.context.config)
+      const dirConfig = await ConfigProvider.mergeFolderConfig(dirPath, this.context.config)
       for (const child of tree.children) {
         const _ctx = {
           ...ctx,
@@ -88,7 +86,7 @@ class Generator {
 
     if (tree.type === 'file' && this.ignoredFiles.indexOf(tree.name) < 0) {
       const filePath = path.join(ctx.partialPath, tree.name)
-      const configFromFile = ConfigProvider.extractConfigFromFileContent(filePath, this.context.config)
+      const configFromFile = await ConfigProvider.extractConfigFromFileContent(filePath, this.context.config)
       const _ctx = { ...ctx }
       _ctx.config = configFromFile.config
 
@@ -97,17 +95,17 @@ class Generator {
 
       const targetPath = path.join(ctx.targetPath, targetName);
       let targetContent = ''
-      if (fsUtil.pathExistsSync(targetPath)) {
-        targetContent = fsUtil.readFileContentSync(targetPath)
+      if (await fsUtil.pathExists(targetPath)) {
+        targetContent = await fsUtil.readFileContent(targetPath)
       }
 
       const appenders = _ctx.config.appenders.map(a => new (require(a))())
       const result = Appender.runAppendersPipeline(appenders, _ctx, srcContent, targetContent)
 
-      fsUtil.saveFileSync(targetPath, result, false)
+      promises.push(fsUtil.saveFile(targetPath, result, false))
     }
 
-    await Promise.all(promises)
+    return Promise.all(promises)
   }
 }
 
