@@ -1,6 +1,5 @@
 const {runCommand} = require('./utils')
-// eslint-disable-next-line node/no-extraneous-require
-const fs = require('fs-extra')
+const fsUtil = require('../fs-util')
 const os = require('os')
 
 /**
@@ -13,15 +12,15 @@ class GitUtil {
   * @param {string} localPath - Local path where the repos will be cloned
   * @param {string} [baseGitHubUrl] - Github base path
   */
-  static async clone(repo, localPath) {
-    await runCommand('git',
+  static clone(repo, localPath) {
+    return runCommand('git',
       [
         'clone',
         repo,
         localPath,
       ]
     )
-  }
+  } 
 
   /**
   * Clones a repo to a temp path.
@@ -29,8 +28,7 @@ class GitUtil {
   * @returns {string} The path where repo was cloned
   */
   static async cloneToTempPath(repo) {
-    const tempDir = fs.mkdtempSync(os.tmpdir())
-
+    const tempDir = await fsUtil.getTempFolder()
     await this.clone(repo, tempDir)
 
     return tempDir

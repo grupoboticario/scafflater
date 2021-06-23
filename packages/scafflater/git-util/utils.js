@@ -5,18 +5,12 @@ const {spawn} = require('child_process')
  * @param {string} command the command to run
  * @param {string[]} args the arguments to pass the command
  * @param {stream} logStream the log streamer to capture log messages
+ * @return {Promise<string>} Promise of output message
  */
-const runCommand = async (
+const runCommand = (
   command,
   args
 ) => {
-  // const process = spawnSync(command, args, {encoding: 'utf8'})
-  // if (process.error) {
-  //   throw new Error(process.error)
-  // }
-
-  // return process.stdout
-
   return new Promise((resolve, reject) => {
     var scriptOutput = ''
     const process = spawn(command, args)
@@ -24,7 +18,6 @@ const runCommand = async (
     process.stdout.setEncoding('utf8')
     process.stdout.on('data', data => {
       data = data.toString()
-      // logger.info(data)
       scriptOutput += data
     })
 
@@ -34,15 +27,12 @@ const runCommand = async (
     })
 
     process.on('error', error => {
-      // logger.error(error)
       return reject(error)
     })
 
     process.on('close', code => {
       if (code !== 0) {
-        const e = `Command ${command} failed, exit code: ${code} \n ${scriptOutput}`
-        // logger.error(e)
-        return reject(new Error(e))
+        return reject(`Error: Command ${command} failed, exit code ${code}: ${scriptOutput}`)
       }
       return resolve(scriptOutput)
     })
