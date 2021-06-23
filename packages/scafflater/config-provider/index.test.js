@@ -8,63 +8,77 @@ describe('Config Provider', () => {
     jest.clearAllMocks()
   })
 
-  test('Get config file for folder', () => {
+  test('mergeFolderConfig exception', async () => {
     // ARRANGE
     const config = new ConfigProvider()
-    FileSystemUtils.pathExistsSync.mockReturnValue(true)
-    FileSystemUtils.readJSONSync.mockReturnValue({
+    FileSystemUtils.readJSON.mockImplementation(async () => 
+    {
+      throw new Error()
+    })
+
+    // ACT & ASSERT
+    await expect(ConfigProvider.mergeFolderConfig(null, config))
+    .rejects
+    .toThrow()
+  })
+
+  test('Get config file for folder', async () => {
+    // ARRANGE
+    const config = new ConfigProvider()
+    FileSystemUtils.pathExists.mockResolvedValue(true)
+    FileSystemUtils.readJSON.mockResolvedValue({
       config: {
         singleLineComment: '//'
       }
     })
 
     // ACT
-    const newConfig = ConfigProvider.mergeFolderConfig('some-folder-path', config)
+    const newConfig = await ConfigProvider.mergeFolderConfig('some-folder-path', config)
 
     // ASSERT
-    expect(FileSystemUtils.readJSONSync.mock.calls.length).toBe(1)
+    expect(FileSystemUtils.readJSON.mock.calls.length).toBe(1)
     expect(newConfig.singleLineComment).toBe('//')
 
   })
 
-  test('Config file for folder does not exists', () => {
+  test('Config file for folder does not exists', async () => {
     // ARRANGE
     const config = new ConfigProvider()
-    FileSystemUtils.pathExistsSync.mockReturnValue(false)
-    FileSystemUtils.readJSONSync.mockReturnValue({
+    FileSystemUtils.pathExists.mockResolvedValue(false)
+    FileSystemUtils.readJSON.mockResolvedValue({
       config: {
         singleLineComment: '//'
       }
     })
 
     // ACT
-    const newConfig = ConfigProvider.mergeFolderConfig('some-folder-path', config)
+    const newConfig = await ConfigProvider.mergeFolderConfig('some-folder-path', config)
 
     // ASSERT
-    expect(FileSystemUtils.readJSONSync.mock.calls.length).toBe(0)
+    expect(FileSystemUtils.readJSON.mock.calls.length).toBe(0)
     expect(newConfig).toStrictEqual({ ...config })
   })
 
-  test('Config file does not has config section', () => {
+  test('Config file does not has config section', async () => {
     // ARRANGE
     const config = new ConfigProvider()
-    FileSystemUtils.pathExistsSync.mockReturnValue(true)
-    FileSystemUtils.readJSONSync.mockReturnValue({
+    FileSystemUtils.pathExists.mockResolvedValue(true)
+    FileSystemUtils.readJSON.mockResolvedValue({
       hey: 'theres no config here'
     })
 
     // ACT
-    const newConfig = ConfigProvider.mergeFolderConfig('some-folder-path', config)
+    const newConfig = await ConfigProvider.mergeFolderConfig('some-folder-path', config)
 
     // ASSERT
-    expect(FileSystemUtils.readJSONSync.mock.calls.length).toBe(1)
+    expect(FileSystemUtils.readJSON.mock.calls.length).toBe(1)
     expect(newConfig).toStrictEqual({ ...config })
   })
 
-  test('Get config from file template', () => {
+  test('Get config from file template', async () => {
     // ARRANGE
     const config = new ConfigProvider()
-    FileSystemUtils.readFileContentSync.mockReturnValue(`
+    FileSystemUtils.readFileContent.mockResolvedValue(`
     # @scf-config processors [ "a-new-processor" ]
     # @scf-config singleLineComment //
     # @scf-config annotate false
@@ -73,7 +87,7 @@ describe('Config Provider', () => {
     `)
 
     // ACT
-    const newConfig = ConfigProvider.extractConfigFromFileContent('some/path', config)
+    const newConfig = await ConfigProvider.extractConfigFromFileContent('some/path', config)
 
     // ASSERT
     expect(newConfig.config.processors[0]).toBe('a-new-processor')
@@ -82,16 +96,32 @@ describe('Config Provider', () => {
     expect(newConfig.fileContent.includes('@scf-config')).toBe(false)
   })
 
-  test('No config on file template', () => {
+  test('No config on file template', async () => {
     // ARRANGE
     const config = new ConfigProvider()
-    FileSystemUtils.readFileContentSync.mockReturnValue(`the file content`)
+    FileSystemUtils.readFileContent.mockResolvedValue(`the file content`)
 
     // ACT
-    const newConfig = ConfigProvider.extractConfigFromFileContent('some-path', config)
+    const newConfig = await ConfigProvider.extractConfigFromFileContent('some-path', config)
 
     // ASSERT
     expect(newConfig.fileContent).toBe('the file content')
+  })
+
+  test('Bad format processors', async () => {
+    // ARRANGE
+    const config = new ConfigProvider()
+    FileSystemUtils.readFileContent.mockResolvedValue(`
+    # @scf-config processors a-new-processor
+    
+    the file content
+    `)
+
+    // ACT && ASSERT
+    await expect(ConfigProvider.extractConfigFromFileContent('some/path', config))
+    .rejects
+    .toThrow(/Could not parse option 'processors'/)
+
   })
 
 })

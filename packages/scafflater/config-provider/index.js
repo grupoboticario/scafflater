@@ -46,52 +46,25 @@ class ConfigProvider {
   }
 
   static mergeFolderConfig(folderPath, config) {
-    let result = { ...config }
-    const scfFilePath = path.join(folderPath, config.scfFileName)
-    if (fsUtil.pathExistsSync(scfFilePath)) {
-      const info = fsUtil.readJSONSync(scfFilePath)
-      if (info.config) {
-        result = { ...result, ...info.config }
+    return new Promise(async (resolve, reject) => {
+      try{
+        let result = { ...config }
+        const scfFilePath = path.join(folderPath, config.scfFileName)
+        if (await fsUtil.pathExists(scfFilePath)) {
+          const info = await fsUtil.readJSON(scfFilePath)
+          if (info.config) {
+            result = { ...result, ...info.config }
+          }
+        }
+        resolve(result)
+      }catch(error){
+        reject(error)
       }
-    }
-
-    return result
+    })
   }
 
-  // static extractConfigFromFileContent(filePath, context) {
-  //   let fileContent = fsUtil.readFileContentSync(filePath)
-  //   const configRegex = new RegExp(`${context.singleLineComment}\\s*${context.configMarker}\\s+(?<name>[^ ]+)\\s+(?<value>.*)`, 'gi')
-  //   const configs = fileContent.matchAll(configRegex)
-  //   let newContext = {}
-
-  //   for (const c of configs) {
-  //     switch (c.groups.name) {
-  //       case 'processors':
-  //       case 'appenders':
-  //         try {
-  //           newContext[c.groups.name] = JSON.parse(c.groups.value)
-  //         } catch (error) {
-  //           throw new Error(`Could not parse option '${c.groups.name}' on file '${filePath}': ${error}`)
-  //         }
-  //         break;
-  //       case 'annotate':
-  //         newContext[c.groups.name] = c.groups.value === '1' || c.groups.value === 'true'
-  //         break;
-  //       default:
-  //         newContext[c.groups.name] = c.groups.value
-  //         break;
-  //     }
-  //   }
-
-  //   return {
-  //     context: merge(context, newContext),
-  //     fileContent: fileContent.replace(configRegex, '')
-  //   }
-
-  // }
-
-  static extractConfigFromFileContent(filePath, config) {
-    let fileContent = fsUtil.readFileContentSync(filePath)
+  static async extractConfigFromFileContent(filePath, config) {
+    let fileContent = await fsUtil.readFileContent(filePath)
     const configRegex = new RegExp(`${config.singleLineComment}\\s*${config.configMarker}\\s+(?<name>[^ ]+)\\s+(?<value>.*)`, 'gi')
     const configs = fileContent.matchAll(configRegex)
     let newConfig = {}
