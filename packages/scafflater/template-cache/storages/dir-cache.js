@@ -10,7 +10,7 @@ const ConfigProvider = require('../../config-provider')
 */
 class DirCache extends TemplateCache {
   constructor(storagePath, config = {}) {
-    config = {...new ConfigProvider(), ...config}
+    config = { ...new ConfigProvider(), ...config }
     super(config)
     this.storagePath = storagePath
     this.config = config
@@ -19,64 +19,54 @@ class DirCache extends TemplateCache {
   /**
   * Stores the template in the local file system.
   * @param {string} templatePath - Path of template
+  * @returns {Promise<string>} The path where template was cached.
   */
   storeTemplate(templatePath) {
-    const templateConfig = fsUtil.readJSONSync(path.join(templatePath, this.config.scfFileName))
-    const cachePath = path.join(this.storagePath, templateConfig.name, templateConfig.version)
-    fsUtil.copyEnsuringDestSync(templatePath, cachePath)
-    return cachePath
+    return new Promise(async (resolve, reject) => {
+      const templateConfig = await fsUtil.readJSON(path.join(templatePath, this.config.scfFileName))
+      const cachePath = path.join(this.storagePath, templateConfig.name, templateConfig.version)
+      await fsUtil.copyEnsuringDest(templatePath, cachePath)
+      resolve(cachePath)
+    })
   }
 
   /**
   *  Returns the template local path
   * @param {string} templateName - Template name
   * @param {string} templateVersion - Template Version. If null, the latest stored version is returned.
-  * @returns {string} The path where template was copied. Returns null if the template is not in cache.
-  */
-  getTemplateFolder(templateName, templateVersion = null) {
-    const templateFolder = path.join(this.storagePath, templateName)
-
-    if (!fsUtil.pathExistsSync(templateFolder)) {
-      return null
-    }
-
-    if (!templateVersion) {
-      let versions =  fsUtil.getDirTreeSync(templateFolder, false)
-
-      // The template folder does not exist or there no versions on it
-      if (!versions || versions.children.length <= 0)
-        return null
-
-      versions = sort(versions.children.map(d => d.name))
-      templateVersion = versions[versions.length - 1]
-    }
-
-    const templateVersionFolder =  path.join(templateFolder, templateVersion)
-
-    if (!fsUtil.pathExistsSync(templateVersionFolder)) {
-      return null
-    }
-
-    return templateVersionFolder
-  }
-
-  /**
-  * Gets the template path.
-  * @param {string} templateName - Template name
-  * @param {string} templateVersion - Template Version. If null, the latest stored version is returned.
-  * @returns {string} The stored template path
+  * @returns {Promise<string>} The path where template was copied. Returns null if the template is not in cache.
   */
   async getTemplatePath(templateName, templateVersion = null) {
-    return this.getTemplateFolder(templateName, templateVersion)
-  }
+    return new Promise(async (resolve, reject) => {
+      const templateFolder = path.join(this.storagePath, templateName)
 
-  /**
-  * Gets the cached template config.
-  * @param {string} cacheKey - The cache key
-  * @returns {object} The template config
-  */
-  getTemplateConfig(cacheKey) {
-    return fsUtil.readJSONSync(path.join(cacheKey, this.config.scfFileName))
+      if (!await fsUtil.pathExists(templateFolder)) {
+        resolve(null)
+        return
+      }
+
+      if (!templateVersion) {
+        let versions = fsUtil.getDirTreeSync(templateFolder, false)
+
+        // The template folder does not exist or there no versions on it
+        if (!versions || versions.children.length <= 0) {
+          resolve(null)
+          return
+        }
+
+        versions = sort(versions.children.map(d => d.name))
+        templateVersion = versions[versions.length - 1]
+      }
+
+      const templateVersionFolder = path.join(templateFolder, templateVersion)
+
+      if (!await fsUtil.pathExists(templateVersionFolder)) {
+        resolve(null)
+        return
+      }
+
+      resolve(templateVersionFolder)
+    })
   }
 
   /**
@@ -92,7 +82,7 @@ class DirCache extends TemplateCache {
       return {
         name: folder.name,
         versions: folder.children.map(v => {
-          return {version: v.name}
+          return { version: v.name }
         }),
       }
     })

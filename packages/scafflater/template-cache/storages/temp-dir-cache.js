@@ -10,7 +10,7 @@ const DirCache = require('./dir-cache')
 class TempDirCache extends DirCache {
   constructor(config = {}) {
     config = {...new ConfigProvider(), ...config}
-    super(FileSystemUtils.getTempFolderSync(), config)
+    super(FileSystemUtils.getTempFolder(), config)
   }
 }
 

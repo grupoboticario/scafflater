@@ -52,17 +52,6 @@ class TemplateCache {
   }
 
   /**
-  * Gets the cached template config.
-  * @param {string} cacheKey - The cache key
-  * @returns {object} The template config
-  */
-  async getTemplateConfig(cacheKey) {
-    return TemplateCache
-    .getTemplateCache()
-    .getTemplateConfig(cacheKey)
-  }
-
-  /**
   * List stored templates and their versions.
   * @param {string} templateName - Template name
   * @param {string} templateVersion - Template Version. If null, the latest stored version is returned.

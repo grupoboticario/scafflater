@@ -11,7 +11,7 @@ describe('Home Dir source', () => {
 
   test('Should set path to .scafflater/templates in UserDir', async () => {
     // ARRANGE
-    fsUtils.getTempFolderSync.mockReturnValue('some/temp/path')
+    fsUtils.getTempFolder.mockReturnValue('some/temp/path')
 
     // ACT
     const tempDirCache = new TempDirCache()
