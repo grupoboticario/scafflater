@@ -3,35 +3,45 @@ const os = require('os')
 const dirTree = require('directory-tree')
 const glob = require('glob')
 const path = require('path')
-const {EOL} = require('os')
+const { EOL } = require('os')
 
 /**
-  * Returns a temp folder path
-  * @returns {string} A temp folder path
-  */
-fs.getTempFolderSync = () => {
-  return fs.mkdtempSync(os.tmpdir())
+* Returns a temp folder path
+* @returns {string} A temp folder path
+* @returns {Promise<string>} The temp path
+*/
+fs.getTempFolder = async () => {
+  return fs.mkdtemp(os.tmpdir())
 }
 
 /**
 * Copies folder and files, creating the dest folder if it does not exists.
 * @param {string} src - Source
 * @param {string} dest - Destiny
+* @returns {Promise}
 */
-fs.copyEnsuringDestSync = (src, dest) => {
-  fs.ensureDirSync(dest)
-  fs.copySync(src, dest)
+fs.copyEnsuringDest = async (src, dest) => {
+  await fs.ensureDir(dest)
+  return fs.copy(src, dest)
 }
 
 /**
 * Gets file
 * @param {string} filePath - Source
 * @returns {string} The read file content
+* @returns {Promise<string>} The File content
 */
-fs.readFileContentSync = (filePath) => {
-  if(!fs.existsSync(filePath))
-    return null
-  return fs.readFileSync(filePath).toString()
+fs.readFileContent = async (filePath) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!await fs.exists(filePath)) {
+        resolve(null)
+      }
+      resolve((await fs.readFile(filePath)).toString())
+    } catch (error) {
+      reject(error)
+    }
+  })
 }
 
 /**
@@ -39,41 +49,42 @@ fs.readFileContentSync = (filePath) => {
 * @param {string} filePath - Source
 * @param {string} data - Data to be saved
 * @param {boolean} append - Appends data in file. The file is created if does not exists. Default = true
+* @returns {Promise}
 */
-fs.saveFileSync = (filePath, data, append = true) => {
-  const option = {flag: 'w'}
-  if (fs.existsSync(filePath) && append) {
+fs.saveFile = async (filePath, data, append = true) => {
+  const option = { flag: 'w' }
+  if (await fs.exists(filePath) && append) {
     data = EOL + EOL + data
     option.flag = 'a'
   }
-  fs.ensureDirSync(path.dirname(filePath))
-  fs.writeFileSync(filePath, data, option)
+  await fs.ensureDir(path.dirname(filePath))
+  return fs.writeFile(filePath, data, option)
 }
 
 /**
 * Returns the directory tree
-* @param {string} path - The path to build the tree
+* @param {string} folderPath - The path to build the tree
 * @param {boolean} includeFiles - If true, the files will be included in the list
-* @return {object} The tree
+* @return {Promise<object>} The tree
 */
-fs.getDirTreeSync = (path, includeFiles = true) => {
+fs.getDirTreeSync = (folderPath, includeFiles = true) => {
   const options = {}
   if (!includeFiles) {
     // Regex thar does not match with nothing
     options.extensions = /ˆ.*/
   }
-  return dirTree(path, options)
+  return dirTree(folderPath, options)
 }
 
 /**
 * List files in directory tree
 * @param {string} folderPath - Path to look for files
 * @param {string} filePattern - Glob pattern to filter files
-* @return {ReturnValueDataTypeHere} Brief description of the returning value here.
+* @return {Promise<string[]>} List of file names
 */
-fs.listFilesDeeply = (folderPath, filePattern) => {
+fs.listFilesDeeply = async (folderPath, filePattern) => {
   return new Promise((resolve, reject) => {
-    glob(filePattern, {root: folderPath}, (err, files) => {
+    glob(filePattern, { root: folderPath }, (err, files) => {
       if (err)
         reject(err)
       if (!files || files.length <= 0)
@@ -87,9 +98,9 @@ fs.listFilesDeeply = (folderPath, filePattern) => {
 * List files in directory tree by extension
 * @param {string} folderPath - Path to look for files
 * @param {string} extension - Glob pattern to filter files
-* @return {ReturnValueDataTypeHere} Brief description of the returning value here.
+* @return {Promise<string[]>} List of file names
 */
-fs.listFilesByExtensionDeeply = (folderPath, extension) => {
+fs.listFilesByExtensionDeeply = async (folderPath, extension) => {
   return fs.listFilesDeeply(folderPath, `/**/*.${extension}`)
 }
 
@@ -97,9 +108,9 @@ fs.listFilesByExtensionDeeply = (folderPath, extension) => {
 * List files in directory tree by name
 * @param {string} folderPath - Path to look for files
 * @param {string} fileName - Glob pattern to filter files
-* @return {ReturnValueDataTypeHere} Brief description of the returning value here.
+* @return {Promise<string[]>} List of file names
 */
-fs.listFilesByNameDeeply = (folderPath, fileName) => {
+fs.listFilesByNameDeeply = async (folderPath, fileName) => {
   return fs.listFilesDeeply(folderPath, `/**/${fileName}`)
 }
 

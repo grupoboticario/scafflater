@@ -46,3 +46,15 @@ test('Should return list of scafflater config', async () => {
   // ASSERT
   expect(out.length).toBe(2)
 })
+
+
+test('No files found, Should return null', async () => {
+  // ARRANGE
+  const folderPath = path.join(__dirname, '.test-resources', 'template-sample')
+
+  // ACT
+  const out = await fsUtils.listFilesDeeply(folderPath, '__...........__')
+
+  // ASSERT
+  expect(out).toBe(null)
+})
