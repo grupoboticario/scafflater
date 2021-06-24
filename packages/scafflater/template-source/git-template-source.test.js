@@ -2,6 +2,7 @@
 const GitTemplateSource = require('./')
 const GitUtil = require('../git-util')
 const fsUtil = require('../fs-util')
+const TemplateSource = require('./')
 
 jest.mock('../git-util')
 jest.mock('../fs-util')
@@ -11,12 +12,30 @@ describe('Github template source', () => {
     jest.clearAllMocks()
   })
 
+  test('Config with username and password', () => {
+    // ARRANGE
+    const config = {
+      github_username: 'some-user',
+      github_password: 'the-secret-password'
+    }
+
+    // ACT
+    const ts = new TemplateSource(config)
+
+    // ASSERT
+    expect(ts.config.github_username).toBe('some-user')
+    expect(ts.config.github_password).toBe('the-secret-password')
+    expect(ts.config.github_baseUrlApi).toBe('https://api.github.com')
+    expect(ts.config.github_baseUrl).toBe('https://github.com')
+
+  })
+
   test('Should clone to the folder in parameter', async () => {
     // ARRANGE
     const repo = 'some/repo'
     const virtualFolder = 'some/virtual/folder'
     const gitTemplateSource = new GitTemplateSource()
-    fsUtil.readJSON.mockResolvedValue({name: 'template-name', version: '0.0.0'})
+    fsUtil.readJSON.mockResolvedValue({ name: 'template-name', version: '0.0.0' })
 
     // ACT
     const out = await gitTemplateSource.getTemplate(repo, virtualFolder)
@@ -46,7 +65,7 @@ describe('Github template source', () => {
     const repo = 'some/repo'
     const tempFolder = 'some/temp/folder'
     const gitTemplateSource = new GitTemplateSource()
-    fsUtil.readJSON.mockResolvedValue({name: 'template-name', version: '0.0.0'})
+    fsUtil.readJSON.mockResolvedValue({ name: 'template-name', version: '0.0.0' })
     fsUtil.getTempFolder.mockResolvedValue(tempFolder)
 
     // ACT

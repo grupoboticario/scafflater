@@ -2,17 +2,7 @@ const TemplateSource = require('./')
 const GitUtil = require('../git-util')
 const fsUtil = require('../fs-util')
 const path = require('path')
-
-const defaultConfig = {
-  source: 'github',
-  sources: {
-    github: './git-template-source',
-  },
-  github: {
-    baseUrlApi: 'https://api.github.com',
-    baseUrl: 'https://github.com',
-  },
-}
+const ConfigProvider = require('../config-provider')
 
 class GitTemplateSource extends TemplateSource {
   /**
@@ -20,7 +10,7 @@ class GitTemplateSource extends TemplateSource {
   * @param {?object} config - Scafflater configuration. If null, will get the default configuration.
   */
   constructor(config = {}) {
-    config = { ...defaultConfig, ...config }
+    config = { ...new ConfigProvider(), ...config }
     super(config)
   }
 
@@ -48,8 +38,8 @@ class GitTemplateSource extends TemplateSource {
             name: this.config.source,
             key: sourceKey,
             github: {
-              baseUrl: this.config.github.baseUrl,
-              baseUrlApi: this.config.github.baseUrlApi,
+              baseUrl: this.config.github_baseUrl,
+              baseUrlApi: this.config.github_baseUrlApi,
             },
           },
         },

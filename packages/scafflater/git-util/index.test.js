@@ -1,14 +1,13 @@
 /* eslint-disable no-undef */
-const GitUtil = require('./')
-const { runCommand } = require('./utils')
+const GitUtil = require('../git-util')
+const git = require('isomorphic-git')
 const fs = require('../fs-util')
 
-jest.mock('./utils')
+jest.mock('isomorphic-git')
 jest.mock('../fs-util')
 
 test('Clone repo', async () => {
   // ARRANGE
-  runCommand.mockResolvedValue('A returned command')
   fs.getTempFolder.mockResolvedValue('/some/temp/path')
 
   // ACT
@@ -16,5 +15,6 @@ test('Clone repo', async () => {
 
   // ASSERT
   expect(temp).toBe('/some/temp/path')
-  expect(runCommand).toHaveBeenCalledWith('git', [ 'clone', 'some-repo', '/some/temp/path' ])
+  expect(git.clone.mock.calls[0][0].url).toBe('some-repo')
+  expect(git.clone.mock.calls[0][0].dir).toBe('/some/temp/path')
 })

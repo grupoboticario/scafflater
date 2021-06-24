@@ -1,6 +1,7 @@
-const { runCommand } = require('./utils')
 const fsUtil = require('../fs-util')
-const os = require('os')
+const git = require('isomorphic-git')
+const http = require('isomorphic-git/http/node')
+const fs = require('fs-extra')
 
 /**
 * Class to manage Github Repos
@@ -11,16 +12,21 @@ class GitUtil {
   * @param {string} repo - Repository (<owner>/<repository>)
   * @param {string} localPath - Local path where the repos will be cloned
   * @param {string} [baseGitHubUrl] - Github base path
-  * @returns {Promise<string>} The command messages
+  * @returns {Promise} The command messages
   */
-  static clone(repo, localPath) {
-    return runCommand('git',
-      [
-        'clone',
-        repo,
-        localPath,
-      ]
-    )
+  static clone(repo, localPath, username = null, password = null) {
+    return git.clone({
+      fs,
+      http,
+      url: repo,
+      dir: localPath,
+      singleBranch: true,
+      depth: 1,
+      headers: {
+        'user-agent': 'git/@isomorphic-git',
+      },
+      onAuth: () => {return {username, password}},
+    });
   }
 
   /**
@@ -28,7 +34,7 @@ class GitUtil {
   * @param {string} repo - Repository (<owner>/<repository>)
   * @returns {Promise<string>} The path where repo was cloned
   */
-  static async cloneToTempPath(repo) {
+  static async cloneToTempPath(repo, username = null, password = null) {
     return new Promise(async (resolve, reject) => {
       const tempDir = await fsUtil.getTempFolder()
       await this.clone(repo, tempDir)

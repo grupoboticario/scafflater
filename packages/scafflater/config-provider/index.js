@@ -43,11 +43,16 @@ class ConfigProvider {
     this.sources = {
       github: './git-template-source',
     }
+
+    this.github_baseUrlApi = 'https://api.github.com'
+    this.github_baseUrl = 'https://github.com'
+    this.github_username = null
+    this.github_password = null
   }
 
   static mergeFolderConfig(folderPath, config) {
     return new Promise(async (resolve, reject) => {
-      try{
+      try {
         let result = { ...config }
         const scfFilePath = path.join(folderPath, config.scfFileName)
         if (await fsUtil.pathExists(scfFilePath)) {
@@ -57,45 +62,44 @@ class ConfigProvider {
           }
         }
         resolve(result)
-      }catch(error){
+      } catch (error) {
         reject(error)
       }
     })
   }
 
-  static async extractConfigFromFileContent(filePath, config) {
-    let fileContent = await fsUtil.readFileContent(filePath)
-    const configRegex = new RegExp(`${config.singleLineComment}\\s*${config.configMarker}\\s+(?<name>[^ ]+)\\s+(?<value>.*)`, 'gi')
-    const configs = fileContent.matchAll(configRegex)
-    let newConfig = {}
+  static extractConfigFromFileContent(filePath, config) {
+    return new Promise(async (resolve, reject) => {
+      let fileContent = await fsUtil.readFileContent(filePath)
+      const configRegex = new RegExp(`${config.singleLineComment}\\s*${config.configMarker}\\s+(?<name>[^ ]+)\\s+(?<value>.*)`, 'gi')
+      const configs = fileContent.matchAll(configRegex)
+      let newConfig = {}
 
-    for (const c of configs) {
-      switch (c.groups.name) {
-        case 'processors':
-        case 'appenders':
-          try {
-            newConfig[c.groups.name] = JSON.parse(c.groups.value)
-          } catch (error) {
-            throw new Error(`Could not parse option '${c.groups.name}' on file '${filePath}': ${error}`)
-          }
-          break;
-        case 'annotate':
-          newConfig[c.groups.name] = c.groups.value === '1' || c.groups.value === 'true'
-          break;
-        default:
-          newConfig[c.groups.name] = c.groups.value
-          break;
+      for (const c of configs) {
+        switch (c.groups.name) {
+          case 'processors':
+          case 'appenders':
+            try {
+              newConfig[c.groups.name] = JSON.parse(c.groups.value)
+            } catch (error) {
+              reject(new Error(`Could not parse option '${c.groups.name}' on file '${filePath}': ${error}`))
+            }
+            break;
+          case 'annotate':
+            newConfig[c.groups.name] = c.groups.value === '1' || c.groups.value === 'true'
+            break;
+          default:
+            newConfig[c.groups.name] = c.groups.value
+            break;
+        }
       }
-    }
 
-    return {
-      config: { ...config, ...newConfig },
-      fileContent: fileContent.replace(configRegex, '')
-    }
-
+      resolve({
+        config: { ...config, ...newConfig },
+        fileContent: fileContent.replace(configRegex, '')
+      })
+    })
   }
-
-
 }
 
 module.exports = ConfigProvider
