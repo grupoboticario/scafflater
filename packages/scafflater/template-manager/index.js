@@ -48,7 +48,7 @@ class TemplateManager {
   * @returns {object} Object containing the config and the path to partial.
   */
   async getPartial(partialName, templateName, templateVersion = null) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const partials = await this.listPartials(templateName, templateVersion)
 
       if (!partials){
