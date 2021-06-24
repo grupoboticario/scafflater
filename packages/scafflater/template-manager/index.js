@@ -91,8 +91,7 @@ class TemplateManager {
       const result = []
       for (const config of configs) {
         result.push({
-          // eslint-disable-next-line no-await-in-loop
-          config: fsUtil.readJSONSync(config),
+          config: await fsUtil.readJSON(config),
           path: path.dirname(config),
         })
       }

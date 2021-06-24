@@ -1,5 +1,6 @@
 /* eslint-disable node/no-unpublished-require */
 /* eslint-disable no-undef */
+const ConfigProvider = require('../config-provider')
 const fsUtil = require('../fs-util')
 const TemplateCache = require('../template-cache')
 const TempDirCache = require('../template-cache/storages/temp-dir-cache')
@@ -8,6 +9,7 @@ const TemplateManager = require('./')
 
 jest.mock('../fs-util')
 jest.mock('../template-cache')
+jest.mock('../template-source')
 
 describe('Template Manager tests', () => {
   afterEach(() => {
@@ -15,10 +17,23 @@ describe('Template Manager tests', () => {
     jest.restoreAllMocks()
   })
 
-  // test('Get template from source', () => {
-  //   // ARRANGE
-    
-  // })
+  const templateCache = new TemplateCache()
+  const templateSource = new TemplateSource()
+
+  test('Get template from source', async () => {
+    // ARRANGE
+    const templateManager = new TemplateManager()
+    templateManager.config = new ConfigProvider()
+    templateCache.storeTemplate.mockResolvedValue('the/cache/path')
+    templateSource.getTemplate.mockResolvedValue({ path: 'some/path' })
+    fsUtil.readJSON.mockResolvedValue({name: 'some-template'})
+
+    // ACT
+    const out = await templateManager.getTemplateFromSource('some/source/key')
+
+    // ASSERT
+    expect(out).toStrictEqual({name: 'some-template'})
+  })
 
   test('Should return list of partial templates', async () => {
     // ARRANGE
@@ -28,12 +43,10 @@ describe('Template Manager tests', () => {
       name: 'the-partial-name',
       parameters: [],
     }
-    const templateCache = new TemplateCache(config)
     templateCache.getTemplatePath.mockReturnValue(partialPath)
     fsUtil.getTempFolder.mockReturnValue('some/temp/folder')
-    TemplateCache.getTemplateCache.mockReturnValue(templateCache)
     fsUtil.listFilesByNameDeeply.mockReturnValue(configList)
-    fsUtil.readJSONSync.mockReturnValue(config)
+    fsUtil.readJSON.mockReturnValue(config)
     const templateManager = new TemplateManager(config)
 
     // ACT
@@ -54,12 +67,10 @@ describe('Template Manager tests', () => {
       parameters: [],
     }
 
-    const templateCache = new TemplateCache(config)
     templateCache.getTemplatePath.mockReturnValue(partialPath)
     fsUtil.getTempFolder.mockReturnValue('some/temp/folder')
-    TemplateCache.getTemplateCache.mockReturnValue(templateCache)
     fsUtil.listFilesByNameDeeply.mockReturnValue(configList)
-    fsUtil.readJSONSync.mockReturnValue(config)
+    fsUtil.readJSON.mockReturnValue(config)
     const templateManager = new TemplateManager(config)
 
     // ACT
@@ -70,5 +81,5 @@ describe('Template Manager tests', () => {
     expect(out.config).toBe(config)
   })
 
-  
+
 })
