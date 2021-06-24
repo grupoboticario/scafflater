@@ -25,9 +25,9 @@ class TemplateManager {
   * @return {object} An object containing template config
   */
   async getTemplateFromSource(sourceKey) {
-    const tempTemplateFolder =  await this.templateSource.getTemplate(sourceKey)
-    const cacheKey = await this.templateCache.storeTemplate(tempTemplateFolder.path)
-    return this.templateCache.getTemplateConfig(cacheKey)
+    const tempTemplateFolder = await this.templateSource.getTemplate(sourceKey)
+    const cachePath = await this.templateCache.storeTemplate(tempTemplateFolder.path)
+    return fsUtil.readJSON(path.resolve(cachePath, this.config.scfFileName))
   }
 
   /**
@@ -65,28 +65,35 @@ class TemplateManager {
   * List available partials in template.
   * @param {string} templateName - Template name
   * @param {string} templateVersion - Template Version. If null, the latest stored version is returned.
-  * @returns {object[]} Array of objects containing the config and the path to partial.
+  * @returns {Promise<object[]>} Array of objects containing the config and the path to partial.
   */
   async listPartials(templateName, templateVersion = null) {
-    const templatePath = await this.templateCache.getTemplatePath(templateName, templateVersion)
-    if (!templatePath)
-      return null
+    return new Promise(async (resolve, reject) => {
+      const templatePath = await this.templateCache.getTemplatePath(templateName, templateVersion)
+      if (!templatePath){
+        resolve(null)
+        return
+      }
 
-    const partialsPath = path.join(templatePath, '_partials')
-    const configs = await fsUtil.listFilesByNameDeeply(partialsPath, this.config.scfFileName)
-    if (!configs)
-      return null
+      const partialsPath = path.join(templatePath, '_partials')
+      const configs = await fsUtil.listFilesByNameDeeply(partialsPath, this.config.scfFileName)
+      if (!configs){
+        resolve(null)
+        return
+      }
 
-    const result = []
-    for (const config of configs) {
-      result.push({
-        // eslint-disable-next-line no-await-in-loop
-        config: fsUtil.readJSONSync(config),
-        path: path.dirname(config),
-      })
-    }
+      const result = []
+      for (const config of configs) {
+        result.push({
+          // eslint-disable-next-line no-await-in-loop
+          config: fsUtil.readJSONSync(config),
+          path: path.dirname(config),
+        })
+      }
 
-    return result
+      resolve(result)
+
+    })
   }
 }
 

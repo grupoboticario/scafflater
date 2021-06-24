@@ -16,7 +16,7 @@ describe('Github template source', () => {
     const repo = 'some/repo'
     const virtualFolder = 'some/virtual/folder'
     const gitTemplateSource = new GitTemplateSource()
-    fsUtil.readJSONSync.mockReturnValue({name: 'template-name', version: '0.0.0'})
+    fsUtil.readJSON.mockResolvedValue({name: 'template-name', version: '0.0.0'})
 
     // ACT
     const out = await gitTemplateSource.getTemplate(repo, virtualFolder)
@@ -46,8 +46,8 @@ describe('Github template source', () => {
     const repo = 'some/repo'
     const tempFolder = 'some/temp/folder'
     const gitTemplateSource = new GitTemplateSource()
-    fsUtil.readJSONSync.mockReturnValue({name: 'template-name', version: '0.0.0'})
-    fsUtil.getTempFolderSync.mockReturnValue(tempFolder)
+    fsUtil.readJSON.mockResolvedValue({name: 'template-name', version: '0.0.0'})
+    fsUtil.getTempFolder.mockResolvedValue(tempFolder)
 
     // ACT
     const out = await gitTemplateSource.getTemplate(repo)

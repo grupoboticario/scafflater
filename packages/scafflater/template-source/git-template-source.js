@@ -20,7 +20,7 @@ class GitTemplateSource extends TemplateSource {
   * @param {?object} config - Scafflater configuration. If null, will get the default configuration.
   */
   constructor(config = {}) {
-    config = {...defaultConfig, ...config}
+    config = { ...defaultConfig, ...config }
     super(config)
   }
 
@@ -32,27 +32,29 @@ class GitTemplateSource extends TemplateSource {
   * @return {object.config} The template config.
   */
   async getTemplate(sourceKey, outputDir = null) {
-    const out = outputDir ? outputDir : fsUtil.getTempFolderSync()
-    await GitUtil.clone(sourceKey, out)
-    const config = fsUtil.readJSONSync(path.join(out, '_scf.json'))
+    return new Promise(async (resolve, reject) => {
+      const out = outputDir ? outputDir : await fsUtil.getTempFolder()
+      await GitUtil.clone(sourceKey, out)
+      const config = await fsUtil.readJSON(path.join(out, '_scf.json'))
 
-    // TODO: Validate template configuration
+      // TODO: Validate template configuration
 
-    return {
-      path: out,
-      config: {
-        name: config.name,
-        version: config.version,
-        source: {
-          name: this.config.source,
-          key: sourceKey,
-          github: {
-            baseUrl: this.config.github.baseUrl,
-            baseUrlApi: this.config.github.baseUrlApi,
+      resolve({
+        path: out,
+        config: {
+          name: config.name,
+          version: config.version,
+          source: {
+            name: this.config.source,
+            key: sourceKey,
+            github: {
+              baseUrl: this.config.github.baseUrl,
+              baseUrlApi: this.config.github.baseUrlApi,
+            },
           },
         },
-      },
-    }
+      })
+    })
   }
 }
 

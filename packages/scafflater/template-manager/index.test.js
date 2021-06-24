@@ -15,6 +15,11 @@ describe('Template Manager tests', () => {
     jest.restoreAllMocks()
   })
 
+  // test('Get template from source', () => {
+  //   // ARRANGE
+    
+  // })
+
   test('Should return list of partial templates', async () => {
     // ARRANGE
     const partialPath = 'the/partial/path'
@@ -25,7 +30,7 @@ describe('Template Manager tests', () => {
     }
     const templateCache = new TemplateCache(config)
     templateCache.getTemplatePath.mockReturnValue(partialPath)
-    fsUtil.getTempFolderSync.mockReturnValue('some/temp/folder')
+    fsUtil.getTempFolder.mockReturnValue('some/temp/folder')
     TemplateCache.getTemplateCache.mockReturnValue(templateCache)
     fsUtil.listFilesByNameDeeply.mockReturnValue(configList)
     fsUtil.readJSONSync.mockReturnValue(config)
@@ -51,7 +56,7 @@ describe('Template Manager tests', () => {
 
     const templateCache = new TemplateCache(config)
     templateCache.getTemplatePath.mockReturnValue(partialPath)
-    fsUtil.getTempFolderSync.mockReturnValue('some/temp/folder')
+    fsUtil.getTempFolder.mockReturnValue('some/temp/folder')
     TemplateCache.getTemplateCache.mockReturnValue(templateCache)
     fsUtil.listFilesByNameDeeply.mockReturnValue(configList)
     fsUtil.readJSONSync.mockReturnValue(config)
@@ -64,4 +69,6 @@ describe('Template Manager tests', () => {
     expect(out.path).toBe('the/partial/path')
     expect(out.config).toBe(config)
   })
+
+  
 })
