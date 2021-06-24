@@ -56,7 +56,6 @@ describe('Template Manager tests', () => {
       name: 'the-partial-name',
       parameters: [],
     }
-
     templateCache.getTemplatePath.mockReturnValue(partialPath)
     fsUtil.getTempFolder.mockReturnValue('some/temp/folder')
     fsUtil.listFilesByNameDeeply.mockReturnValue(configList)
@@ -149,5 +148,4 @@ describe('Template Manager tests', () => {
     expect(out[0].path).toBe('the/partial/path')
     expect(out[0].config).toBe(config)
   })
-
 })
