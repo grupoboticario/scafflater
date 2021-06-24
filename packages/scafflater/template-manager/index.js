@@ -48,17 +48,23 @@ class TemplateManager {
   * @returns {object} Object containing the config and the path to partial.
   */
   async getPartial(partialName, templateName, templateVersion = null) {
-    const partials = await this.listPartials(templateName, templateVersion)
+    return new Promise((resolve, reject) => {
+      const partials = await this.listPartials(templateName, templateVersion)
 
-    if (!partials)
-      return null
+      if (!partials){
+        resolve(null)
+        return
+      }
 
-    const partial = partials.find(p => p.config.name === partialName)
+      const partial = partials.find(p => p.config.name === partialName)
 
-    if (!partial)
-      return null
+      if (!partial){
+        resolve(null)
+        return
+      }
 
-    return partial
+      resolve(partial)
+    })
   }
 
   /**
@@ -70,14 +76,14 @@ class TemplateManager {
   async listPartials(templateName, templateVersion = null) {
     return new Promise(async (resolve, reject) => {
       const templatePath = await this.templateCache.getTemplatePath(templateName, templateVersion)
-      if (!templatePath){
+      if (!templatePath) {
         resolve(null)
         return
       }
 
       const partialsPath = path.join(templatePath, '_partials')
       const configs = await fsUtil.listFilesByNameDeeply(partialsPath, this.config.scfFileName)
-      if (!configs){
+      if (!configs) {
         resolve(null)
         return
       }
