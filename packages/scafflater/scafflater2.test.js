@@ -3,7 +3,7 @@ const Scafflater = require('./scafflater')
 const fsUtil = require('./fs-util')
 const GitTemplateSource = require('./template-source/git-template-source')
 
-//jest.mock('./template-source/git-template-source')
+jest.mock('./fs-util')
 
 test('Call with github credentials', () => {
   // ARRANGE
