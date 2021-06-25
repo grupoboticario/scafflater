@@ -15,6 +15,15 @@ fs.getTempFolder = async () => {
 }
 
 /**
+* Returns a temp folder path
+* @returns {string} A temp folder path
+* @returns {string} The temp path
+*/
+fs.getTempFolderSync = () => {
+  return fs.mkdtempSync(os.tmpdir())
+}
+
+/**
 * Copies folder and files, creating the dest folder if it does not exists.
 * @param {string} src - Source
 * @param {string} dest - Destiny
