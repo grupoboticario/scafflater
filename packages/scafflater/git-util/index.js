@@ -14,7 +14,7 @@ class GitUtil {
   * @param {string} [baseGitHubUrl] - Github base path
   * @returns {Promise} The command messages
   */
-  static clone(repo, localPath, username = null, password = null) {
+  static async clone(repo, localPath, username = null, password = null) {
     const headers = {}
 
     if (username && password) {
@@ -24,7 +24,7 @@ class GitUtil {
 
     console.log(headers)
     try {
-      return git.clone({
+      return await git.clone({
         fs,
         http,
         url: repo,
