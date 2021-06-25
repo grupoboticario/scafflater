@@ -24,26 +24,29 @@ class GitTemplateSource extends TemplateSource {
   async getTemplate(sourceKey, outputDir = null) {
     return new Promise(async (resolve, reject) => {
       const out = outputDir ? outputDir : await fsUtil.getTempFolder()
-      await GitUtil.clone(sourceKey, out, this.config.github_username, this.github_password)
+      await GitUtil.clone(sourceKey, out, this.config.github_username, this.config.github_password)
       const config = await fsUtil.readJSON(path.join(out, '_scf.json'))
 
       // TODO: Validate template configuration
-
-      resolve({
-        path: out,
-        config: {
-          name: config.name,
-          version: config.version,
-          source: {
-            name: this.config.source,
-            key: sourceKey,
-            github: {
-              baseUrl: this.config.github_baseUrl,
-              baseUrlApi: this.config.github_baseUrlApi,
+      try {
+        resolve({
+          path: out,
+          config: {
+            name: config.name,
+            version: config.version,
+            source: {
+              name: this.config.source,
+              key: sourceKey,
+              github: {
+                baseUrl: this.config.github_baseUrl,
+                baseUrlApi: this.config.github_baseUrlApi,
+              },
             },
           },
-        },
-      })
+        })
+      } catch (error) {
+        reject(error)
+      }
     })
   }
 }

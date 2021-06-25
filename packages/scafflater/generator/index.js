@@ -36,7 +36,7 @@ class Generator {
   async generate() {
     // Loading handlebars js custom helper
     const helpersPath = path.join(this.context.templatePath, this.context.config.helpersFolderName)
-    if (fsUtil.pathExists(helpersPath)) {
+    if (await fsUtil.pathExists(helpersPath)) {
       for (const js of await fsUtil.listFilesByExtensionDeeply(helpersPath, 'js')) {
         const helperFunction = require(js)
         const helperName = path.basename(js, '.js')

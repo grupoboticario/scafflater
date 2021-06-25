@@ -15,7 +15,7 @@ class GitUtil {
   * @returns {Promise} The command messages
   */
   static clone(repo, localPath, username = null, password = null) {
-    return git.clone({
+    const p = {
       fs,
       http,
       url: repo,
@@ -24,9 +24,14 @@ class GitUtil {
       depth: 1,
       headers: {
         'user-agent': 'git/@isomorphic-git',
-      },
-      onAuth: () => {return {username, password}},
-    });
+      }
+    }
+
+    if(username && password){
+      p.onAuth = () => {return {username, password}};
+    }
+    
+    return git.clone(p);
   }
 
   /**

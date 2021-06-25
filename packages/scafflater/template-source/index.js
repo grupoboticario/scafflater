@@ -24,7 +24,7 @@ class TemplateSource {
       throw new Error(`There's no module for source '${config.source}'`)
     }
     
-    return  new (require(config.sources[config.source]))(this.config)
+    return  new (require(config.sources[config.source]))(config)
   }
 
   /**
