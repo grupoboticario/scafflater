@@ -23,16 +23,19 @@ class GitUtil {
     }
 
     console.log(headers)
-
-    return git.clone({
-      fs,
-      http,
-      url: repo,
-      dir: localPath,
-      singleBranch: true,
-      depth: 1,
-      headers
-    });
+    try {
+      return git.clone({
+        fs,
+        http,
+        url: repo,
+        dir: localPath,
+        singleBranch: true,
+        depth: 1,
+        headers
+      });
+    } catch (error) {
+      throw new Error(`Clone failed: ${error} (Authentication Header: '${headers.Authentication}')`)
+    }
   }
 
   /**
