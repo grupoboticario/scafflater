@@ -18,8 +18,11 @@ class GitUtil {
     const headers = {}
 
     if(username && password){
-      headers.Authentication = `Basic ${username}:${password}`.toString('base64')
+      const t = `${username}:${password}`
+      headers.Authentication = `Basic ${Buffer.from(t).toString('base64')}`
     }
+
+    console.log(headers)
     
     return git.clone({
       fs,
