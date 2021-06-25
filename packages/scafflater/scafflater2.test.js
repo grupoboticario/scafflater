@@ -17,6 +17,8 @@ test('Create Scafflater with github credentials, config in template source shoul
     name: 'template-name',
     version: 'template-version'
   })
+  const t = `some-user:the-secret-password`
+  const authHeader = `Basic ${Buffer.from(t).toString('base64')}`
 
   // ACT
   const scf = new Scafflater(config)
@@ -25,6 +27,6 @@ test('Create Scafflater with github credentials, config in template source shoul
   // ASSERT
   expect(scf.templateManager.templateSource.config.github_username).toBe('some-user')
   expect(scf.templateManager.templateSource.config.github_password).toBe('the-secret-password')
-  expect(git.clone.mock.calls[0][0].headers.Authentication).toBe(`Basic some-user:the-secret-password`.toString('base64'))
+  expect(git.clone.mock.calls[0][0].headers.Authentication).toBe(authHeader)
 
 })
