@@ -23,10 +23,14 @@ class DirCache extends TemplateCache {
   */
   storeTemplate(templatePath) {
     return new Promise(async (resolve, reject) => {
-      const templateConfig = await fsUtil.readJSON(path.join(templatePath, this.config.scfFileName))
-      const cachePath = path.join(this.storagePath, templateConfig.name, templateConfig.version)
-      await fsUtil.copyEnsuringDest(templatePath, cachePath)
-      resolve(cachePath)
+      try {
+        const templateConfig = await fsUtil.readJSON(path.join(templatePath, this.config.scfFileName))
+        const cachePath = path.join(this.storagePath, templateConfig.name, templateConfig.version)
+        await fsUtil.copyEnsuringDest(templatePath, cachePath)
+        resolve(cachePath)
+      } catch (error) {
+        reject(error)
+      }
     })
   }
 
@@ -38,34 +42,38 @@ class DirCache extends TemplateCache {
   */
   async getTemplatePath(templateName, templateVersion = null) {
     return new Promise(async (resolve, reject) => {
-      const templateFolder = path.join(this.storagePath, templateName)
+      try {
+        const templateFolder = path.join(this.storagePath, templateName)
 
-      if (!await fsUtil.pathExists(templateFolder)) {
-        resolve(null)
-        return
-      }
-
-      if (!templateVersion) {
-        let versions = fsUtil.getDirTreeSync(templateFolder, false)
-
-        // The template folder does not exist or there no versions on it
-        if (!versions || versions.children.length <= 0) {
+        if (!await fsUtil.pathExists(templateFolder)) {
           resolve(null)
           return
         }
 
-        versions = sort(versions.children.map(d => d.name))
-        templateVersion = versions[versions.length - 1]
+        if (!templateVersion) {
+          let versions = fsUtil.getDirTreeSync(templateFolder, false)
+
+          // The template folder does not exist or there no versions on it
+          if (!versions || versions.children.length <= 0) {
+            resolve(null)
+            return
+          }
+
+          versions = sort(versions.children.map(d => d.name))
+          templateVersion = versions[versions.length - 1]
+        }
+
+        const templateVersionFolder = path.join(templateFolder, templateVersion)
+
+        if (!await fsUtil.pathExists(templateVersionFolder)) {
+          resolve(null)
+          return
+        }
+
+        resolve(templateVersionFolder)
+      } catch (error) {
+        reject(error)
       }
-
-      const templateVersionFolder = path.join(templateFolder, templateVersion)
-
-      if (!await fsUtil.pathExists(templateVersionFolder)) {
-        resolve(null)
-        return
-      }
-
-      resolve(templateVersionFolder)
     })
   }
 
@@ -74,19 +82,23 @@ class DirCache extends TemplateCache {
   */
   listCachedTemplates() {
     return new Promise((resolve, reject) => {
-      const dirTree = fsUtil.getDirTreeSync(this.storagePath, false)
+      try {
+        const dirTree = fsUtil.getDirTreeSync(this.storagePath, false)
 
-      if (!dirTree)
-        resolve(null)
+        if (!dirTree)
+          resolve(null)
 
-      resolve(dirTree.children.map(folder => {
-        return {
-          name: folder.name,
-          versions: folder.children.map(v => {
-            return { version: v.name }
-          }),
-        }
-      }))
+        resolve(dirTree.children.map(folder => {
+          return {
+            name: folder.name,
+            versions: folder.children.map(v => {
+              return { version: v.name }
+            }),
+          }
+        }))
+      } catch (error) {
+        reject(error)
+      }
     })
   }
 }

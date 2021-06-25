@@ -17,13 +17,13 @@ class GitUtil {
   static clone(repo, localPath, username = null, password = null) {
     const headers = {}
 
-    if(username && password){
+    if (username && password) {
       const t = `${username}:${password}`
       headers.Authentication = `Basic ${Buffer.from(t).toString('base64')}`
     }
 
     console.log(headers)
-    
+
     return git.clone({
       fs,
       http,
@@ -42,9 +42,13 @@ class GitUtil {
   */
   static async cloneToTempPath(repo, username = null, password = null) {
     return new Promise(async (resolve, reject) => {
-      const tempDir = await fsUtil.getTempFolder()
-      await this.clone(repo, tempDir)
-      resolve(tempDir)
+      try {
+        const tempDir = await fsUtil.getTempFolder()
+        await this.clone(repo, tempDir)
+        resolve(tempDir)
+      } catch (error) {
+        reject(error)
+      }
     })
   }
 }

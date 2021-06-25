@@ -49,21 +49,25 @@ class TemplateManager {
   */
   async getPartial(partialName, templateName, templateVersion = null) {
     return new Promise(async (resolve, reject) => {
-      const partials = await this.listPartials(templateName, templateVersion)
+      try {
+        const partials = await this.listPartials(templateName, templateVersion)
 
-      if (!partials){
-        resolve(null)
-        return
+        if (!partials) {
+          resolve(null)
+          return
+        }
+
+        const partial = partials.find(p => p.config.name === partialName)
+
+        if (!partial) {
+          resolve(null)
+          return
+        }
+
+        resolve(partial)
+      } catch (error) {
+        reject(error)
       }
-
-      const partial = partials.find(p => p.config.name === partialName)
-
-      if (!partial){
-        resolve(null)
-        return
-      }
-
-      resolve(partial)
     })
   }
 
@@ -75,29 +79,32 @@ class TemplateManager {
   */
   async listPartials(templateName, templateVersion = null) {
     return new Promise(async (resolve, reject) => {
-      const templatePath = await this.templateCache.getTemplatePath(templateName, templateVersion)
-      if (!templatePath) {
-        resolve(null)
-        return
+      try {
+        const templatePath = await this.templateCache.getTemplatePath(templateName, templateVersion)
+        if (!templatePath) {
+          resolve(null)
+          return
+        }
+
+        const partialsPath = path.join(templatePath, '_partials')
+        const configs = await fsUtil.listFilesByNameDeeply(partialsPath, this.config.scfFileName)
+        if (!configs) {
+          resolve(null)
+          return
+        }
+
+        const result = []
+        for (const config of configs) {
+          result.push({
+            config: await fsUtil.readJSON(config),
+            path: path.dirname(config),
+          })
+        }
+
+        resolve(result)
+      } catch (error) {
+        reject(error)
       }
-
-      const partialsPath = path.join(templatePath, '_partials')
-      const configs = await fsUtil.listFilesByNameDeeply(partialsPath, this.config.scfFileName)
-      if (!configs) {
-        resolve(null)
-        return
-      }
-
-      const result = []
-      for (const config of configs) {
-        result.push({
-          config: await fsUtil.readJSON(config),
-          path: path.dirname(config),
-        })
-      }
-
-      resolve(result)
-
     })
   }
 }

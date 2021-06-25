@@ -45,46 +45,50 @@ class Scafflater {
   */
   async runPartial(partialPath, parameters, targetPath = './') {
     return new Promise(async (resolve, reject) => {
-      const scfConfig = await fsUtil.readJSON(path.join(targetPath, this.config.scfFileName))
+      try {
+        const scfConfig = await fsUtil.readJSON(path.join(targetPath, this.config.scfFileName))
 
-      let partialInfo = await this.templateManager.getPartial(partialPath, scfConfig.template.name, scfConfig.template.version)
+        let partialInfo = await this.templateManager.getPartial(partialPath, scfConfig.template.name, scfConfig.template.version)
 
-      if (!partialInfo) {
-        // Trying to get the template
-        // TODO: Get template by version
-        await this.templateManager.getTemplateFromSource(scfConfig.template.source.key)
-        partialInfo = await this.templateManager.getPartial(partialPath, scfConfig.template.name, scfConfig.template.version)
         if (!partialInfo) {
-          resolve(null)
-          return
+          // Trying to get the template
+          // TODO: Get template by version
+          await this.templateManager.getTemplateFromSource(scfConfig.template.source.key)
+          partialInfo = await this.templateManager.getPartial(partialPath, scfConfig.template.name, scfConfig.template.version)
+          if (!partialInfo) {
+            resolve(null)
+            return
+          }
         }
+
+        const templatePath = await this.templateManager.getTemplatePath(scfConfig.template.name, scfConfig.template.version)
+        const templateScf = await fsUtil.readJSON(path.join(templatePath, this.config.scfFileName))
+
+        const ctx = {
+          partial: partialInfo.config,
+          partialPath: partialInfo.path,
+          parameters,
+          targetPath,
+          template: templateScf,
+          templatePath: templatePath,
+          config: new ConfigProvider()
+        }
+
+        await new Generator(ctx).generate(ctx)
+
+        if (!scfConfig.partials) {
+          scfConfig.partials = []
+        }
+
+        scfConfig.partials.push({
+          path: `${scfConfig.template.name}/${partialPath}`,
+          parameters: parameters,
+        })
+
+        resolve(await fsUtil.writeJSON(path.join(targetPath, this.config.scfFileName), scfConfig))
+      } catch (error) {
+        reject(error())
       }
-
-      const templatePath = await this.templateManager.getTemplatePath(scfConfig.template.name, scfConfig.template.version)
-      const templateScf = await fsUtil.readJSON(path.join(templatePath, this.config.scfFileName))
-
-      const ctx = {
-        partial: partialInfo.config,
-        partialPath: partialInfo.path,
-        parameters,
-        targetPath,
-        template: templateScf,
-        templatePath: templatePath,
-        config: new ConfigProvider()
-      }
-
-      await new Generator(ctx).generate(ctx)
-
-      if (!scfConfig.partials) {
-        scfConfig.partials = []
-      }
-
-      scfConfig.partials.push({
-        path: `${scfConfig.template.name}/${partialPath}`,
-        parameters: parameters,
-      })
-
-      resolve(await fsUtil.writeJSON(path.join(targetPath, this.config.scfFileName), scfConfig))
     })
   }
 }
