@@ -15,23 +15,21 @@ class GitUtil {
   * @returns {Promise} The command messages
   */
   static clone(repo, localPath, username = null, password = null) {
-    const p = {
+    const headers = {}
+
+    if(username && password){
+      headers.Authentication = `Basic ${username}:${password}`.toString('base64')
+    }
+    
+    return git.clone({
       fs,
       http,
       url: repo,
       dir: localPath,
       singleBranch: true,
       depth: 1,
-      headers: {
-        'user-agent': 'git/@isomorphic-git',
-      }
-    }
-
-    if(username && password){
-      p.onAuth = () => {return {username, password}};
-    }
-    
-    return git.clone(p);
+      headers
+    });
   }
 
   /**
