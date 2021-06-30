@@ -73,23 +73,27 @@ class ConfigProvider {
 
   static extractConfigFromFileContent(filePath, config) {
     return new Promise(async (resolve, reject) => {
-      let fileContent = await fsUtil.readFileContent(filePath)
-      const configRegex = new RegExp(`.*${config.singleLineComment}\\s*${config.configMarker}\\s*(?<json>{.*})`, 'gi')
-      const configs = fileContent.matchAll(configRegex)
-      let newConfig = {}
+      try {
+        let fileContent = await fsUtil.readFileContent(filePath)
+        const configRegex = new RegExp(`.*${config.configMarker}\\s*(?<json>{.*}).*`, 'gi')
+        const configs = fileContent.matchAll(configRegex)
+        let newConfig = {}
 
-      for (const c of configs) {
-        try {
-          newConfig = { ...newConfig, ...JSON.parse(c.groups.json) }
-        } catch (error) {
-          reject(new Error(`Could not parse option '${c.groups.name}' on file '${filePath}': ${error}`))
+        for (const c of configs) {
+          try {
+            newConfig = { ...newConfig, ...JSON.parse(c.groups.json) }
+          } catch (error) {
+            reject(new Error(`Could not parse option '${c.groups.name}' on file '${filePath}': ${error}`))
+          }
         }
-      }
 
-      resolve({
-        config: { ...config, ...newConfig },
-        fileContent: fileContent.replace(configRegex, '')
-      })
+        resolve({
+          config: { ...config, ...newConfig },
+          fileContent: fileContent.replace(configRegex, '')
+        })
+      } catch (error) {
+        reject(error)
+      }
     })
   }
 }

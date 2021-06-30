@@ -10,12 +10,10 @@ const merge = require('deepmerge')
 /**
  * @typedef {object} Context
  * @description The context used by generator to generate files and folder structure
- * @property {object} partial The partial info
- * @property {string} partialPath The folder path to partial
- * @property {object} parameters The parameters to generate the partial
+ * @property {string} originPath The folder path to origin template files
+ * @property {object} parameters The parameters to generate the output
  * @property {string} targetPath The path where generated files and folders will be saved
- * @property {object} template The template info
- * @property {string} templatePath The folder path to template
+ * @property {string} helpersPath The folder with handlebars helpers implementations
  * @property {object} config The scafflater configuration. This is provided by ConfigProvider
  */
 
@@ -30,21 +28,24 @@ class Generator {
   constructor(context) {
     this.context = context
     this.ignoredFiles = [context.config.scfFileName]
-    this.ignoredFolders = [context.config.partialsFolderName, context.config.hooksFolderName]
+    this.ignoredFolders = [
+      context.config.partialsFolderName, 
+      context.config.hooksFolderName, 
+      context.config.helpersFolderName, 
+      '.git']
   }
 
   async generate() {
     // Loading handlebars js custom helper
-    const helpersPath = path.join(this.context.templatePath, this.context.config.helpersFolderName)
-    if (await fsUtil.pathExists(helpersPath)) {
-      for (const js of await fsUtil.listFilesByExtensionDeeply(helpersPath, 'js')) {
+    if (this.context.helpersPath && await fsUtil.pathExists(this.context.helpersPath)) {
+      for (const js of await fsUtil.listFilesByExtensionDeeply(this.context.helpersPath, 'js')) {
         const helperFunction = require(js)
         const helperName = path.basename(js, '.js')
         Handlebars.registerHelper(helperName, helperFunction)
       }
     }
 
-    const tree = fsUtil.getDirTreeSync(this.context.partialPath)
+    const tree = fsUtil.getDirTreeSync(this.context.originPath)
 
     const promises = []
     if (tree.type === 'file') {
@@ -69,13 +70,13 @@ class Generator {
 
     const promises = []
     if (tree.type === 'directory' && this.ignoredFolders.indexOf(tree.name) < 0) {
-      const dirPath = path.join(ctx.partialPath, tree.name)
+      const dirPath = path.join(ctx.originPath, tree.name)
       const dirConfig = await ConfigProvider.mergeFolderConfig(dirPath, this.context.config)
       for (const child of tree.children) {
         const _ctx = {
           ...ctx,
           ...{
-            partialPath: path.join(dirPath),
+            originPath: path.join(dirPath),
             targetPath: path.join(ctx.targetPath, targetName),
             config: dirConfig
           },
@@ -85,7 +86,7 @@ class Generator {
     }
 
     if (tree.type === 'file' && this.ignoredFiles.indexOf(tree.name) < 0) {
-      const filePath = path.join(ctx.partialPath, tree.name)
+      const filePath = path.join(ctx.originPath, tree.name)
       const configFromFile = await ConfigProvider.extractConfigFromFileContent(filePath, this.context.config)
       const _ctx = { ...ctx }
       _ctx.config = configFromFile.config

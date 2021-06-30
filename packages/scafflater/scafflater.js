@@ -18,6 +18,37 @@ class Scafflater {
     this.templateManager = new TemplateManager(this.config)
   }
 
+  /** 
+  * Run scafflater
+  * @param {ParamDataTypeHere} parameterNameHere - Brief description of the parameter here. Note: For other notations of data types, please refer to JSDocs: DataTypes command.
+  * @return {Promise<string} Brief description of the returning value here.
+  */
+  async run(originPath, parameters, targetPath = './', ctx = {}, helpersPath = null) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const _ctx = {
+          ...ctx,
+          ...{
+            originPath,
+            parameters,
+            targetPath,
+            helpersPath,
+            config: {
+              ...new ConfigProvider(),
+              ...ctx.config
+            }
+          }
+        }
+
+        await new Generator(_ctx).generate()
+
+        resolve()
+      } catch (error) {
+        reject(error)
+      }
+    })
+  }
+
   /**
   * Initializes the basic structure for this scafflater template.
   * @param {string} sourceKey - Source Template key
@@ -26,15 +57,29 @@ class Scafflater {
   * @return {ReturnValueDataTypeHere} Brief description of the returning value here.
   */
   async init(sourceKey, parameters, targetPath = './') {
-    const templateConfig = await this.templateManager.templateSource.getTemplate(sourceKey)
+    return new Promise(async (resolve, reject) => {
+      try {
+        const { path: templatePath, config } = await this.templateManager.templateSource.getTemplate(sourceKey)
 
-    const scfConfig = {
-      template: { ...templateConfig.config },
-      partials: [],
-    }
+        const scfConfig = {
+          template: { ...config },
+          parameters,
+          partials: [],
+        }
 
-    await fsUtil.writeJSON(path.resolve(targetPath, this.config.scfFileName), scfConfig)
-    return this.runPartial('_init', parameters, targetPath, templateConfig,)
+        const ctx = {
+          template: config,
+          templatePath
+        }
+        const helpersPath = path.resolve(templatePath, this.config.helpersFolderName)
+
+        await this.run(templatePath, parameters, targetPath, ctx, helpersPath)
+
+        resolve(await fsUtil.writeJSON(path.resolve(targetPath, this.config.scfFileName), scfConfig))
+      } catch (error) {
+        reject(error)
+      }
+    })
   }
 
   /** 
@@ -63,18 +108,15 @@ class Scafflater {
 
         const templatePath = await this.templateManager.getTemplatePath(scfConfig.template.name, scfConfig.template.version)
         const templateScf = await fsUtil.readJSON(path.join(templatePath, this.config.scfFileName))
+        const helpersPath = path.resolve(templatePath, this.config.helpersFolderName)
 
         const ctx = {
           partial: partialInfo.config,
-          partialPath: partialInfo.path,
-          parameters,
-          targetPath,
           template: templateScf,
-          templatePath: templatePath,
-          config: new ConfigProvider()
+          templatePath: templatePath
         }
 
-        await new Generator(ctx).generate(ctx)
+        await this.run(partialInfo.path, parameters, targetPath, ctx, helpersPath)
 
         if (!scfConfig.partials) {
           scfConfig.partials = []

@@ -22,7 +22,7 @@ describe('Generator Tests', () => {
           singleLineComment: '#',
         },
       },
-      partialPath: '/source/path',
+      originPath: '/source/path',
       partial: {
         name: '_init',
         type: 'init',
@@ -82,7 +82,7 @@ a sample test
           singleLineComment: '#',
         },
       },
-      partialPath: '/source/path',
+      originPath: '/source/path',
       partial: {
         name: '_init',
         type: 'init',
@@ -127,7 +127,7 @@ a sample test
           singleLineComment: '#',
         },
       },
-      partialPath: '/source/path',
+      originPath: '/source/path',
       partial: {
         name: '_init',
         type: 'init',
@@ -172,7 +172,7 @@ a sample test
           singleLineComment: '#',
         },
       },
-      partialPath: '/source/path',
+      originPath: '/source/path',
       partial: {
         name: '_init',
         type: 'init',
@@ -230,7 +230,7 @@ a sample test
       })
     fsUtil.readFileContent.mockReturnValue('{{parameters.test}}')
     const ctx = {
-      partialPath: '/source/path',
+      originPath: '/source/path',
       partial: {
         name: '_init',
         type: 'init',
@@ -308,7 +308,7 @@ a sample test
       })
     fsUtil.readFileContent.mockReturnValue('{{parameters.test}}')
     const ctx = {
-      partialPath: '/source/path',
+      originPath: '/source/path',
       partial: {
         name: '_init',
         type: 'init',
