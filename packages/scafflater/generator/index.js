@@ -62,7 +62,7 @@ class Generator {
 
   async _generate(ctx, tree) {
 
-    const targetName = Processor.runProcessorsPipeline([HandlebarsProcessor], ctx, tree.name)
+    let targetName = Processor.runProcessorsPipeline([HandlebarsProcessor], ctx, tree.name)
     if (targetName === '') {
       return
     }
@@ -90,19 +90,28 @@ class Generator {
       const _ctx = { ...ctx }
       _ctx.config = configFromFile.config
 
-      const processors = _ctx.config.processors.map(p => new (require(p))())
-      let srcContent = Processor.runProcessorsPipeline(processors, _ctx, configFromFile.fileContent)
+      if (!_ctx.config.ignore) {
+        if(_ctx.config.targetName || _ctx.config.targetName === ''){
+          targetName = Processor.runProcessorsPipeline([HandlebarsProcessor], ctx, _ctx.config.targetName)
+        }
+        if (targetName === '') {
+          return
+        }
 
-      const targetPath = path.join(ctx.targetPath, targetName);
-      let targetContent = ''
-      if (await fsUtil.pathExists(targetPath)) {
-        targetContent = await fsUtil.readFileContent(targetPath)
+        const processors = _ctx.config.processors.map(p => new (require(p))())
+        let srcContent = Processor.runProcessorsPipeline(processors, _ctx, configFromFile.fileContent)
+
+        const targetPath = path.join(ctx.targetPath, targetName);
+        let targetContent = ''
+        if (await fsUtil.pathExists(targetPath)) {
+          targetContent = await fsUtil.readFileContent(targetPath)
+        }
+
+        const appenders = _ctx.config.appenders.map(a => new (require(a))())
+        const result = Appender.runAppendersPipeline(appenders, _ctx, srcContent, targetContent)
+
+        promises.push(fsUtil.saveFile(targetPath, result, false))
       }
-
-      const appenders = _ctx.config.appenders.map(a => new (require(a))())
-      const result = Appender.runAppendersPipeline(appenders, _ctx, srcContent, targetContent)
-
-      promises.push(fsUtil.saveFile(targetPath, result, false))
     }
 
     return Promise.all(promises)

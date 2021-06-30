@@ -79,9 +79,11 @@ describe('Config Provider', () => {
     // ARRANGE
     const config = new ConfigProvider()
     FileSystemUtils.readFileContent.mockResolvedValue(`
-    # @scf-config processors [ "a-new-processor" ]
-    # @scf-config singleLineComment //
-    # @scf-config annotate false
+    # @scf-config {"processors":[ "a-new-processor" ]}
+    # @scf-config {"singleLineComment":"//"}
+    # @scf-config {"annotate":false}
+    # @scf-config {"ignore":true}
+    # @scf-config {"targetName":"some-name"}
     
     the file content
     `)
@@ -92,6 +94,7 @@ describe('Config Provider', () => {
     // ASSERT
     expect(newConfig.config.processors[0]).toBe('a-new-processor')
     expect(newConfig.config.annotate).toStrictEqual(false)
+    expect(newConfig.config.ignore).toStrictEqual(true)
     expect(newConfig.config.singleLineComment).toStrictEqual('//')
     expect(newConfig.fileContent.includes('@scf-config')).toBe(false)
   })
@@ -106,22 +109,6 @@ describe('Config Provider', () => {
 
     // ASSERT
     expect(newConfig.fileContent).toBe('the file content')
-  })
-
-  test('Bad format processors', async () => {
-    // ARRANGE
-    const config = new ConfigProvider()
-    FileSystemUtils.readFileContent.mockResolvedValue(`
-    # @scf-config processors a-new-processor
-    
-    the file content
-    `)
-
-    // ACT && ASSERT
-    await expect(ConfigProvider.extractConfigFromFileContent('some/path', config))
-    .rejects
-    .toThrow(/Could not parse option 'processors'/)
-
   })
 
 })

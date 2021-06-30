@@ -70,6 +70,142 @@ a sample test
 # @end-scf-region`)
   })
 
+  test('Does not render an ignored file', async () => {
+    // ARRANGE
+    const ctx = {
+      templatePath: '/template/path',
+      template: {
+        name: 'test-template',
+        type: 'template',
+        version: '0.0.1',
+        config: {
+          singleLineComment: '#',
+        },
+      },
+      partialPath: '/source/path',
+      partial: {
+        name: '_init',
+        type: 'init',
+      },
+      targetPath: '/target/path',
+      parameters: { test: 'a sample test' },
+      config: new ConfigProvider()
+    }
+    fsUtil.getDirTreeSync.mockReturnValue({
+      path: 'just/a/sample/test.txt',
+      name: 'test.txt',
+      size: 100,
+      type: 'file',
+      extension: '.txt',
+    })
+
+    fsUtil.readFileContent.mockImplementation(path => {
+      return `
+      # @scf-config {"ignore":true}
+      
+      the file content
+      `
+    })
+    const generator = new Generator(ctx)
+
+    // ACT
+    await generator.generate()
+
+    // ASSERT
+    expect(fsUtil.saveFile.mock.calls.length).toBe(0)
+  })
+
+  test('Does not render an empty file name config', async () => {
+    // ARRANGE
+    const ctx = {
+      templatePath: '/template/path',
+      template: {
+        name: 'test-template',
+        type: 'template',
+        version: '0.0.1',
+        config: {
+          singleLineComment: '#',
+        },
+      },
+      partialPath: '/source/path',
+      partial: {
+        name: '_init',
+        type: 'init',
+      },
+      targetPath: '/target/path',
+      parameters: { test: 'a sample test' },
+      config: new ConfigProvider()
+    }
+    fsUtil.getDirTreeSync.mockReturnValue({
+      path: 'just/a/sample/test.txt',
+      name: 'test.txt',
+      size: 100,
+      type: 'file',
+      extension: '.txt',
+    })
+
+    fsUtil.readFileContent.mockImplementation(path => {
+      return `
+      # @scf-config {"targetName":""}
+      
+      the file content
+      `
+    })
+    const generator = new Generator(ctx)
+
+    // ACT
+    await generator.generate()
+
+    // ASSERT
+    expect(fsUtil.saveFile.mock.calls.length).toBe(0)
+  })
+
+  test('Save the file with name config', async () => {
+    // ARRANGE
+    const ctx = {
+      templatePath: '/template/path',
+      template: {
+        name: 'test-template',
+        type: 'template',
+        version: '0.0.1',
+        config: {
+          singleLineComment: '#',
+        },
+      },
+      partialPath: '/source/path',
+      partial: {
+        name: '_init',
+        type: 'init',
+      },
+      targetPath: '/target/path',
+      parameters: { test: 'a sample test' },
+      config: new ConfigProvider()
+    }
+    fsUtil.getDirTreeSync.mockReturnValue({
+      path: 'just/a/sample/test.txt',
+      name: 'test.txt',
+      size: 100,
+      type: 'file',
+      extension: '.txt',
+    })
+
+    fsUtil.readFileContent.mockImplementation(path => {
+      return `
+      # @scf-config {"targetName":"other-name.txt"}
+      
+      the file content
+      `
+    })
+    const generator = new Generator(ctx)
+
+    // ACT
+    await generator.generate()
+
+    // ASSERT
+    expect(fsUtil.saveFile.mock.calls.length).toBe(1)
+    expect(fsUtil.saveFile.mock.calls[0][0]).toBe('/target/path/other-name.txt')
+  })
+
   test('Render parameters in the folder and file paths', async () => {
     // ARRANGE
     fsUtil.getDirTreeSync.mockReturnValue(
