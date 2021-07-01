@@ -55,8 +55,6 @@ describe('Scafflater', () => {
 
   test('No local partial found, but it exists on source', async () => {
     // ARRANGE
-    const templateManager = new TemplateManager()
-    templateManager.config = new ConfigProvider()
     const parameters = {
       domain: 'vs-one',
       systemDescription: 'aaaaaaaa',
@@ -94,8 +92,6 @@ describe('Scafflater', () => {
 
   test('No local partial found, and it does not exists on source too', async () => {
     // ARRANGE
-    const templateManager = new TemplateManager()
-    templateManager.config = new ConfigProvider()
     const parameters = {
       domain: 'vs-one',
       systemDescription: 'aaaaaaaa',

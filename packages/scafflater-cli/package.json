@@ -1,7 +1,7 @@
 {
   "name": "scafflater-cli",
   "description": "The Scafflater Cli",
-  "version": "0.0.44",
+  "version": "0.0.45",
   "author": "chicoribas @chicoribas",
   "bin": "./bin/run",
   "bugs": "https://github.com/chicoribas/scafflater/issues",
@@ -12,7 +12,7 @@
     "chalk": "^4.1.1",
     "inquirer": "^8.1.1",
     "ora": "^5.4.1",
-    "scafflater": "^0.0.44"
+    "scafflater": "^0.0.45"
   },
   "files": [
     "/bin",
