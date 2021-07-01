@@ -14,10 +14,12 @@ describe('Scafflater', () => {
     jest.resetAllMocks()
   })
 
+  const generator = new Generator()
+  const templateManager = new TemplateManager()
+  templateManager.config = new ConfigProvider()
+
   test('Simple run partial', async () => {
     // ARRANGE
-    const templateManager = new TemplateManager()
-    templateManager.config = new ConfigProvider()
     const parameters = {
       domain: 'vs-one',
       systemDescription: 'aaaaaaaa',
@@ -43,11 +45,12 @@ describe('Scafflater', () => {
     })
 
     // ACT
-    const scafflater = new Scafflater({})
+    const scafflater = new Scafflater({ annotate: false })
     await scafflater.init('some/template/source/key', parameters, '/some/target')
 
     // ASSERT
     expect(fsUtil.writeJSON.mock.calls[0][0]).toBe('/some/target/_scf.json')
+    expect(generator.constructor.mock.calls[0][0].config.annotate).toBe(false)
   })
 
   test('No local partial found, but it exists on source', async () => {

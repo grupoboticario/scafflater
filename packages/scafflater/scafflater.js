@@ -34,7 +34,7 @@ class Scafflater {
             targetPath,
             helpersPath,
             config: {
-              ...new ConfigProvider(),
+              ...this.config,
               ...ctx.config
             }
           }
