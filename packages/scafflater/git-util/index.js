@@ -2,6 +2,8 @@ const fsUtil = require('../fs-util')
 const git = require('isomorphic-git')
 const http = require('isomorphic-git/http/node')
 const fs = require('fs-extra')
+const { spawn } = require('child_process')
+const { URL } = require('url')
 
 /**
 * Class to manage Github Repos
@@ -30,11 +32,33 @@ class GitUtil {
         dir: localPath,
         singleBranch: true,
         depth: 1,
-        headers
+        headers,
+        onAuth: this.onAuth
       });
     } catch (error) {
       throw new Error(`Clone failed: ${error} (Authorization Header: '${headers.Authorization}')`)
     }
+  }
+
+  static async onAuth (url) {
+    const { protocol, host } = new URL(url)
+    return new Promise((resolve, reject) => {
+      const output = []
+      const process = spawn('git', ['credential', 'fill'])
+      process.on('close', (code) => {
+        if (code) return reject(code)
+        const { username, password } = output.join('\n').split('\n').reduce((acc, line) => {
+          if (line.startsWith('username') || line.startsWith('password')) {
+            const [ key, val ] = line.split('=')
+            acc[key] = val
+          }
+          return acc
+        }, {})
+        resolve({ username, password })
+      })
+      process.stdout.on('data', (data) => output.push(data.toString().trim()))
+      process.stdin.write(`protocol=${protocol.slice(0, -1)}\nhost=${host}\n\n`)
+    })
   }
 
   /**
