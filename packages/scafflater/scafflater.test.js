@@ -18,16 +18,25 @@ describe('Scafflater', () => {
   const templateManager = new TemplateManager()
   templateManager.config = new ConfigProvider()
 
-  test('Simple run partial', async () => {
+  test('Simple init', async () => {
     // ARRANGE
     const parameters = {
       domain: 'vs-one',
       systemDescription: 'aaaaaaaa',
       systemName: 'aaaaaaa',
-      systemTeam: 'vs-one-team'
+      systemTeam: 'vs-one-team',
+      password: 'password'
     }
     templateManager.templateSource.getTemplate.mockResolvedValue({
-      path: 'the/template/path'
+      path: 'the/template/path',
+      config: {
+        parameters: [
+          {
+            name: 'password',
+            mask: true
+          }
+        ]
+      }
     })
     templateManager.getPartial.mockResolvedValueOnce({
       config: {},
@@ -50,6 +59,7 @@ describe('Scafflater', () => {
 
     // ASSERT
     expect(fsUtil.writeJSON.mock.calls[0][0]).toBe('/some/target/_scf.json')
+    expect(fsUtil.writeJSON.mock.calls[0][1].parameters.password).toBe('******')
     expect(generator.constructor.mock.calls[0][0].config.annotate).toBe(false)
   })
 
@@ -59,14 +69,22 @@ describe('Scafflater', () => {
       domain: 'vs-one',
       systemDescription: 'aaaaaaaa',
       systemName: 'aaaaaaa',
-      systemTeam: 'vs-one-team'
+      systemTeam: 'vs-one-team',
+      password: 'password'
     }
     templateManager.templateSource.getTemplate.mockResolvedValue({
       path: 'the/template/path'
     })
     templateManager.getPartial.mockResolvedValueOnce(null)
     templateManager.getPartial.mockResolvedValueOnce({
-      config: {},
+      config: {
+        parameters: [
+          {
+            name: 'password',
+            mask: true
+          }
+        ]
+      },
       path: 'the/partial/path'
     })
     templateManager.getTemplatePath.mockResolvedValueOnce('/some/path/to/template')
@@ -87,6 +105,7 @@ describe('Scafflater', () => {
     // ASSERT
     expect(templateManager.getTemplateFromSource.mock.calls[0][0]).toBe('the-template-source-key')
     expect(fsUtil.writeJSON.mock.calls[0][0]).toBe('/some/target/_scf.json')
+    expect(fsUtil.writeJSON.mock.calls[0][1].partials[0].parameters.password).toBe('******')
   })
 
 

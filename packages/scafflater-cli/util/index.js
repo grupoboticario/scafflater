@@ -18,6 +18,7 @@ const parseParametersFlags = parameters => {
 
 const promptMissingParameters = async (parameterFlags, requireParameters) => {
   const flags = parseParametersFlags(parameterFlags)
+  if(!requireParameters) return flags
 
   const missingParameters = []
   for (const rp of requireParameters) {

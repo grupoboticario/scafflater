@@ -26,7 +26,6 @@ class InitCommand extends Command {
         logger.info('Aborting!')
         return
       }
-
       const manager = new TemplateManager(config)
 
       let templateConfig
@@ -34,8 +33,7 @@ class InitCommand extends Command {
         templateConfig = await manager.getTemplateFromSource(iniArgs.Git_Hub_Repository)
       })
 
-      const initConfig = await manager.getPartial('_init', templateConfig.name, templateConfig.version)
-      const parameters = await promptMissingParameters(initFlags.parameters, initConfig.config.parameters)
+      const parameters = await promptMissingParameters(initFlags.parameters, templateConfig.parameters)
 
       await spinner('Running template initialization', async () => {
         const scafflater = new Scafflater({ cacheStorage: 'homeDir' })

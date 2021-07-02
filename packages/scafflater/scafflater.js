@@ -3,6 +3,7 @@ const Generator = require('./generator')
 const fsUtil = require('./fs-util')
 const path = require('path')
 const ConfigProvider = require('./config-provider')
+const { maskParameters } = require('./util')
 
 /**
 * Scafflater class
@@ -61,9 +62,11 @@ class Scafflater {
       try {
         const { path: templatePath, config } = await this.templateManager.templateSource.getTemplate(sourceKey)
 
+        const maskedParameters = maskParameters(parameters, config.parameters)
+
         const scfConfig = {
           template: { ...config },
-          parameters,
+          parameters: maskedParameters,
           partials: [],
         }
 
@@ -122,9 +125,11 @@ class Scafflater {
           scfConfig.partials = []
         }
 
+        const maskedParameters = maskParameters(parameters, partialInfo.config.parameters)
+
         scfConfig.partials.push({
           path: `${scfConfig.template.name}/${partialPath}`,
-          parameters: parameters,
+          parameters: maskedParameters,
         })
 
         resolve(await fsUtil.writeJSON(path.join(targetPath, this.config.scfFileName), scfConfig))
