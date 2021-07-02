@@ -43,6 +43,7 @@ class GitTemplateSource extends TemplateSource {
                 baseUrlApi: this.config.github_baseUrlApi,
               },
             },
+            parameters: config.parameters
           },
         })
       } catch (error) {
