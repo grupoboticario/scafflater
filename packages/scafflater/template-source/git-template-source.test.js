@@ -35,7 +35,7 @@ describe('Github template source', () => {
     const repo = 'some/repo'
     const virtualFolder = 'some/virtual/folder'
     const gitTemplateSource = new GitTemplateSource()
-    fsUtil.readJSON.mockResolvedValue({ name: 'template-name', version: '0.0.0' })
+    fsUtil.readJSON.mockResolvedValue({ name: 'template-name', version: '0.0.0', parameters: [ { name: 'some-parameter' } ] })
 
     // ACT
     const out = await gitTemplateSource.getTemplate(repo, virtualFolder)
@@ -46,6 +46,7 @@ describe('Github template source', () => {
       config: {
         name: 'template-name',
         version: '0.0.0',
+        parameters: [ { name: 'some-parameter' } ],
         source: {
           name: 'github',
           key: 'some/repo',
@@ -65,7 +66,7 @@ describe('Github template source', () => {
     const repo = 'some/repo'
     const tempFolder = 'some/temp/folder'
     const gitTemplateSource = new GitTemplateSource()
-    fsUtil.readJSON.mockResolvedValue({ name: 'template-name', version: '0.0.0' })
+    fsUtil.readJSON.mockResolvedValue({ name: 'template-name', version: '0.0.0', parameters: [ { name: 'some-parameter' } ] })
     fsUtil.getTempFolder.mockResolvedValue(tempFolder)
 
     // ACT
@@ -76,7 +77,8 @@ describe('Github template source', () => {
       path: tempFolder,
       config: {
         name: 'template-name',
-        version: '0.0.0',
+        version: '0.0.0', 
+        parameters: [ { name: 'some-parameter' } ],
         source: {
           name: 'github',
           key: 'some/repo',
