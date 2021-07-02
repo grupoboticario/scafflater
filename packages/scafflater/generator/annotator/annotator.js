@@ -1,11 +1,20 @@
+const { maskParameters } = require('../../util')
 const HandlebarsProcessor = require('../processors/handlebars-processor')
 
 class Annotator {
   static annotate(context, content){
+    let _ctx = { ...context }
+    if (context.template) {
+      _ctx.parameters = maskParameters(_ctx.parameters, context.template.parameters)
+    }
+    if (context.partial) {
+      _ctx.parameters = maskParameters(_ctx.parameters, context.partial.parameters)
+    }
+
     if (content.trim().length > 0) {
       if (context.config.annotate && context.config.annotationTemplate) {
         const annotationTemplate = context.config.annotationTemplate
-        const annotationContext = { ...context, content}
+        const annotationContext = { ..._ctx, content}
         const processor = new HandlebarsProcessor()
         return processor.process(annotationContext, annotationTemplate).result
       }
