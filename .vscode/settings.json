@@ -10,5 +10,8 @@
   },
   "sonarlint.disableTelemetry": true,
   "sonarlint.output.showAnalyzerLogs": true,
-  "sonarlint.output.showVerboseLogs": true
+  "sonarlint.output.showVerboseLogs": true,
+  "files.associations": {
+    ".scafflater": "jsonc"
+  }
 }

@@ -51,7 +51,7 @@ describe('Template Manager tests', () => {
   test('getPartial: Should return the partial template', async () => {
     // ARRANGE
     const partialPath = 'the/partial/path'
-    const configList = ['the/partial/path/_scf.json']
+    const configList = ['the/partial/path/.scafflater']
     const config = {
       name: 'the-partial-name',
       parameters: [],
@@ -72,7 +72,7 @@ describe('Template Manager tests', () => {
 
   test('getPartial: template does not exists, should return null', async () => {
     // ARRANGE
-    const configList = ['the/partial/path/_scf.json']
+    const configList = ['the/partial/path/.scafflater']
     const config = {
       name: 'the-partial-name',
       parameters: [],
@@ -107,7 +107,7 @@ describe('Template Manager tests', () => {
   
   test('getPartial: the partial does not exists in the template, should return null', async () => {
     // ARRANGE
-    const configList = ['the/partial/path/_scf.json']
+    const configList = ['the/partial/path/.scafflater']
     const config = {
       name: 'the-partial-name',
       parameters: [],
@@ -129,7 +129,7 @@ describe('Template Manager tests', () => {
   test('listPartials: Should return list of partial templates', async () => {
     // ARRANGE
     const partialPath = 'the/partial/path'
-    const configList = ['the/partial/path/_scf.json']
+    const configList = ['the/partial/path/_.scafflater']
     const config = {
       name: 'the-partial-name',
       parameters: [],

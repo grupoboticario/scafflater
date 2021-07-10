@@ -58,7 +58,7 @@ describe('Scafflater', () => {
     await scafflater.init('some/template/source/key', parameters, '/some/target')
 
     // ASSERT
-    expect(fsUtil.writeJSON.mock.calls[0][0]).toBe('/some/target/_scf.json')
+    expect(fsUtil.writeJSON.mock.calls[0][0]).toBe('/some/target/.scafflater')
     expect(fsUtil.writeJSON.mock.calls[0][1].parameters.password).toBe('******')
     expect(generator.constructor.mock.calls[0][0].config.annotate).toBe(false)
   })
@@ -104,7 +104,7 @@ describe('Scafflater', () => {
 
     // ASSERT
     expect(templateManager.getTemplateFromSource.mock.calls[0][0]).toBe('the-template-source-key')
-    expect(fsUtil.writeJSON.mock.calls[0][0]).toBe('/some/target/_scf.json')
+    expect(fsUtil.writeJSON.mock.calls[0][0]).toBe('/some/target/.scafflater')
     expect(fsUtil.writeJSON.mock.calls[0][1].partials[0].parameters.password).toBe('******')
   })
 

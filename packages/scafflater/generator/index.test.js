@@ -2,6 +2,7 @@
 const fsUtil = require('../fs-util')
 const ConfigProvider = require('../config-provider')
 const Generator = require('./')
+const { annotate } = require('./annotator/annotator')
 
 jest.mock('../fs-util')
 
@@ -29,7 +30,7 @@ describe('Generator Tests', () => {
       },
       targetPath: '/target/path',
       parameters: { test: 'a sample test' },
-      config: new ConfigProvider()
+      config: { ...new ConfigProvider(), ...{annotate: true} }
     }
     fsUtil.getDirTreeSync.mockReturnValue({
       path: 'just/a/sample/test.txt',
@@ -105,7 +106,7 @@ a sample test
         password: 'password',
         otherPassword: 'other-password',
       },
-      config: new ConfigProvider()
+      config: { ...new ConfigProvider(), ...{annotate: true}}
     }
     fsUtil.getDirTreeSync.mockReturnValue({
       path: 'just/a/sample/test.txt',

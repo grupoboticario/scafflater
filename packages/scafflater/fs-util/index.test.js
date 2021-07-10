@@ -41,7 +41,7 @@ test('Should return list of scafflater config', async () => {
   const folderPath = path.join(__dirname, '.test-resources', 'template-sample')
 
   // ACT
-  const out = await fsUtils.listFilesDeeply(folderPath, '/**/_scf.json')
+  const out = await fsUtils.listFilesDeeply(folderPath, '/**/.scafflater')
 
   // ASSERT
   expect(out.length).toBe(2)

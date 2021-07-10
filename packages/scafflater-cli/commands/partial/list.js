@@ -11,7 +11,7 @@ class ListPartialCommand extends Command {
   async run() {
     try {
       const {flags: cmdFlags} = this.parse(ListPartialCommand)
-      const outputInfoPath = path.join(cmdFlags.output, '_scf.json')
+      const outputInfoPath = path.join(cmdFlags.output, '.scafflater')
       if (!fsUtil.pathExistsSync(outputInfoPath)) {
         logger.error('The template is not initialized!')
         logger.error(`Run ${chalk.bold('init')} to initialize the template at the ${chalk.bold('output folder')} before working with partials!`)

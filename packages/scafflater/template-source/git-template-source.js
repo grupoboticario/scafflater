@@ -26,7 +26,7 @@ class GitTemplateSource extends TemplateSource {
       try {
         const out = outputDir ? outputDir : await fsUtil.getTempFolder()
         await GitUtil.clone(sourceKey, out, this.config.github_username, this.config.github_password)
-        const config = await fsUtil.readJSON(path.join(out, '_scf.json'))
+        const config = await fsUtil.readJSON(path.join(out, '.scafflater'))
 
         // TODO: Validate template configuration
 
