@@ -65,20 +65,29 @@ class Scafflater {
         const maskedParameters = maskParameters(parameters, config.parameters)
 
         const scfConfig = {
-          template: { ...config },
+          template: {
+            name: config.name,
+            version: config.version,
+            source: { ...config.source}
+          },
           parameters: maskedParameters,
           partials: [],
         }
 
         const ctx = {
-          template: config,
+          template: await this.templateManager.getTemplateInfo(config.name, config.version),
           templatePath
         }
         const helpersPath = path.resolve(templatePath, this.config.helpersFolderName)
 
         await this.run(templatePath, parameters, targetPath, ctx, helpersPath)
 
-        resolve(await fsUtil.writeJSON(path.resolve(targetPath, this.config.scfFileName), scfConfig))
+        const scfFile = path.resolve(targetPath, this.config.scfFileName)
+        if (!fsUtil.pathExists(scfFile)){
+          // If the file already exists, it means that the template generate one config file. Must not override.
+          await fsUtil.writeJSON(scfFile, scfConfig)
+        }
+        resolve(scfFile)
       } catch (error) {
         reject(error)
       }
@@ -110,13 +119,12 @@ class Scafflater {
         }
 
         const templatePath = await this.templateManager.getTemplatePath(scfConfig.template.name, scfConfig.template.version)
-        const templateScf = await fsUtil.readJSON(path.join(templatePath, this.config.scfFileName))
+        const templateInfo = await this.templateManager.getTemplateInfo(scfConfig.template.name, scfConfig.template.version)
         const helpersPath = path.resolve(templatePath, this.config.helpersFolderName)
 
         const ctx = {
           partial: partialInfo.config,
-          template: templateScf,
-          templatePath: templatePath
+          template: templateInfo
         }
 
         await this.run(partialInfo.path, parameters, targetPath, ctx, helpersPath)

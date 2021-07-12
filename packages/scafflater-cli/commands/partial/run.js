@@ -9,10 +9,10 @@ const chalk = require('chalk')
 const inquirer = require('inquirer')
 const ConfigProvider = require('scafflater/config-provider')
 
-class AddPartialCommand extends Command {
+class RunPartialCommand extends Command {
   async run() {
     try {
-      const { args, flags } = this.parse(AddPartialCommand)
+      const { args, flags } = this.parse(RunPartialCommand)
 
       const config = {  
         ...new ConfigProvider(), 
@@ -24,13 +24,13 @@ class AddPartialCommand extends Command {
       const outputInfoPath = path.join(flags.output, config.scfFileName)
       if (!fsUtils.pathExistsSync(outputInfoPath)) {
         logger.error('The template is not initialized!')
-        logger.error(`Run ${chalk.bold('init')} to initialize the template at the ${chalk.bold('output folder')} before adding partials!`)
+        logger.error(`Run ${chalk.bold('init')} to initialize the template at the ${chalk.bold('output folder')} before running partials!`)
         return
       }
 
       const manager = new TemplateManager(config)
 
-      const outputInfo = fsUtils.readJSONSync(outputInfoPath)
+      const outputInfo = await fsUtils.readJSON(outputInfoPath)
 
       // Checking if the template is cached
       let cachePath = await manager.templateCache.getTemplatePath(outputInfo.template.name, outputInfo.template.version)
@@ -84,18 +84,18 @@ class AddPartialCommand extends Command {
         await scafflater.runPartial(partial.config.name, parameters, flags.output)
       })
 
-      logger.log('notice', 'Partial added to output!')
+      logger.log('notice', 'Partial results appended to output!')
     } catch (error) {
       logger.error(error)
     }
   }
 }
 
-AddPartialCommand.description = `Adds a partial to the output folder
+RunPartialCommand.description = `Runs a partial and append the result to the output folder
 ...
 `
 
-AddPartialCommand.args = [
+RunPartialCommand.args = [
   {
     name: 'PARTIAL_NAME',
     description: 'The partial name',
@@ -104,9 +104,9 @@ AddPartialCommand.args = [
   },
 ]
 
-AddPartialCommand.flags = {
+RunPartialCommand.flags = {
   output: flags.string({ char: 'o', description: 'The output folder', default: './' }),
   parameters: flags.string({ char: 'p', description: 'The parameters to init template', default: [], multiple: true }),
 }
 
-module.exports = AddPartialCommand
+module.exports = RunPartialCommand

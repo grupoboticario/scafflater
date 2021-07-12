@@ -36,7 +36,7 @@ test('List regions in a well formatted content', () => {
 
   And this is a region
 
-  `)
+`)
   expect(regions[1].name).toBe('sample-region')
   expect(regions[2].name).toBe('another-sample-region')
 })
@@ -75,7 +75,7 @@ test('Parse content with not finished region, should throw an exception', () => 
   }).toThrowError()
 })
 
-test('Appends an simple region', () => {
+test('Appends an simple region', async () => {
   // ARRANGE
   const regionProvider = new RegionProvider(new ConfigProvider())
   const region = new Region(
@@ -86,7 +86,7 @@ test('Appends an simple region', () => {
   )
 
   // ACT
-  const result = regionProvider.appendRegion(region, 'original content')
+  const result = await regionProvider.appendRegion(region, 'original content')
 
   // ASSERT
   expect(result).toBe(`original content
@@ -96,7 +96,7 @@ some content
 `)
 })
 
-test('Build a nested region', () => {
+test('Build a nested region', async () => {
   // ARRANGE
   const regionProvider = new RegionProvider(new ConfigProvider())
   const parentRegion = new Region(
@@ -113,7 +113,7 @@ test('Build a nested region', () => {
   )
 
   // ACT
-  const result = regionProvider.appendRegion(region, 'original content')
+  const result = await regionProvider.appendRegion(region, 'original content')
 
   // ASSERT
   expect(result).toBe(`original content

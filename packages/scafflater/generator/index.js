@@ -4,7 +4,7 @@ const fsUtil = require('../fs-util')
 const Processor = require('./processors/processor')
 const Appender = require('./appenders/appender')
 const ConfigProvider = require('../config-provider')
-const HandlebarsProcessor = new (require('./processors/handlebars-processor'))()
+const HandlebarsProcessor = require('./processors/handlebars-processor')
 const merge = require('deepmerge')
 
 /**
@@ -33,17 +33,12 @@ class Generator {
       context.config.hooksFolderName, 
       context.config.helpersFolderName, 
       '.git']
+    this.handlebarsProcessor = new HandlebarsProcessor()
   }
 
   async generate() {
     // Loading handlebars js custom helper
-    if (this.context.helpersPath && await fsUtil.pathExists(this.context.helpersPath)) {
-      for (const js of await fsUtil.listFilesByExtensionDeeply(this.context.helpersPath, 'js')) {
-        const helperFunction = require(js)
-        const helperName = path.basename(js, '.js')
-        Handlebars.registerHelper(helperName, helperFunction)
-      }
-    }
+    await HandlebarsProcessor.loadHelpersFolder(this.context.helpersPath)
 
     const tree = fsUtil.getDirTreeSync(this.context.originPath)
 
@@ -63,7 +58,7 @@ class Generator {
 
   async _generate(ctx, tree) {
 
-    let targetName = Processor.runProcessorsPipeline([HandlebarsProcessor], ctx, tree.name)
+    let targetName = Processor.runProcessorsPipeline([this.handlebarsProcessor], ctx, tree.name)
     if (targetName === '') {
       return
     }
@@ -93,7 +88,7 @@ class Generator {
 
       if (!_ctx.config.ignore) {
         if(_ctx.config.targetName || _ctx.config.targetName === ''){
-          targetName = Processor.runProcessorsPipeline([HandlebarsProcessor], ctx, _ctx.config.targetName)
+          targetName = Processor.runProcessorsPipeline([this.handlebarsProcessor], ctx, _ctx.config.targetName)
         }
         if (targetName === '') {
           return
@@ -109,9 +104,9 @@ class Generator {
         }
 
         const appenders = _ctx.config.appenders.map(a => new (require(a))())
-        const result = Appender.runAppendersPipeline(appenders, _ctx, srcContent, targetContent)
+        const result = await Appender.runAppendersPipeline(appenders, _ctx, srcContent, targetContent)
 
-        promises.push(fsUtil.saveFile(targetPath, result, false))
+        promises.push(fsUtil.saveFile(targetPath, await ConfigProvider.removeConfigFromString(result, _ctx.config), false))
       }
     }
 

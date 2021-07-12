@@ -14,19 +14,29 @@ class Appender {
   * @param {Context} context The context of generation
   * @param {string} srcStr The string to be appended
   * @param {string} destStr The string where srcStr must be appended
-  * @return {ProccessResult} The process result
+  * @return {ProcessResult} The process result
   */
   append(context, srcStr, destStr) {
-    const annotated = Annotator.annotate(context, srcStr)
-    let result = destStr
-    if (srcStr && srcStr.trim().length > 0) {
-      result += `${EOL}${EOL}${annotated}` 
-    }
-    return {
-      context,
-      result,
-      notAppended: ''
-    }
+    return new Promise((resolve, reject) => {
+      try {
+        const annotated = Annotator.annotate(context, srcStr)
+        let result = destStr
+
+        if (srcStr && srcStr.trim().length > 0) {
+          result = context.config.appendStrategy === 'append' ?
+            `${destStr}${EOL}${EOL}${annotated}` :
+            annotated
+        }
+
+        resolve({
+          context,
+          result,
+          notAppended: ''
+        })
+      } catch (e) {
+        reject(e)
+      }
+    })
   }
 
   /** 
@@ -34,21 +44,27 @@ class Appender {
   * @param {Array<Processor>} appenders - Processors to be executed
   * @param {string} srcStr The string to be appended
   * @param {string} destStr The string where srcStr must be appended
-  * @return {string} The pipeline append result
+  * @return {Promise<string>} The pipeline append result
   */
-  static runAppendersPipeline(appenders, context, srcStr, destStr){
-    let appendContext = { ...context }
+  static runAppendersPipeline(appenders, context, srcStr, destStr) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let appendContext = { ...context }
 
-    for (const appender of appenders) {
-      const appenderResult = appender.append(appendContext, srcStr, destStr)
-      appendContext = appenderResult.context
-      srcStr = appenderResult.notAppended,
-      destStr = appenderResult.result
-    }
+        for (const appender of appenders) {
+          const appenderResult = await appender.append(appendContext, srcStr, destStr)
+          appendContext = appenderResult.context
+          srcStr = appenderResult.notAppended
+          destStr = appenderResult.result
+        }
 
-    destStr = destStr.replace(/^(\s*\r?\n){2,}/gm,'\n')
+        destStr = destStr.replace(/^(\s*\r?\n){2,}/gm, '\n')
 
-    return destStr.trim()
+        resolve(destStr.trim())
+      } catch (e) {
+        reject(e)
+      }
+    })
   }
 }
 

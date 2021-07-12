@@ -1,4 +1,7 @@
-const {maskParameters} = require('./')
+const {
+  maskParameters, 
+  buildLineComment} = require('./')
+const ConfigProvider = require('../config-provider')
 
 
 test('Mask Parameters', () => {
@@ -30,5 +33,24 @@ test('Mask Parameters', () => {
   expect(result.shouldMask).toBe('******')
   expect(result.shouldNotMask).toBe(1)
   expect(result.shouldNotMask2).toBe('open text')
+
+})
+
+test('Build Line Comment', () => {
+  // ARRANGE
+  const config = new ConfigProvider()
+  const comment = 'this is a comment'
+  const otherCofig = { 
+    ...config,
+    lineCommentTemplate: "<!-- {{{comment}}} -->"
+  }
+
+  // ACT
+  const result = buildLineComment(config, comment)
+  const result2 = buildLineComment(otherCofig, comment)
+
+  // ASSERT
+  expect(result).toBe('# this is a comment')
+  expect(result2).toBe('<!-- this is a comment -->')
 
 })

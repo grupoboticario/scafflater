@@ -58,3 +58,36 @@ test('No files found, Should return null', async () => {
   // ASSERT
   expect(out).toBe(null)
 })
+
+test('Read JSON with comments', async () => {
+  // ARRANGE
+  const folderPath = path.join(__dirname, '.test-resources', 'template-sample', '.scafflater')
+  const noExistingFolderPath = path.join(__dirname, '.test-resources', 'template-sample', '.scafflater2')
+  const invalidFolderPath = path.join(__dirname, '.test-resources', 'sample-file.txt')
+
+  // ACT
+  const out = await fsUtils.readJSON(folderPath)
+  const out2 = await fsUtils.readJSON(noExistingFolderPath)
+
+  // ASSERT
+  expect(out).toStrictEqual({
+    "name": "main-name",
+    "version": "main-version"
+  })
+  expect(out2).toBeNull()
+  await expect(fsUtils.readJSON(invalidFolderPath))
+    .rejects
+    .toThrow()
+})
+
+test('Require', () => {
+  // ARRANGE
+  const jsPath = path.join(__dirname, '.test-resources', 'fake-module.js')
+
+  // ACT
+  const fakeModule = fsUtils.require(jsPath)
+
+  expect(fakeModule).toBe("Fake Module")
+
+})
+

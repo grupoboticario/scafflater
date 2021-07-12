@@ -11,11 +11,9 @@
       "program": "${workspaceFolder}/packages/scafflater-cli/bin/run",
       "args": [
         "init",
-        "https://github.com/chicoribas/scafflater-test-template.git",
-        "-p=domain:domain name",
-        "-p=system:system-name",
-        "-p=team:team-name",
-        "-o=/Users/ribasf/Downloads/test"
+        "https://github.com/chicoribas/scafflater-template",
+        "-p=name:template-name",
+        "-p=description:Template Description"
       ]
     },
     {

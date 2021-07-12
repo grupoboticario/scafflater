@@ -1,3 +1,4 @@
+const util = require('../../util')
 const RegionTagType = {
   Unknown: 0,
   Start: 1,
@@ -57,7 +58,7 @@ class RegionProvider {
   */
   getRegions(str) {
     var completedRegions = []
-    const regionRegex = new RegExp(`(?<start>${this.configProvider.singleLineComment}\\s*${this.configProvider.startRegionMarker})\\s*(?<startName>[\\S-]*).*$|(?<end>${this.configProvider.singleLineComment}\\s*${this.configProvider.endRegionMarker}.*$)`, 'gim')
+    const regionRegex = new RegExp(`(?<start>.*${this.configProvider.startRegionMarker}) *(?<startName>.*)?.*$|(?<end>.*${this.configProvider.endRegionMarker}.*$)`, 'gim')
     const regionMarkers = str.matchAll(regionRegex)
     var startedRegions = []
 
@@ -80,7 +81,7 @@ class RegionProvider {
         var content = str.substring(lastStartedRegion.startRegionTag.endPosition, endTag.startPosition)
         var finishedRegion = new Region(lastStartedRegion.parentRegion, lastStartedRegion.startRegionTag, endTag, content)
 
-        completedRegions.filter(cr => cr.parentRegion && cr.parentRegion.name === finishedRegion.name).forEach(cr => cr.parentRegion = finishedRegion )
+        completedRegions.filter(cr => cr.parentRegion && cr.parentRegion.name === finishedRegion.name).forEach(cr => cr.parentRegion = finishedRegion)
 
         completedRegions.push(finishedRegion)
         startedRegions.pop()
@@ -102,25 +103,30 @@ class RegionProvider {
   * Appends region to a content
   * @param {Region} region - The Region
   * @param {string} content - The Region Content
-  * @return {string} The content with the region appended
+  * @return {Promise<string>} The content with the region appended
   */
-   appendRegion(region, content){
-    let regionStr = `${this.configProvider.singleLineComment} ${this.configProvider.startRegionMarker} ${region.name}\n`+
-    `${region.content}\n`+
-    `${this.configProvider.singleLineComment} ${this.configProvider.endRegionMarker}\n`
+  appendRegion(region, content) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let regionStr = util.buildLineComment(this.configProvider, `${this.configProvider.startRegionMarker} ${region.name}`) + `\n` +
+          `${region.content}\n` +
+          util.buildLineComment(this.configProvider, this.configProvider.endRegionMarker) + `\n`
 
-    if(region.parentRegion){
-      const p = new Region(
-        region.parentRegion.parentRegion,
-        region.parentRegion.startRegionTag,
-        region.parentRegion.endRegionTag,
-        regionStr
-      )
-      regionStr = this.appendRegion(p, null)
-    }
+        if (region.parentRegion) {
+          const p = new Region(
+            region.parentRegion.parentRegion,
+            region.parentRegion.startRegionTag,
+            region.parentRegion.endRegionTag,
+            regionStr
+          )
+          regionStr = await this.appendRegion(p, null)
+        }
 
-    return content && content.length > 0 ? `${content}\n${regionStr}` : regionStr
-      
+        resolve(content && content.length > 0 ? `${content}\n${regionStr}` : regionStr)
+      } catch (error) {
+        reject(error)
+      }
+    })
   }
 }
 

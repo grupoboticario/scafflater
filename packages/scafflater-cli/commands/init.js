@@ -40,7 +40,7 @@ class InitCommand extends Command {
         await scafflater.init(iniArgs.Git_Hub_Repository, parameters, initFlags.output)
       })
 
-      logger.log('notice', 'Template initialized. Fell free to add partials. 🥳')
+      logger.log('notice', 'Template initialized. Fell free to run partials. 🥳')
     } catch (error) {
       logger.error(error)
     }

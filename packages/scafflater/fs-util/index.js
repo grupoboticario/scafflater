@@ -4,6 +4,16 @@ const dirTree = require('directory-tree')
 const glob = require('glob')
 const path = require('path')
 const { EOL } = require('os')
+const stripJsonComments = require('strip-json-comments')
+
+/**
+* Loads js
+* @param {string} jsPath
+* @returns {object} Loaded script
+*/
+fs.require = (jsPath) => {
+  return require(jsPath)
+}
 
 /**
 * Returns a temp folder path
@@ -47,6 +57,26 @@ fs.readFileContent = async (filePath) => {
         resolve(null)
       }
       resolve((await fs.readFile(filePath)).toString())
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+/**
+* Reads an Json file
+* @param {string} filePath - Source
+* @returns {Promise<object>} The Json object
+*/
+fs.readJSON = async (filePath) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!await fs.exists(filePath)) {
+        resolve(null)
+      }
+      const content = (await fs.readFile(filePath)).toString()
+
+      resolve(JSON.parse(stripJsonComments(content)))
     } catch (error) {
       reject(error)
     }

@@ -1,9 +1,7 @@
 const ConfigProvider = require('../../config-provider')
-const { annotate } = require('../annotator/annotator')
-const { RegionProvider } = require('../region-provider')
 const RegionAppender = require('./region-appender')
 
-test('Append to an existing region', () => {
+test('Append to an existing region', async () => {
   // ARRANGE
   const src = `This content is not in regions
   # @scf-region test-region
@@ -12,7 +10,7 @@ test('Append to an existing region', () => {
 
   # @scf-region inner-test-region
 
-  some new inner region contet
+  some new inner region content
 
   # @end-scf-region
 
@@ -50,7 +48,7 @@ test('Append to an existing region', () => {
   const regionAppender = new RegionAppender()
 
   // ACT
-  const result = regionAppender.append(context, src, dst)
+  const result = await regionAppender.append(context, src, dst)
 
   // ASSERT
   expect(result.result).toEqual(`
@@ -62,7 +60,7 @@ test('Append to an existing region', () => {
 
   some existing inner test content
 
-  some new inner region contet
+  some new inner region content
 
   # @end-scf-region
 
@@ -83,7 +81,45 @@ test('Append to an existing region', () => {
   And this one is not in region too`)
 })
 
-test('Append to non existing region, should create region', () => {
+test('Replace an existing region', async () => {
+  // ARRANGE
+  const src = `
+  # @scf-region test-region
+  # @scf-config {"appendStrategy":"replace"}
+
+  some new content
+
+  # @end-scf-region`
+  const dst = `This content is not in regions
+  # @scf-region test-region
+
+  This is the existing content
+
+  # @end-scf-region
+
+  And this one is not in region too`
+  
+  const context = {
+    config: { ...new ConfigProvider(), annotate: false }
+  }
+  const regionAppender = new RegionAppender()
+
+  // ACT
+  const result = await regionAppender.append(context, src, dst)
+
+  // ASSERT
+  expect(result.result).toEqual(`This content is not in regions
+  # @scf-region test-region
+  # @scf-config {"appendStrategy":"replace"}
+
+  some new content
+
+  # @end-scf-region
+
+  And this one is not in region too`)
+})
+
+test('Append to non existing region, should create region', async () => {
   // ARRANGE
   const src = `
   # @scf-region new-test-region
@@ -92,7 +128,7 @@ test('Append to non existing region, should create region', () => {
 
   # @scf-region new-inner-test-region
 
-  some new inner region contet
+  some new inner region content
 
   # @end-scf-region
 
@@ -112,7 +148,7 @@ test('Append to non existing region, should create region', () => {
   const regionAppender = new RegionAppender()
 
   // ACT
-  const result = regionAppender.append(context, src, dst)
+  const result = await regionAppender.append(context, src, dst)
 
   // ASSERT
   expect(result.result).toEqual(`
@@ -121,13 +157,13 @@ test('Append to non existing region, should create region', () => {
 # @scf-region new-test-region
 # @scf-region new-inner-test-region
 
-  some new inner region contet
+  some new inner region content
 
 # @end-scf-region
 
   some new content
 
-  # @end-scf-region
+# @end-scf-region
 
 # @scf-region new-test-region2
 

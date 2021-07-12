@@ -2,7 +2,7 @@ const Appender = require('./appender')
 const merge = require('deepmerge')
 
 class JsonAppender extends Appender {
-  
+
   /** 
   * Process the input.
   * @param {Context} context The context of generation
@@ -11,17 +11,22 @@ class JsonAppender extends Appender {
   * @return {ProcessResult} The process result
   */
   append(context, srcStr, destStr) {
+    return new Promise((resolve, reject) => {
+      try {
+        let src = JSON.parse(srcStr)
+        let dst = JSON.parse(destStr)
 
-    let src = JSON.parse(srcStr)
-    let dst = JSON.parse(destStr)
+        src = merge(dst, src)
 
-    src = merge(dst, src)
-
-    return {
-      context,
-      result: JSON.stringify(src),
-      notAppended: ''
-    }
+        resolve({
+          context,
+          result: JSON.stringify(src),
+          notAppended: ''
+        })
+      } catch (error) {
+        reject(error)
+      }
+    })
   }
 }
 

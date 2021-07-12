@@ -1,8 +1,7 @@
 const Appender = require('./appender')
-const yaml = require('js-yaml');
 const merge = require('deepmerge')
 
-class YamlAppender extends Appender {
+class ReplaceAllAppender extends Appender {
 
   /** 
   * Process the input.
@@ -14,21 +13,16 @@ class YamlAppender extends Appender {
   append(context, srcStr, destStr) {
     return new Promise((resolve, reject) => {
       try {
-        let src = yaml.load(srcStr)
-        let dst = yaml.load(destStr)
-
-        src = merge(dst, src)
-
         resolve({
           context,
-          result: yaml.dump(src),
+          result: srcStr,
           notAppended: ''
         })
-      } catch (e) {
-        reject(e)
+      } catch (error) {
+        reject(error)
       }
     })
   }
 }
 
-module.exports = YamlAppender
+module.exports = ReplaceAllAppender

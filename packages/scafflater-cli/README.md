@@ -17,7 +17,7 @@ $ npm install -g scafflater-cli
 $ scafflater-cli COMMAND
 running command...
 $ scafflater-cli (-v|--version|version)
-scafflater-cli/0.0.17 darwin-x64 node-v15.7.0
+scafflater-cli/0.0.49 darwin-x64 node-v14.17.1
 $ scafflater-cli --help [COMMAND]
 USAGE
   $ scafflater-cli COMMAND
@@ -28,8 +28,8 @@ USAGE
 <!-- commands -->
 * [`scafflater-cli help [COMMAND]`](#scafflater-cli-help-command)
 * [`scafflater-cli init [GIT_HUB_REPOSITORY]`](#scafflater-cli-init-git_hub_repository)
-* [`scafflater-cli partial:add [PARTIAL_NAME]`](#scafflater-cli-partialadd-partial_name)
 * [`scafflater-cli partial:list`](#scafflater-cli-partiallist)
+* [`scafflater-cli partial:run [PARTIAL_NAME]`](#scafflater-cli-partialrun-partial_name)
 
 ## `scafflater-cli help [COMMAND]`
 
@@ -64,28 +64,7 @@ DESCRIPTION
   ...
 ```
 
-_See code: [commands/init.js](https://github.com/chicoribas/scafflater/blob/v0.0.17/commands/init.js)_
-
-## `scafflater-cli partial:add [PARTIAL_NAME]`
-
-Adds a partial to the output folder
-
-```
-USAGE
-  $ scafflater-cli partial:add [PARTIAL_NAME]
-
-ARGUMENTS
-  PARTIAL_NAME  The partial name
-
-OPTIONS
-  -o, --output=output          [default: ./] The output folder
-  -p, --parameters=parameters  [default: ] The parameters to init template
-
-DESCRIPTION
-  ...
-```
-
-_See code: [commands/partial/add.js](https://github.com/chicoribas/scafflater/blob/v0.0.17/commands/partial/add.js)_
+_See code: [commands/init.js](https://github.com/chicoribas/scafflater/blob/v0.0.49/commands/init.js)_
 
 ## `scafflater-cli partial:list`
 
@@ -102,5 +81,27 @@ DESCRIPTION
   ...
 ```
 
-_See code: [commands/partial/list.js](https://github.com/chicoribas/scafflater/blob/v0.0.17/commands/partial/list.js)_
+_See code: [commands/partial/list.js](https://github.com/chicoribas/scafflater/blob/v0.0.49/commands/partial/list.js)_
+
+## `scafflater-cli partial:run [PARTIAL_NAME]`
+
+Runs a partial and append the result to the output folder
+
+```
+USAGE
+  $ scafflater-cli partial:run [PARTIAL_NAME]
+
+ARGUMENTS
+  PARTIAL_NAME  The partial name
+
+OPTIONS
+  -o, --output=output          [default: ./] The output folder
+  -p, --parameters=parameters  [default: ] The parameters to init template
+
+DESCRIPTION
+  Runs a partial and append the result to the output folder
+  ...
+```
+
+_See code: [commands/partial/run.js](https://github.com/chicoribas/scafflater/blob/v0.0.49/commands/partial/run.js)_
 <!-- commandsstop -->

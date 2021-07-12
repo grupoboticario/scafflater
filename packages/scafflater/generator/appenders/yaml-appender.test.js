@@ -10,7 +10,7 @@ spec:
     - array
     `
 
-test('Append simple property', () =>{
+test('Append simple property', async () =>{
   // ARRANGE
   const srcYaml = `
 test-prop: testing
@@ -20,7 +20,7 @@ metadata:
   const yamlAppender = new YamlAppender()
 
   // ACT
-  const result = yamlAppender.append({}, srcYaml, destYaml)
+  const result = await yamlAppender.append({}, srcYaml, destYaml)
 
   // ASSERT
   expect(result.result).toBe(`apiVersion: backstage.io/v1alpha1
@@ -36,7 +36,7 @@ test-prop: testing
 `)
 })
 
-test('Append array item', () =>{
+test('Append array item', async () =>{
   // ARRANGE
   const srcYaml = `
 spec:
@@ -46,7 +46,7 @@ spec:
   const yamlAppender = new YamlAppender()
 
   // ACT
-  const result = yamlAppender.append({}, srcYaml, destYaml)
+  const result = await yamlAppender.append({}, srcYaml, destYaml)
 
   // ASSERT
   expect(result.result).toBe(`apiVersion: backstage.io/v1alpha1

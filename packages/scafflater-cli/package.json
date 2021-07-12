@@ -43,8 +43,8 @@
       "partial": {
         "description": "Partial template operations"
       },
-      "partial:add": {
-        "description": "Adds a partial to the output folder"
+      "partial:run": {
+        "description": "Runs a partial and append the result to the output folder"
       },
       "partial:list": {
         "description": "List available partials in template"

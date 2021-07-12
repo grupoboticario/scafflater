@@ -53,6 +53,7 @@ describe('Template Manager tests', () => {
     const partialPath = 'the/partial/path'
     const configList = ['the/partial/path/.scafflater']
     const config = {
+      type: 'partial',
       name: 'the-partial-name',
       parameters: [],
     }
@@ -128,9 +129,10 @@ describe('Template Manager tests', () => {
 
   test('listPartials: Should return list of partial templates', async () => {
     // ARRANGE
-    const partialPath = 'the/partial/path'
-    const configList = ['the/partial/path/_.scafflater']
+    const partialPath = 'the/template/path'
+    const configList = ['the/partial/path/.scafflater']
     const config = {
+      type: 'partial',
       name: 'the-partial-name',
       parameters: [],
     }
@@ -147,5 +149,68 @@ describe('Template Manager tests', () => {
     expect(out.length).toBe(1)
     expect(out[0].path).toBe('the/partial/path')
     expect(out[0].config).toBe(config)
+  })
+
+  test('getTemplateInfo: Should return a complete info about template', async () => {
+    // ARRANGE
+    fsUtil.getTempFolder.mockReturnValue('some/temp/folder')
+
+    templateCache.getTemplatePath.mockReturnValueOnce('the/template/path')
+
+    fsUtil.listFilesByNameDeeply.mockReturnValue([
+      'the/partial/path/1/.scafflater',
+      'the/partial/path/2/.scafflater'
+    ])
+
+    fsUtil.readJSON.mockReturnValueOnce({
+      type: "template",
+      name: "some-template",
+      description: "This is some template",
+      version: "0.0.1",
+    })
+
+    fsUtil.readJSON.mockReturnValueOnce({
+      type: "partial",
+      name: "partial-1",
+      description: "This is partial one",
+      version: "0.0.1",
+    })
+
+    fsUtil.readJSON.mockReturnValueOnce({
+      type: "partial",
+      name: "partial-2",
+      description: "This is partial teo",
+      version: "0.0.1",
+    })
+
+    const templateManager = new TemplateManager({ scfFileName: '.scafflater' })
+
+    // ACT
+    const out = await templateManager.getTemplateInfo('some-template', '0.0.1')
+
+    // ASSERT
+    expect(out).toStrictEqual({
+      type: "template",
+      name: "some-template",
+      description: "This is some template",
+      version: "0.0.1",
+      path: "the/template/path",
+      partials: [
+        {
+          type: "partial",
+          name: "partial-1",
+          description: "This is partial one",
+          version: "0.0.1",
+          path: "the/partial/path/1",
+        },
+        {
+          type: "partial",
+          name: "partial-2",
+          description: "This is partial teo",
+          version: "0.0.1",
+          path: "the/partial/path/2",
+        }
+      ]
+    })
   })
 })

@@ -43,7 +43,7 @@ describe('Scafflater', () => {
       path: 'the/partial/path'
     })
     templateManager.getTemplatePath.mockResolvedValueOnce('/some/path/to/template')
-    fsUtil.readJson.mockResolvedValueOnce({
+    fsUtil.readJSON.mockResolvedValueOnce({
       template: {
         name: 'some-template',
         version: 'some-version',
@@ -88,7 +88,7 @@ describe('Scafflater', () => {
       path: 'the/partial/path'
     })
     templateManager.getTemplatePath.mockResolvedValueOnce('/some/path/to/template')
-    fsUtil.readJson.mockResolvedValueOnce({
+    fsUtil.readJSON.mockResolvedValueOnce({
       template: {
         name: 'some-template',
         version: 'some-version',
@@ -122,7 +122,7 @@ describe('Scafflater', () => {
     })
     templateManager.getPartial.mockResolvedValue(null)
     templateManager.getTemplatePath.mockResolvedValueOnce('/some/path/to/template')
-    fsUtil.readJson.mockResolvedValueOnce({
+    fsUtil.readJSON.mockResolvedValueOnce({
       template: {
         name: 'some-template',
         version: 'some-version',

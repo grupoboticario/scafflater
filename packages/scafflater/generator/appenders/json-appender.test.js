@@ -10,7 +10,7 @@ const destJson = `{
   ]
 }`
 
-test('Append Json', () =>{
+test('Append Json', async () =>{
   // ARRANGE
   const srcJson = `{
     "new-property": "the property",
@@ -25,7 +25,7 @@ test('Append Json', () =>{
   const jsonAppender = new JsonAppender()
 
   // ACT
-  const result = jsonAppender.append({}, srcJson, destJson)
+  const result = await jsonAppender.append({}, srcJson, destJson)
 
   // ASSERT
   expect(JSON.parse(result.result)).toStrictEqual(JSON.parse(`{
