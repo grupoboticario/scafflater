@@ -92,10 +92,10 @@ describe('Config Provider', () => {
     const newConfig = await ConfigProvider.extractConfigFromFileContent('some/path', config)
 
     // ASSERT
-    expect(newConfig.config.processors[0]).toBe('a-new-processor')
-    expect(newConfig.config.annotate).toStrictEqual(false)
-    expect(newConfig.config.ignore).toStrictEqual(true)
-    expect(newConfig.config.lineCommentTemplate).toStrictEqual('// {{comment}}')
+    expect(newConfig.processors[0]).toBe('a-new-processor')
+    expect(newConfig.annotate).toStrictEqual(false)
+    expect(newConfig.ignore).toStrictEqual(true)
+    expect(newConfig.lineCommentTemplate).toStrictEqual('// {{comment}}')
   })
 
   test('Remove config from file template', async () => {
@@ -134,19 +134,19 @@ describe('Config Provider', () => {
     const newConfig = await ConfigProvider.extractConfigFromString(str, config)
 
     // ASSERT
-    expect(newConfig.config.processors[0]).toBe('processor1')
+    expect(newConfig.processors[0]).toBe('processor1')
   })
 
   test('No config on file template', async () => {
     // ARRANGE
-    const config = new ConfigProvider()
+    const config = { ...new ConfigProvider() }
     FileSystemUtils.readFileContent.mockResolvedValue(`the file content`)
 
     // ACT
     const newConfig = await ConfigProvider.extractConfigFromFileContent('some-path', config)
 
     // ASSERT
-    expect(newConfig.fileContent).toBe('the file content')
+    expect(newConfig).toStrictEqual(config)
   })
 
 })

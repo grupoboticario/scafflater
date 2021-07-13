@@ -7,6 +7,7 @@ const TempDirCache = require('../template-cache/storages/temp-dir-cache')
 const TemplateSource = require('../template-source')
 const TemplateManager = require('./')
 
+jest.mock('../util')
 jest.mock('../fs-util')
 jest.mock('../template-cache')
 jest.mock('../template-source')

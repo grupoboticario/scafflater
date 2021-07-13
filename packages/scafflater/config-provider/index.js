@@ -55,6 +55,11 @@ class ConfigProvider {
     this.github_password = null
   }
 
+  /** 
+  * Merge the folder config
+  * @param {string} folderPath Folder to load the config
+  * @return {Promise<ConfigProvider>} The merged config
+  */
   static mergeFolderConfig(folderPath, config) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -73,6 +78,11 @@ class ConfigProvider {
     })
   }
 
+  /** 
+  * Merge the file config
+  * @param {string} folderPath File to load the config
+  * @return {Promise<ConfigProvider>} The merged config
+  */
   static extractConfigFromFileContent(filePath, config) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -98,7 +108,7 @@ class ConfigProvider {
         for (const c of configs) {
           try {
             // Ignore configuration in regions
-            if(regions.findIndex(r => r.contentStart <= c.index && r.contentEnd >= c.index) >= 0){
+            if (regions.findIndex(r => r.contentStart <= c.index && r.contentEnd >= c.index) >= 0) {
               continue;
             }
 
@@ -109,8 +119,8 @@ class ConfigProvider {
         }
 
         resolve({
-          config: { ...config, ...newConfig },
-          fileContent: str
+          ...config,
+          ...newConfig
         })
       } catch (error) {
         reject(error)

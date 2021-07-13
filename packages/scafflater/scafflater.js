@@ -14,9 +14,9 @@ class Scafflater {
   * @param {?object} config - Scafflater configuration. If null, will get the default configuration.
   * @param {string} sourceKey - The source key
   */
-  constructor(config = {}) {
+  constructor(config = {}, templateManager = null) {
     this.config = { ...new ConfigProvider(), ...config }
-    this.templateManager = new TemplateManager(this.config)
+    this.templateManager = templateManager ?? new TemplateManager(this.config)
   }
 
   /** 
@@ -24,9 +24,17 @@ class Scafflater {
   * @param {ParamDataTypeHere} parameterNameHere - Brief description of the parameter here. Note: For other notations of data types, please refer to JSDocs: DataTypes command.
   * @return {Promise<string} Brief description of the returning value here.
   */
-  async run(originPath, parameters, targetPath = './', ctx = {}, helpersPath = null) {
+  async run(originPath, parameters, templatePath, targetPath = './', ctx = {}) {
     return new Promise(async (resolve, reject) => {
       try {
+        const config = {
+          ...this.config,
+          ...ctx.config
+        }
+
+        const helpersPath = path.resolve(templatePath, config.helpersFolderName)
+        const hooksPath = path.resolve(templatePath, config.hooksFolderName)
+        
         const _ctx = {
           ...ctx,
           ...{
@@ -34,10 +42,8 @@ class Scafflater {
             parameters,
             targetPath,
             helpersPath,
-            config: {
-              ...this.config,
-              ...ctx.config
-            }
+            hooksPath,
+            config
           }
         }
 
@@ -64,11 +70,11 @@ class Scafflater {
 
         const maskedParameters = maskParameters(parameters, config.parameters)
 
-        const scfConfig = {
+        const targetInfo = {
           template: {
             name: config.name,
             version: config.version,
-            source: { ...config.source}
+            source: { ...config.source }
           },
           parameters: maskedParameters,
           partials: [],
@@ -76,16 +82,15 @@ class Scafflater {
 
         const ctx = {
           template: await this.templateManager.getTemplateInfo(config.name, config.version),
-          templatePath
+          target: targetInfo
         }
-        const helpersPath = path.resolve(templatePath, this.config.helpersFolderName)
 
-        await this.run(templatePath, parameters, targetPath, ctx, helpersPath)
+        await this.run(templatePath, parameters, templatePath, targetPath, ctx)
 
         const scfFile = path.resolve(targetPath, this.config.scfFileName)
-        if (!fsUtil.pathExists(scfFile)){
+        if (!fsUtil.pathExists(scfFile)) {
           // If the file already exists, it means that the template generate one config file. Must not override.
-          await fsUtil.writeJSON(scfFile, scfConfig)
+          await fsUtil.writeJSON(scfFile, targetInfo)
         }
         resolve(scfFile)
       } catch (error) {
@@ -103,44 +108,49 @@ class Scafflater {
   async runPartial(partialPath, parameters, targetPath = './') {
     return new Promise(async (resolve, reject) => {
       try {
-        const scfConfig = await fsUtil.readJSON(path.join(targetPath, this.config.scfFileName))
+        const targetInfo = await fsUtil.readJSON(path.join(targetPath, this.config.scfFileName))
 
-        let partialInfo = await this.templateManager.getPartial(partialPath, scfConfig.template.name, scfConfig.template.version)
+        let partialInfo = await this.templateManager.getPartial(partialPath, targetInfo.template.name, targetInfo.template.version)
 
         if (!partialInfo) {
           // Trying to get the template
           // TODO: Get template by version
-          await this.templateManager.getTemplateFromSource(scfConfig.template.source.key)
-          partialInfo = await this.templateManager.getPartial(partialPath, scfConfig.template.name, scfConfig.template.version)
+          await this.templateManager.getTemplateFromSource(targetInfo.template.source.key)
+          partialInfo = await this.templateManager.getPartial(partialPath, targetInfo.template.name, targetInfo.template.version)
           if (!partialInfo) {
             resolve(null)
             return
           }
         }
 
-        const templatePath = await this.templateManager.getTemplatePath(scfConfig.template.name, scfConfig.template.version)
-        const templateInfo = await this.templateManager.getTemplateInfo(scfConfig.template.name, scfConfig.template.version)
-        const helpersPath = path.resolve(templatePath, this.config.helpersFolderName)
+        const templatePath = await this.templateManager.getTemplatePath(targetInfo.template.name, targetInfo.template.version)
+        const templateInfo = await this.templateManager.getTemplateInfo(targetInfo.template.name, targetInfo.template.version)
 
         const ctx = {
           partial: partialInfo.config,
-          template: templateInfo
+          template: templateInfo,
+          templatePath,
+          target: targetInfo
         }
 
-        await this.run(partialInfo.path, parameters, targetPath, ctx, helpersPath)
+        await this.run(partialInfo.path, parameters, templatePath, targetPath, ctx)
 
-        if (!scfConfig.partials) {
-          scfConfig.partials = []
+        if (!targetInfo.partials) {
+          targetInfo.partials = []
         }
 
         const maskedParameters = maskParameters(parameters, partialInfo.config.parameters)
 
-        scfConfig.partials.push({
-          path: `${scfConfig.template.name}/${partialPath}`,
-          parameters: maskedParameters,
-        })
+        if (partialInfo.config.options?.logRun == null ||
+          partialInfo.config.options?.logRun == undefined ||
+          partialInfo.config.options?.logRun) {
+          targetInfo.partials.push({
+            path: `${targetInfo.template.name}/${partialPath}`,
+            parameters: maskedParameters,
+          })
+        }
 
-        resolve(await fsUtil.writeJSON(path.join(targetPath, this.config.scfFileName), scfConfig))
+        resolve(await fsUtil.writeJSON(path.join(targetPath, this.config.scfFileName), targetInfo))
       } catch (error) {
         reject(error)
       }

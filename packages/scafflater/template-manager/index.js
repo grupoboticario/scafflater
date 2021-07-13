@@ -1,5 +1,6 @@
 const path = require('path')
 const fsUtil = require('../fs-util')
+const {npmInstall} = require('../util')
 const TemplateCache = require('../template-cache')
 const TemplateSource = require('../template-source')
 

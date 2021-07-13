@@ -1,12 +1,13 @@
 const ConfigProvider = require('../config-provider');
-const HandlebarsProcessor = require('../generator/processors/handlebars-processor')
+const Handlebars = require('handlebars')
+const { exec } = require('child_process')
 
 const maskParameters = (parameters, templateParameters) => {
-  if(!templateParameters || !parameters)
+  if (!templateParameters || !parameters)
     return parameters
 
   for (const p of templateParameters) {
-    if(p.mask){
+    if (p.mask) {
       parameters[p.name] = '******'
     }
   }
@@ -20,13 +21,27 @@ const maskParameters = (parameters, templateParameters) => {
 * @param {string} comment - The comment content
 * @return {string} The comment 
 */
-const buildLineComment = (config, comment) =>{
-  const processor = new HandlebarsProcessor()
+const buildLineComment = (config, comment) => {
+  return Handlebars.compile(config.lineCommentTemplate, { noEscape: true })({ comment })
+}
 
-  return processor.process({ comment }, config.lineCommentTemplate).result
+const npmInstall = (packagePath) => {
+  return new Promise((resolve, reject) => {
+    exec(
+      'npm install',
+      { cwd: packagePath },
+      (error, stdout, stderr) => {
+        if (error) {
+          reject(error.message)
+          return
+        }
+        resolve(stdout);
+      })
+  })
 }
 
 module.exports = {
   maskParameters,
-  buildLineComment
+  buildLineComment,
+  npmInstall
 }

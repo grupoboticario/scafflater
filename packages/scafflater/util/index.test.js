@@ -1,8 +1,24 @@
 const {
   maskParameters, 
-  buildLineComment} = require('./')
+  buildLineComment,
+  npmInstall
+} = require('./')
 const ConfigProvider = require('../config-provider')
+const { exec } = require('child_process')
 
+jest.mock('child_process')
+
+test('npmInstall', async () => {
+  // ARRANGE
+
+  // ACT
+  await npmInstall('some/folder')
+
+  // ASSERT
+  expect(exec.mock.calls[0][0]).toBe('npm install')
+  expect(exec.mock.calls[0][1]).toStrictEqual({ cwd: 'some/folder' })
+
+})
 
 test('Mask Parameters', () => {
   // ARRANGE

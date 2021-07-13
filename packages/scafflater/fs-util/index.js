@@ -5,6 +5,7 @@ const glob = require('glob')
 const path = require('path')
 const { EOL } = require('os')
 const stripJsonComments = require('strip-json-comments')
+const util = require('../util')
 
 /**
 * Loads js
@@ -13,6 +14,109 @@ const stripJsonComments = require('strip-json-comments')
 */
 fs.require = (jsPath) => {
   return require(jsPath)
+}
+
+/** 
+* Looks for file uo.
+* @param {string} startPath - Path to start search
+* @param {string} fileName - File name to look for
+* @return {Promise<string>} The found file path
+*/
+fs.findFileUp = async (startPath, fileName) => {
+  return new Promise(async (resolve, reject) => {
+    const parts = path.dirname(startPath).split(path.sep)
+    parts[0] = parts[0] === '' ? '/' : parts[0]
+    while (parts.length > 0) {
+      const tryPath = path.join(...parts, fileName)
+      if (await fs.pathExists(tryPath)) {
+        resolve(tryPath)
+        return
+      }
+      parts.pop()
+    }
+    reject(new Error('File not found'))
+  })
+}
+
+fs.loadScriptsAsObjects = (folderPath, npmInstall = false) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const jsList = await fs.listJsScripts(folderPath, npmInstall)
+      const result = {}
+
+      for (const key in jsList) {
+        if (Object.hasOwnProperty.call(jsList, key)) {
+          const js = jsList[key]
+          result[js.jsName] = js.object
+        }
+      }
+
+      // for (const js of jsList) {
+      //   result[js.jsName] = js.object
+      // }
+
+      resolve(result);
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+/**
+ * @typedef {Object} JsFile
+ * @property {string} filePath - The js file path
+ * @property {string} fileName - The js file name
+ * @property {object} object - The object loaded with required
+ * @property {string} jsName - The filename without extension (.js)
+ */
+/** 
+* Lists js scripts in a folder name.
+* @param {string} folderPath - Folder to list scripts
+* @param {boolean} npmInstall - If true, will run 'npm install' in the parent package
+* @return {Promise<JsFile>} The loaded scripts details
+*/
+fs.listJsScripts = (folderPath, npmInstall = false) => {
+  return new Promise(async (resolve, reject) => {
+    if (!folderPath || !await fs.pathExists(folderPath)) {
+      resolve([])
+      return
+    }
+
+    const jsList = await fs.listFilesByExtensionDeeply(folderPath, 'js')
+    if(!jsList)
+    {
+      resolve([])
+      return
+    }
+
+    if (npmInstall) {
+      const packageJsonPath = await fs.findFileUp(folderPath, 'package.json')
+      if (!packageJsonPath) {
+        reject(new Error(`No package found for folder '${folderPath}'`))
+        return
+      }
+      await util.npmInstall(path.dirname(packageJsonPath))
+    }
+
+    const result = []
+    for (const js of jsList) {
+      try {
+        if (js.endsWith('.test.js')) continue
+
+        result.push({
+          filePath: js,
+          fileName: path.basename(js),
+          object: fs.require(js),
+          jsName: path.basename(js, '.js')
+        })
+      } catch (error) {
+        reject(error)
+        return
+      }
+    }
+
+    resolve(result)
+  })
 }
 
 /**
@@ -82,6 +186,17 @@ fs.readJSON = async (filePath) => {
     }
   })
 }
+
+/**
+* Reads an Json file
+* @param {string} filePath - Source
+* @param {string} filePath - Source
+* @returns {Promise<object>} The Json object
+*/
+fs.writeJSON = async (filePath, obj, indent = true) => {
+  return fs.writeFile(filePath, JSON.stringify(obj, null, indent ? 2 : null))
+}
+
 
 /**
 * Saves the file, ensuring that destiny folder exists and formatting text if it is an append operation.

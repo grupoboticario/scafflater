@@ -29,10 +29,12 @@ class RegionAppender extends Appender {
           let destRegion = regionProvider.getRegions(destStr).find(r => r.name === srcRegion.name)
           let destContent = destRegion ? destRegion.content : ''
 
-          const configFromFile = await ConfigProvider.extractConfigFromString(srcRegion.content, context.config)
-          const _ctx = { ...context }
-          _ctx.config = configFromFile.config
-          destContent = (await super.append(_ctx, configFromFile.fileContent, destContent)).result
+          const config = await ConfigProvider.extractConfigFromString(srcRegion.content, context.config)
+          const _ctx = { 
+            ...context,
+            config
+          }
+          destContent = (await super.append(_ctx, srcRegion.content, destContent)).result
 
           if (destRegion) {
             destStr =

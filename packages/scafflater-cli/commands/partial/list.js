@@ -21,7 +21,7 @@ class ListPartialCommand extends Command {
       const config = {  
         ...new ConfigProvider(), 
         ...{ 
-          cacheStorage: 'homeDir' 
+          //cacheStorage: 'homeDir' 
         }
       }
 

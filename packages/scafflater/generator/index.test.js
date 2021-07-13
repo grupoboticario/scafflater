@@ -11,6 +11,7 @@ describe('Generator Tests', () => {
     jest.clearAllMocks()
     jest.restoreAllMocks()
   })
+  
   test('Render a simple file', async () => {
     // ARRANGE
     const ctx = {
@@ -52,6 +53,7 @@ describe('Generator Tests', () => {
     })
     fsUtil.listFilesByExtensionDeeply.mockResolvedValue(['lineComment.js'])
     fsUtil.require.mockReturnValue(require('./processors/hbs-builtin-helpers/lineComment'))
+    fsUtil.loadScriptsAsObjects.mockResolvedValue([])
     const generator = new Generator(ctx)
 
     // ACT
@@ -128,6 +130,8 @@ a sample test
       if (path.startsWith(ctx.targetPath))
         return true;
     })
+    fsUtil.loadScriptsAsObjects.mockResolvedValue([])
+    fsUtil.listFilesByExtensionDeeply.mockResolvedValue([])
     const generator = new Generator(ctx)
 
     // ACT
@@ -179,7 +183,8 @@ a sample test
       type: 'file',
       extension: '.txt',
     })
-
+    fsUtil.loadScriptsAsObjects.mockResolvedValue([])
+    fsUtil.listFilesByExtensionDeeply.mockResolvedValue([])
     fsUtil.readFileContent.mockImplementation(path => {
       return `
       # @scf-config {"ignore":true}
@@ -224,7 +229,8 @@ a sample test
       type: 'file',
       extension: '.txt',
     })
-
+    fsUtil.loadScriptsAsObjects.mockResolvedValue([])
+    fsUtil.listFilesByExtensionDeeply.mockResolvedValue([])
     fsUtil.readFileContent.mockImplementation(path => {
       return `
       # @scf-config {"targetName":""}
@@ -269,7 +275,8 @@ a sample test
       type: 'file',
       extension: '.txt',
     })
-
+    fsUtil.loadScriptsAsObjects.mockResolvedValue([])
+    fsUtil.listFilesByExtensionDeeply.mockResolvedValue([])
     fsUtil.readFileContent.mockImplementation(path => {
       return `
       # @scf-config {"targetName":"other-name.txt"}
@@ -334,6 +341,9 @@ a sample test
       if (path.startsWith(ctx.targetPath))
         return false;
     })
+    fsUtil.loadScriptsAsObjects.mockResolvedValue([])
+    fsUtil.listFilesByExtensionDeeply.mockResolvedValue([])
+    
     const generator = new Generator(ctx)
 
     // ACT
@@ -388,6 +398,8 @@ a sample test
         }],
       })
     fsUtil.readFileContent.mockReturnValue('{{parameters.test}}')
+    fsUtil.loadScriptsAsObjects.mockResolvedValue([])
+    fsUtil.listFilesByExtensionDeeply.mockResolvedValue([])
     const ctx = {
       originPath: '/source/path',
       partial: {
