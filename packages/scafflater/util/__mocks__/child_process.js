@@ -1,5 +1,5 @@
 
 
 module.exports = {
-  exec: jest.fn()
+  execSync: jest.fn()
 }
