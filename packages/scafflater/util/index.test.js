@@ -4,61 +4,69 @@ const { execSync } = require("child_process");
 
 jest.mock("child_process");
 
-test("npmInstall", async () => {
-  // ARRANGE
+describe("util", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-  // ACT
-  await npmInstall("some/folder");
+  test("npmInstall", async () => {
+    // ARRANGE
 
-  // ASSERT
-  expect(execSync).toHaveBeenCalledWith("npm install", { cwd: "some/folder" });
-});
+    // ACT
+    await npmInstall("some/folder");
 
-test("Mask Parameters", () => {
-  // ARRANGE
-  const templateParameters = [
-    {
-      name: "shouldMask",
-      mask: true,
-    },
-    {
-      name: "shouldNotMask",
-      mask: false,
-    },
-    {
-      name: "shouldNotMask2",
-    },
-  ];
+    // ASSERT
+    expect(execSync).toHaveBeenCalledWith("npm install", {
+      cwd: "some/folder",
+    });
+  });
 
-  const parameters = {
-    shouldMask: "some-password",
-    shouldNotMask: 1,
-    shouldNotMask2: "open text",
-  };
+  test("Mask Parameters", () => {
+    // ARRANGE
+    const templateParameters = [
+      {
+        name: "shouldMask",
+        mask: true,
+      },
+      {
+        name: "shouldNotMask",
+        mask: false,
+      },
+      {
+        name: "shouldNotMask2",
+      },
+    ];
 
-  // ACT
-  const result = maskParameters(parameters, templateParameters);
+    const parameters = {
+      shouldMask: "some-password",
+      shouldNotMask: 1,
+      shouldNotMask2: "open text",
+    };
 
-  // ASSERT
-  expect(result.shouldMask).toBe("******");
-  expect(result.shouldNotMask).toBe(1);
-  expect(result.shouldNotMask2).toBe("open text");
-});
+    // ACT
+    const result = maskParameters(parameters, templateParameters);
 
-test("Build Line Comment", () => {
-  // ARRANGE
-  const config = new ConfigProvider();
-  const comment = "this is a comment";
-  const otherCofig = {
-    ...config,
-    lineCommentTemplate: "<!-- {{{comment}}} -->",
-  };
+    // ASSERT
+    expect(result.shouldMask).toBe("******");
+    expect(result.shouldNotMask).toBe(1);
+    expect(result.shouldNotMask2).toBe("open text");
+  });
 
-  // ACT
-  const result = buildLineComment(config, comment);
-  const result2 = buildLineComment(otherCofig, comment);
+  test("Build Line Comment", () => {
+    // ARRANGE
+    const config = new ConfigProvider();
+    const comment = "this is a comment";
+    const otherCofig = {
+      ...config,
+      lineCommentTemplate: "<!-- {{{comment}}} -->",
+    };
 
-  // ASSERT
-  expect(result).toBe("# this is a comment");
-  expect(result2).toBe("<!-- this is a comment -->");
+    // ACT
+    const result = buildLineComment(config, comment);
+    const result2 = buildLineComment(otherCofig, comment);
+
+    // ASSERT
+    expect(result).toBe("# this is a comment");
+    expect(result2).toBe("<!-- this is a comment -->");
+  });
 });
