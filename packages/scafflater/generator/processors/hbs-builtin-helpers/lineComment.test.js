@@ -1,4 +1,4 @@
-const ConfigProvider = require('../../../config-provider')
+const OptionsProvider = require('../../../options-provider')
 const lineComment = require('./lineComment')
 
 
@@ -9,7 +9,7 @@ test('lineComment handlebars helper', () => {
     fn: jest.fn(),
     data:{
       root: {
-        config: new ConfigProvider()
+        config: new OptionsProvider()
       }
     }
   }

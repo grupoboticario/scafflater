@@ -1,6 +1,6 @@
 /* eslint-disable node/no-unpublished-require */
 /* eslint-disable no-undef */
-const ConfigProvider = require('../config-provider')
+const OptionsProvider = require('../options-provider')
 const fsUtil = require('../fs-util')
 const TemplateCache = require('../template-cache')
 const TempDirCache = require('../template-cache/storages/temp-dir-cache')
@@ -24,7 +24,7 @@ describe('Template Manager tests', () => {
   test('getTemplateFromSource', async () => {
     // ARRANGE
     const templateManager = new TemplateManager()
-    templateManager.config = new ConfigProvider()
+    templateManager.config = new OptionsProvider()
     templateCache.storeTemplate.mockResolvedValue('the/cache/path')
     templateSource.getTemplate.mockResolvedValue({ path: 'some/path' })
     fsUtil.readJSON.mockResolvedValue({name: 'some-template'})
@@ -98,7 +98,7 @@ describe('Template Manager tests', () => {
     templateCache.getTemplatePath.mockReturnValue('the/template/path')
     fsUtil.getTempFolder.mockReturnValue('some/temp/folder')
     fsUtil.listFilesByNameDeeply.mockReturnValue(null)
-    const templateManager = new TemplateManager(new ConfigProvider())
+    const templateManager = new TemplateManager(new OptionsProvider())
 
     // ACT
     const out = await templateManager.getPartial('the-partial-name', 'template')

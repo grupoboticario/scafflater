@@ -2,7 +2,7 @@ const TemplateSource = require('./')
 const GitUtil = require('../git-util')
 const fsUtil = require('../fs-util')
 const path = require('path')
-const ConfigProvider = require('../config-provider')
+const OptionsProvider = require('../options-provider')
 
 class GitTemplateSource extends TemplateSource {
   /**
@@ -10,7 +10,7 @@ class GitTemplateSource extends TemplateSource {
   * @param {?object} config - Scafflater configuration. If null, will get the default configuration.
   */
   constructor(config = {}) {
-    config = { ...new ConfigProvider(), ...config }
+    config = { ...new OptionsProvider(), ...config }
     super(config)
   }
 

@@ -1,6 +1,6 @@
 const { RegionProvider } = require('../region-provider')
 const Appender = require('./appender')
-const ConfigProvider = require('../../config-provider')
+const OptionsProvider = require('../../options-provider')
 
 class RegionAppender extends Appender {
 
@@ -29,7 +29,7 @@ class RegionAppender extends Appender {
           let destRegion = regionProvider.getRegions(destStr).find(r => r.name === srcRegion.name)
           let destContent = destRegion ? destRegion.content : ''
 
-          const config = await ConfigProvider.extractConfigFromString(srcRegion.content, context.config)
+          const config = await OptionsProvider.extractConfigFromString(srcRegion.content, context.config)
           const _ctx = { 
             ...context,
             config

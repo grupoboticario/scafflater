@@ -1,4 +1,4 @@
-const ConfigProvider = require("../config-provider")
+const OptionsProvider = require("../options-provider")
 
 /**
 * TemplateStorage factory.
@@ -9,7 +9,7 @@ class TemplateCache {
   * @param {?object} config - Scafflater configuration. If null, will get the default configuration.
   */
   constructor(config = {}) {
-    this.config = {...new ConfigProvider(), ...config}
+    this.config = {...new OptionsProvider(), ...config}
   }
 
   /**
@@ -19,7 +19,7 @@ class TemplateCache {
   * @return {TemplateCache} An specialized instance of TemplateStorage.
   */
   static getTemplateCache(config = {}) {
-    config = {...new ConfigProvider(), ...config}
+    config = {...new OptionsProvider(), ...config}
 
     if (!config.cacheStorages[config.cacheStorage]) {
       throw new Error(`There's no module for source '${config.cacheStorage}'`)

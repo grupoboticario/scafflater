@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 const fsUtil = require('../fs-util')
-const ConfigProvider = require('../config-provider')
+const OptionsProvider = require('../options-provider')
 const Generator = require('./')
 const { annotate } = require('./annotator/annotator')
 
@@ -31,7 +31,7 @@ describe('Generator Tests', () => {
       },
       targetPath: '/target/path',
       parameters: { test: 'a sample test' },
-      config: { ...new ConfigProvider(), ...{annotate: true} }
+      config: { ...new OptionsProvider(), ...{annotate: true} }
     }
     fsUtil.getDirTreeSync.mockReturnValue({
       path: 'just/a/sample/test.txt',
@@ -110,7 +110,7 @@ a sample test
         password: 'password',
         otherPassword: 'other-password',
       },
-      config: { ...new ConfigProvider(), ...{annotate: true}}
+      config: { ...new OptionsProvider(), ...{annotate: true}}
     }
     fsUtil.getDirTreeSync.mockReturnValue({
       path: 'just/a/sample/test.txt',
@@ -174,7 +174,7 @@ a sample test
       },
       targetPath: '/target/path',
       parameters: { test: 'a sample test' },
-      config: new ConfigProvider()
+      config: new OptionsProvider()
     }
     fsUtil.getDirTreeSync.mockReturnValue({
       path: 'just/a/sample/test.txt',
@@ -187,7 +187,7 @@ a sample test
     fsUtil.listFilesByExtensionDeeply.mockResolvedValue([])
     fsUtil.readFileContent.mockImplementation(path => {
       return `
-      # @scf-config {"ignore":true}
+      # @scf-option {"ignore":true}
       
       the file content
       `
@@ -220,7 +220,7 @@ a sample test
       },
       targetPath: '/target/path',
       parameters: { test: 'a sample test' },
-      config: new ConfigProvider()
+      config: new OptionsProvider()
     }
     fsUtil.getDirTreeSync.mockReturnValue({
       path: 'just/a/sample/test.txt',
@@ -233,7 +233,7 @@ a sample test
     fsUtil.listFilesByExtensionDeeply.mockResolvedValue([])
     fsUtil.readFileContent.mockImplementation(path => {
       return `
-      # @scf-config {"targetName":""}
+      # @scf-option {"targetName":""}
       
       the file content
       `
@@ -266,7 +266,7 @@ a sample test
       },
       targetPath: '/target/path',
       parameters: { test: 'a sample test' },
-      config: new ConfigProvider()
+      config: new OptionsProvider()
     }
     fsUtil.getDirTreeSync.mockReturnValue({
       path: 'just/a/sample/test.txt',
@@ -279,7 +279,7 @@ a sample test
     fsUtil.listFilesByExtensionDeeply.mockResolvedValue([])
     fsUtil.readFileContent.mockImplementation(path => {
       return `
-      # @scf-config {"targetName":"other-name.txt"}
+      # @scf-option {"targetName":"other-name.txt"}
       
       the file content
       `
@@ -335,7 +335,7 @@ a sample test
         type: 'template',
         version: '0.0.1',
       },
-      config: { ...new ConfigProvider(), annotate: false }
+      config: { ...new OptionsProvider(), annotate: false }
     }
     fsUtil.pathExists.mockImplementation(path => {
       if (path.startsWith(ctx.targetPath))
@@ -420,7 +420,7 @@ a sample test
         type: 'template',
         version: '0.0.1',
       },
-      config: { ...new ConfigProvider(), annotate: false }
+      config: { ...new OptionsProvider(), annotate: false }
     }
     const generator = new Generator(ctx)
 

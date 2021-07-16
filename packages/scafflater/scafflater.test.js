@@ -3,7 +3,7 @@ const Scafflater = require('./scafflater')
 const fsUtil = require('./fs-util')
 const TemplateManager = require('./template-manager')
 const Generator = require('./generator')
-const ConfigProvider = require('./config-provider')
+const OptionsProvider = require('./options-provider')
 
 jest.mock('./template-manager')
 jest.mock('./fs-util')
@@ -16,7 +16,7 @@ describe('Scafflater', () => {
 
   const generator = new Generator()
   const templateManager = new TemplateManager()
-  templateManager.config = new ConfigProvider()
+  templateManager.config = new OptionsProvider()
 
   test('Simple init', async () => {
     // ARRANGE

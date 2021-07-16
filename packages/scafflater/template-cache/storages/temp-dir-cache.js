@@ -1,5 +1,5 @@
 const path = require('path')
-const ConfigProvider = require('../../config-provider')
+const OptionsProvider = require('../../options-provider')
 const FileSystemUtils = require('../../fs-util')
 const DirCache = require('./dir-cache')
 
@@ -9,7 +9,7 @@ const DirCache = require('./dir-cache')
 */
 class TempDirCache extends DirCache {
   constructor(config = {}) {
-    config = {...new ConfigProvider(), ...config}
+    config = {...new OptionsProvider(), ...config}
     super(FileSystemUtils.getTempFolderSync(), config)
   }
 }

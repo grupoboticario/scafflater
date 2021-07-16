@@ -6,13 +6,13 @@ const { RegionProvider } = require('../generator/region-provider')
  * @typedef {object} Config
  * @description The generation configuration
  */
-class ConfigProvider {
+class OptionsProvider {
 
   constructor() {
     this.lineCommentTemplate = '# {{{comment}}}'
     this.startRegionMarker = '@scf-region'
     this.endRegionMarker = '@end-scf-region'
-    this.configMarker = '@scf-config'
+    this.optionMarker = '@scf-option'
     // Can be handlebars
     this.targetName = null
     this.ignore = false
@@ -58,7 +58,7 @@ class ConfigProvider {
   /** 
   * Merge the folder config
   * @param {string} folderPath Folder to load the config
-  * @return {Promise<ConfigProvider>} The merged config
+  * @return {Promise<OptionsProvider>} The merged config
   */
   static mergeFolderConfig(folderPath, config) {
     return new Promise(async (resolve, reject) => {
@@ -81,7 +81,7 @@ class ConfigProvider {
   /** 
   * Merge the file config
   * @param {string} folderPath File to load the config
-  * @return {Promise<ConfigProvider>} The merged config
+  * @return {Promise<OptionsProvider>} The merged config
   */
   static extractConfigFromFileContent(filePath, config) {
     return new Promise(async (resolve, reject) => {
@@ -98,7 +98,7 @@ class ConfigProvider {
   static extractConfigFromString(str, config) {
     return new Promise(async (resolve, reject) => {
       try {
-        const configRegex = new RegExp(`.*${config.configMarker}\\s*(?<json>{.*}).*`, 'gi')
+        const configRegex = new RegExp(`.*${config.optionMarker}\\s*(?<json>{.*}).*`, 'gi')
         const configs = str.matchAll(configRegex)
         let newConfig = {}
 
@@ -131,7 +131,7 @@ class ConfigProvider {
   static removeConfigFromString(str, config) {
     return new Promise(async (resolve, reject) => {
       try {
-        const configRegex = new RegExp(`.*${config.configMarker}\\s*(?<json>{.*}).*`, 'gi')
+        const configRegex = new RegExp(`.*${config.optionMarker}\\s*(?<json>{.*}).*`, 'gi')
         resolve(str.replace(configRegex, ''))
       } catch (error) {
         reject(error)
@@ -140,4 +140,4 @@ class ConfigProvider {
   }
 }
 
-module.exports = ConfigProvider
+module.exports = OptionsProvider

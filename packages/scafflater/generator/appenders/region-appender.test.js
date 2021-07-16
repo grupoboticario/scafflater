@@ -1,4 +1,4 @@
-const ConfigProvider = require('../../config-provider')
+const OptionsProvider = require('../../options-provider')
 const RegionAppender = require('./region-appender')
 
 test('Append to an existing region', async () => {
@@ -43,7 +43,7 @@ test('Append to an existing region', async () => {
   # @end-scf-region
   `
   const context = {
-    config: { ...new ConfigProvider(), annotate: false }
+    config: { ...new OptionsProvider(), annotate: false }
   }
   const regionAppender = new RegionAppender()
 
@@ -85,7 +85,7 @@ test('Replace an existing region', async () => {
   // ARRANGE
   const src = `
   # @scf-region test-region
-  # @scf-config {"appendStrategy":"replace"}
+  # @scf-option {"appendStrategy":"replace"}
 
   some new content
 
@@ -100,7 +100,7 @@ test('Replace an existing region', async () => {
   And this one is not in region too`
   
   const context = {
-    config: { ...new ConfigProvider(), annotate: false }
+    config: { ...new OptionsProvider(), annotate: false }
   }
   const regionAppender = new RegionAppender()
 
@@ -110,7 +110,7 @@ test('Replace an existing region', async () => {
   // ASSERT
   expect(result.result).toEqual(`This content is not in regions
   # @scf-region test-region
-  # @scf-config {"appendStrategy":"replace"}
+  # @scf-option {"appendStrategy":"replace"}
 
   some new content
 
@@ -143,7 +143,7 @@ test('Append to non existing region, should create region', async () => {
   some content without regions
   `
   const context = {
-    config: { ...new ConfigProvider(), annotate: false }
+    config: { ...new OptionsProvider(), annotate: false }
   }
   const regionAppender = new RegionAppender()
 

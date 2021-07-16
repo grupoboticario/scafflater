@@ -1,5 +1,5 @@
 const { maskParameters, buildLineComment, npmInstall } = require("./");
-const ConfigProvider = require("../config-provider");
+const OptionsProvider = require("../options-provider");
 const { execSync } = require("child_process");
 
 jest.mock("child_process");
@@ -54,7 +54,7 @@ describe("util", () => {
 
   test("Build Line Comment", () => {
     // ARRANGE
-    const config = new ConfigProvider();
+    const config = new OptionsProvider();
     const comment = "this is a comment";
     const otherCofig = {
       ...config,

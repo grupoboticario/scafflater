@@ -7,7 +7,7 @@ const {promptMissingParameters, spinner} = require('../util')
 const fsUtil = require('scafflater/fs-util')
 const path = require('path')
 const logger = require('scafflater/logger')
-const ConfigProvider = require('scafflater/config-provider')
+const OptionsProvider = require('scafflater/options-provider')
 
 class InitCommand extends Command {
   async run() {
@@ -15,9 +15,9 @@ class InitCommand extends Command {
       const {args: iniArgs, flags: initFlags} = this.parse(InitCommand)
 
       const config = {  
-        ...new ConfigProvider(), 
+        ...new OptionsProvider(), 
         ...{ 
-          cacheStorage: 'homeDir' 
+          cacheStorage: initFlags.cache 
         }
       }
 
@@ -55,8 +55,10 @@ InitCommand.args = [
   {name: 'Git_Hub_Repository', require: true},
 ]
 
+const caches = ['homeDir', 'tempDir']
 InitCommand.flags = {
   output: flags.string({char: 'o', description: 'The output folder', default: './'}),
+  cache: flags.string({ char: 'c', description: 'The cache strategy', default: 'homeDir', options: caches }),
   parameters: flags.string({char: 'p', description: 'The parameters to init template', default: [], multiple: true}),
 }
 

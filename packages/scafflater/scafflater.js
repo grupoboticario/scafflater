@@ -2,7 +2,7 @@ const TemplateManager = require('./template-manager')
 const Generator = require('./generator')
 const fsUtil = require('./fs-util')
 const path = require('path')
-const ConfigProvider = require('./config-provider')
+const OptionsProvider = require('./options-provider')
 const { maskParameters } = require('./util')
 
 /**
@@ -15,7 +15,7 @@ class Scafflater {
   * @param {string} sourceKey - The source key
   */
   constructor(config = {}, templateManager = null) {
-    this.config = { ...new ConfigProvider(), ...config }
+    this.config = { ...new OptionsProvider(), ...config }
     this.templateManager = templateManager ?? new TemplateManager(this.config)
   }
 

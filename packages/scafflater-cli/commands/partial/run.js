@@ -7,21 +7,21 @@ const path = require('path')
 const logger = require('scafflater/logger')
 const chalk = require('chalk')
 const inquirer = require('inquirer')
-const ConfigProvider = require('scafflater/config-provider')
+const OptionsProvider = require('scafflater/options-provider')
 
 class RunPartialCommand extends Command {
   async run() {
     try {
-      const { args, flags } = this.parse(RunPartialCommand)
+      const { args: runArgs, flags: runFlags } = this.parse(RunPartialCommand)
 
       const config = {  
-        ...new ConfigProvider(), 
+        ...new OptionsProvider(), 
         ...{ 
-          cacheStorage: 'homeDir' 
+          cacheStorage: runFlags.cache 
         }
       }
 
-      const outputInfoPath = path.join(flags.output, config.scfFileName)
+      const outputInfoPath = path.join(runFlags.output, config.scfFileName)
       if (!fsUtils.pathExistsSync(outputInfoPath)) {
         logger.error('The template is not initialized!')
         logger.error(`Run ${chalk.bold('init')} to initialize the template at the ${chalk.bold('output folder')} before running partials!`)
@@ -53,13 +53,13 @@ class RunPartialCommand extends Command {
       }
 
       let partial = null
-      if (args.PARTIAL_NAME && args.PARTIAL_NAME.length > 0) {
+      if (runArgs.PARTIAL_NAME && runArgs.PARTIAL_NAME.length > 0) {
         // Validating partialName flag
         partial = partials.find(p => {
-          return p.config.name === args.PARTIAL_NAME
+          return p.config.name === runArgs.PARTIAL_NAME
         })
         if (!partial) {
-          logger.error(`The partial '${chalk.bold(args.PARTIAL_NAME)}' is not available at template '${chalk.bold(outputInfo.template.name)}' (version ${chalk.bold(outputInfo.template.version)})`)
+          logger.error(`The partial '${chalk.bold(runArgs.PARTIAL_NAME)}' is not available at template '${chalk.bold(outputInfo.template.name)}' (version ${chalk.bold(outputInfo.template.version)})`)
           logger.error(`Run '${chalk.bold('scafflater-cli partial:list')}' to see the partials for this template`)
           return
         }
@@ -77,11 +77,11 @@ class RunPartialCommand extends Command {
         })
       }
 
-      const parameters = await promptMissingParameters(flags.parameters, partial.config.parameters)
+      const parameters = await promptMissingParameters(runFlags.parameters, partial.config.parameters)
 
       await spinner('Running partial template', async () => {
         const scafflater = new Scafflater(config, manager)
-        await scafflater.runPartial(partial.config.name, parameters, flags.output)
+        await scafflater.runPartial(partial.config.name, parameters, runFlags.output)
       })
 
       logger.log('notice', 'Partial results appended to output!')
@@ -104,8 +104,10 @@ RunPartialCommand.args = [
   },
 ]
 
+const caches = ['homeDir', 'tempDir']
 RunPartialCommand.flags = {
   output: flags.string({ char: 'o', description: 'The output folder', default: './' }),
+  cache: flags.string({ char: 'c', description: 'The cache strategy', default: 'homeDir', options: caches }),
   parameters: flags.string({ char: 'p', description: 'The parameters to init template', default: [], multiple: true }),
 }
 

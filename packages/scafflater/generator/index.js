@@ -2,7 +2,7 @@ const path = require('path')
 const fsUtil = require('../fs-util')
 const Processor = require('./processors/processor')
 const Appender = require('./appenders/appender')
-const ConfigProvider = require('../config-provider')
+const OptionsProvider = require('../options-provider')
 const HandlebarsProcessor = require('./processors/handlebars-processor')
 
 /**
@@ -137,7 +137,7 @@ class Generator {
       const appenders = _ctx.config.appenders.map(a => new (require(a))())
       const result = await Appender.runAppendersPipeline(appenders, _ctx, srcContent, targetContent)
 
-      promises.push(fsUtil.saveFile(targetPath, await ConfigProvider.removeConfigFromString(result, _ctx.config), false))
+      promises.push(fsUtil.saveFile(targetPath, await OptionsProvider.removeConfigFromString(result, _ctx.config), false))
 
     }
 
@@ -153,12 +153,12 @@ class Generator {
   async loadConfig(tree, context) {
     if (tree.type === 'directory') {
       const dirPath = path.join(context.originPath, tree.name)
-      return ConfigProvider.mergeFolderConfig(dirPath, context.config)
+      return OptionsProvider.mergeFolderConfig(dirPath, context.config)
     }
 
     if (tree.type === 'file') {
       const filePath = path.join(context.originPath, tree.name)
-      return ConfigProvider.extractConfigFromFileContent(filePath, context.config)
+      return OptionsProvider.extractConfigFromFileContent(filePath, context.config)
     }
   }
 }

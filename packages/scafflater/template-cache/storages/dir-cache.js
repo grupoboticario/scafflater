@@ -2,7 +2,7 @@ const TemplateCache = require('..')
 const path = require('path')
 const fsUtil = require('../../fs-util')
 const sort = require('version-sort')
-const ConfigProvider = require('../../config-provider')
+const OptionsProvider = require('../../options-provider')
 
 /**
 * Stores templates in the local file system
@@ -10,7 +10,7 @@ const ConfigProvider = require('../../config-provider')
 */
 class DirCache extends TemplateCache {
   constructor(storagePath, config = {}) {
-    config = { ...new ConfigProvider(), ...config }
+    config = { ...new OptionsProvider(), ...config }
     super(config)
     this.storagePath = storagePath
     this.config = config

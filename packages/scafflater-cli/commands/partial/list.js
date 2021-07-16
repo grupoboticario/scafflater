@@ -5,7 +5,7 @@ const fsUtil = require('scafflater/fs-util')
 const path = require('path')
 const logger = require('scafflater/logger')
 const chalk = require('chalk')
-const ConfigProvider = require('scafflater/config-provider')
+const OptionsProvider = require('scafflater/options-provider')
 
 class ListPartialCommand extends Command {
   async run() {
@@ -19,7 +19,7 @@ class ListPartialCommand extends Command {
       }
 
       const config = {  
-        ...new ConfigProvider(), 
+        ...new OptionsProvider(), 
         ...{ 
           //cacheStorage: 'homeDir' 
         }
