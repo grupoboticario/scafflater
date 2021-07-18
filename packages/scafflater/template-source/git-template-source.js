@@ -40,25 +40,23 @@ class GitTemplateSource extends LocalFolderTemplateSource {
     );
 
     const { path: out } = await super.getTemplate(pathToClone, outputDir);
-    const config = await fsUtil.readJSON(path.join(out, ".scafflater"));
+    const config = {
+      ...(await fsUtil.readJSON(path.join(out, ".scafflater"))),
+      source: {
+        name: "github",
+        key: sourceKey,
+        github: {
+          baseUrl: this.options.github_baseUrl,
+          baseUrlApi: this.options.github_baseUrlApi,
+        },
+      },
+    };
 
     // TODO: Validate template configuration
 
     return Promise.resolve({
       path: out,
-      config: {
-        name: config.name,
-        version: config.version,
-        source: {
-          name: "github",
-          key: sourceKey,
-          github: {
-            baseUrl: this.options.github_baseUrl,
-            baseUrlApi: this.options.github_baseUrlApi,
-          },
-        },
-        parameters: config.parameters,
-      },
+      config,
     });
   }
 }

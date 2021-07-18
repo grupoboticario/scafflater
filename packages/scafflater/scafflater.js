@@ -28,10 +28,7 @@ class Scafflater {
   async run(originPath, parameters, templatePath, targetPath = "./", ctx = {}) {
     return new Promise(async (resolve, reject) => {
       try {
-        const options = new ScafflaterOptions({
-          ...this.options,
-          ...ctx.options,
-        });
+        const options = new ScafflaterOptions(ctx.options);
 
         const helpersPath = path.resolve(
           templatePath,
@@ -91,6 +88,7 @@ class Scafflater {
             config.version
           ),
           target: targetInfo,
+          options: config.options,
         };
 
         await this.run(templatePath, parameters, templatePath, targetPath, ctx);
@@ -157,6 +155,7 @@ class Scafflater {
           template: templateInfo,
           templatePath,
           target: targetInfo,
+          options: partialInfo.config.options,
         };
 
         await this.run(

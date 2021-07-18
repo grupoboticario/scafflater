@@ -1,5 +1,19 @@
-const { execSync } = require("child_process");
+const { exec } = require("child_process");
 
-module.exports = (packagePath) => {
-  execSync("npm install", { cwd: packagePath });
-};
+/**
+ * Executes npm install in a folder
+ * @param {string} packagePath - The path where npm install must be run
+ * @return {Promise<void>}
+ */
+function npmInstall(packagePath) {
+  return new Promise((resolve, reject) => {
+    exec("npm install", { cwd: packagePath }, (err) => {
+      if (err) {
+        reject(err);
+      }
+      resolve();
+    });
+  });
+}
+
+module.exports = npmInstall;

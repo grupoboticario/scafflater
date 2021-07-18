@@ -39,21 +39,19 @@ class LocalFolderTemplateSource extends TemplateSource {
             return !_this.options.ignores(sourceKey, sourcePath);
           },
         });
-        const config = await fsUtil.readJSON(path.join(out, ".scafflater"));
+        const config = {
+          ...(await fsUtil.readJSON(path.join(out, ".scafflater"))),
+          source: {
+            name: "localFolder",
+            key: sourceKey,
+          },
+        };
 
         // TODO: Validate template configuration
 
         resolve({
           path: out,
-          config: {
-            name: config.name,
-            version: config.version,
-            source: {
-              name: "localFolder",
-              key: sourceKey,
-            },
-            parameters: config.parameters,
-          },
+          config,
         });
       } catch (error) {
         reject(error);

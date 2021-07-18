@@ -78,14 +78,14 @@ fs.listJsScripts = (folderPath, npmInstall = false) => {
       return;
     }
 
-    const jsList = await fs.listFilesByExtensionDeeply(folderPath, "js");
+    const jsList = await fs.listFilesDeeply(folderPath, "/*.js");
     if (!jsList) {
       resolve([]);
       return;
     }
 
     if (npmInstall) {
-      npmInstallExec(folderPath);
+      await npmInstallExec(folderPath);
     }
 
     const result = [];
