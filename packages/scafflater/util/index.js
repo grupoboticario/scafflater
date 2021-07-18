@@ -1,5 +1,4 @@
 const Handlebars = require("handlebars");
-const ScafflaterOptions = require("../options-provider");
 
 const maskParameters = (parameters, templateParameters) => {
   if (!templateParameters || !parameters) return parameters;

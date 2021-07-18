@@ -15,7 +15,7 @@ describe("npmInstall", () => {
       callback();
     });
     exec.mockImplementationOnce((cmd, opt, callback) => {
-      callback("one error ocurred");
+      callback(new Error("one error ocurred"));
     });
 
     // ACT
@@ -28,6 +28,6 @@ describe("npmInstall", () => {
       { cwd: "some/folder" },
       expect.anything()
     );
-    expect(callWithError).rejects;
+    await expect(callWithError).rejects.toThrow("one error ocurred");
   });
 });

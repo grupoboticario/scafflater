@@ -1,4 +1,4 @@
-const { maskParameters, buildLineComment, npmInstall } = require("./");
+const { maskParameters, buildLineComment } = require("./");
 const OptionsProvider = require("../options-provider");
 
 describe("util", () => {

@@ -1,8 +1,6 @@
-/* eslint-disable no-undef */
 const fsUtil = require("../fs-util");
 const ScafflaterOptions = require("../options-provider");
 const Generator = require("./");
-const { annotate } = require("./annotator/annotator");
 
 jest.mock("../fs-util");
 

@@ -1,4 +1,4 @@
-const JsonAppender = require('./json-appender')
+const JsonAppender = require("./json-appender");
 
 const destJson = `{
   "property": "the property",
@@ -8,9 +8,9 @@ const destJson = `{
   "arrayProperty": [
     "array item"
   ]
-}`
+}`;
 
-test('Append Json', async () =>{
+test("Append Json", async () => {
   // ARRANGE
   const srcJson = `{
     "new-property": "the property",
@@ -20,15 +20,16 @@ test('Append Json', async () =>{
     "arrayProperty": [
       "new array item"
     ]
-  }`
+  }`;
 
-  const jsonAppender = new JsonAppender()
+  const jsonAppender = new JsonAppender();
 
   // ACT
-  const result = await jsonAppender.append({}, srcJson, destJson)
+  const result = await jsonAppender.append({}, srcJson, destJson);
 
   // ASSERT
-  expect(JSON.parse(result.result)).toStrictEqual(JSON.parse(`{
+  expect(JSON.parse(result.result)).toStrictEqual(
+    JSON.parse(`{
     "property": "the property",
     "new-property": "the property",
     "objectProperty": {
@@ -39,5 +40,6 @@ test('Append Json', async () =>{
       "array item",
       "new array item"
     ]
-  }`))
-})
+  }`)
+  );
+});

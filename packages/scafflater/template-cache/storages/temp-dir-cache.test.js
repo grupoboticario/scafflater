@@ -1,22 +1,22 @@
 /* eslint-disable no-undef */
-const TempDirCache = require('./temp-dir-cache')
-const fsUtils = require('../../fs-util')
+const TempDirCache = require("./temp-dir-cache");
+const fsUtils = require("../../fs-util");
 
-jest.mock('../../fs-util')
+jest.mock("../../fs-util");
 
-describe('Home Dir source', () => {
+describe("Home Dir source", () => {
   afterEach(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
-  test('Should set path to .scafflater/templates in UserDir', async () => {
+  test("Should set path to .scafflater/templates in UserDir", async () => {
     // ARRANGE
-    fsUtils.getTempFolderSync.mockReturnValue('some/temp/path')
+    fsUtils.getTempFolderSync.mockReturnValue("some/temp/path");
 
     // ACT
-    const tempDirCache = new TempDirCache()
+    const tempDirCache = new TempDirCache();
 
     // ASSERT
-    expect(tempDirCache.storagePath).toBe('some/temp/path')
-  })
-})
+    expect(tempDirCache.storagePath).toBe("some/temp/path");
+  });
+});

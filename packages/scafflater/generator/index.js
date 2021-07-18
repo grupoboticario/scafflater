@@ -2,7 +2,6 @@ const path = require("path");
 const fsUtil = require("../fs-util");
 const Processor = require("./processors/processor");
 const Appender = require("./appenders/appender");
-const OptionsProvider = require("../options-provider");
 const HandlebarsProcessor = require("./processors/handlebars-processor");
 const prettier = require("prettier");
 
@@ -122,7 +121,7 @@ class Generator {
       const fileContent = await fsUtil.readFileContent(filePath);
 
       const processors = _ctx.options.processors.map((p) => new (require(p))());
-      let srcContent = Processor.runProcessorsPipeline(
+      const srcContent = Processor.runProcessorsPipeline(
         processors,
         _ctx,
         fileContent
@@ -142,7 +141,7 @@ class Generator {
         targetContent
       );
 
-      result = await _ctx.options.stripConfig(result);
+      result = _ctx.options.stripConfig(result);
 
       try {
         result = prettier.format(result, { filepath: targetPath });

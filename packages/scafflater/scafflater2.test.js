@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 const Scafflater = require("./scafflater");
 const fsUtil = require("./fs-util");
-const GitTemplateSource = require("./template-source/git-template-source");
 const git = require("isomorphic-git");
 
 jest.mock("./fs-util");

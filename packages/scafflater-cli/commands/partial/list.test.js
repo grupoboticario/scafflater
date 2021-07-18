@@ -35,7 +35,7 @@ describe("ListCommand", () => {
     // ACT
     await listCommand.run();
 
-    //ASSERT
+    // ASSERT
     expect(logger.error).toHaveBeenCalledWith(
       expect.stringMatching(/No partials available on template/)
     );
@@ -76,15 +76,15 @@ describe("ListCommand", () => {
     // ACT
     await listCommand.run();
 
-    //ASSERT
+    // ASSERT
     expect(logger.print).toHaveBeenCalledWith(
       expect.stringMatching(/PARTIALS/)
     );
     expect(logger.print).toHaveBeenCalledWith(
-      expect.stringMatching(/  partial-name\tPartial Description/)
+      expect.stringMatching(/ {2}partial-name\tPartial Description/)
     );
     expect(logger.print).toHaveBeenCalledWith(
-      expect.stringMatching(/  partial2-name\t/)
+      expect.stringMatching(/ {2}partial2-name\t/)
     );
   });
 });

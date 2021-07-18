@@ -2,7 +2,6 @@ const path = require("path");
 const fsUtil = require("../fs-util");
 const TemplateCache = require("../template-cache");
 const TemplateSource = require("../template-source");
-const ScafflaterOptions = require("../options-provider");
 
 /**
  * Template Manager factory
@@ -46,7 +45,7 @@ class TemplateManager {
     const templateInfo = await fsUtil.readJSON(
       path.resolve(templateFolder, this.options.scfFileName)
     );
-    templateInfo["path"] = templateFolder;
+    templateInfo.path = templateFolder;
     templateInfo.partials = [];
 
     for (const partial of await this.listPartials(
@@ -80,27 +79,19 @@ class TemplateManager {
    * @returns {Promise<object>} Object containing the config and the path to partial.
    */
   async getPartial(partialName, templateName, templateVersion = null) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const partials = await this.listPartials(templateName, templateVersion);
+    const partials = await this.listPartials(templateName, templateVersion);
 
-        if (!partials) {
-          resolve(null);
-          return;
-        }
+    if (!partials) {
+      return Promise.resolve(null);
+    }
 
-        const partial = partials.find((p) => p.config.name === partialName);
+    const partial = partials.find((p) => p.config.name === partialName);
 
-        if (!partial) {
-          resolve(null);
-          return;
-        }
+    if (!partial) {
+      return Promise.resolve(null);
+    }
 
-        resolve(partial);
-      } catch (error) {
-        reject(error);
-      }
-    });
+    return Promise.resolve(partial);
   }
 
   /**
@@ -110,43 +101,35 @@ class TemplateManager {
    * @returns {Promise<object[]>} Array of objects containing the config and the path to partial.
    */
   async listPartials(templateName, templateVersion = null) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const templatePath = await this.templateCache.getTemplatePath(
-          templateName,
-          templateVersion
-        );
-        if (!templatePath) {
-          resolve(null);
-          return;
-        }
+    const templatePath = await this.templateCache.getTemplatePath(
+      templateName,
+      templateVersion
+    );
+    if (!templatePath) {
+      return Promise.resolve(null);
+    }
 
-        const partialsPath = path.join(templatePath, "_partials");
-        const paths = await fsUtil.listFilesByNameDeeply(
-          partialsPath,
-          this.options.scfFileName
-        );
-        if (!paths) {
-          resolve(null);
-          return;
-        }
+    const partialsPath = path.join(templatePath, "_partials");
+    const paths = await fsUtil.listFilesByNameDeeply(
+      partialsPath,
+      this.options.scfFileName
+    );
+    if (!paths) {
+      return Promise.resolve(null);
+    }
 
-        const result = [];
-        for (const configPath of paths) {
-          const config = await fsUtil.readJSON(configPath);
-          if (config.type === "partial") {
-            result.push({
-              config,
-              path: path.dirname(configPath),
-            });
-          }
-        }
-
-        resolve(result);
-      } catch (error) {
-        reject(error);
+    const result = [];
+    for (const configPath of paths) {
+      const config = await fsUtil.readJSON(configPath);
+      if (config.type === "partial") {
+        result.push({
+          config,
+          path: path.dirname(configPath),
+        });
       }
-    });
+    }
+
+    return Promise.resolve(result);
   }
 }
 

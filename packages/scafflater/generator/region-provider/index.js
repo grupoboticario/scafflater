@@ -1,4 +1,3 @@
-const ScafflaterOptions = require("../../options-provider");
 const util = require("../../util");
 const RegionTagType = {
   Unknown: 0,
@@ -65,17 +64,17 @@ class RegionProvider {
    * @return {Region[]} A list of regions
    */
   getRegions(str) {
-    var completedRegions = [];
+    const completedRegions = [];
     const regionRegex = new RegExp(
       `(?<start>.*${this.options.startRegionMarker}) *(?<startName>.*)?.*$|(?<end>.*${this.options.endRegionMarker}.*$)`,
       "gim"
     );
     const regionMarkers = str.matchAll(regionRegex);
-    var startedRegions = [];
+    const startedRegions = [];
 
     for (const rm of regionMarkers) {
       if (rm.groups.start) {
-        var startRegionTag = new RegionTag(
+        const startRegionTag = new RegionTag(
           rm.groups.startName,
           rm.index,
           rm.index + rm[0].length,
@@ -93,19 +92,19 @@ class RegionProvider {
             `Found an end region with no matching start tag at position ${rm.index}`
           );
         }
-        var endTag = new RegionTag(
+        const endTag = new RegionTag(
           null,
           rm.index,
           rm.index + rm[0].length,
           RegionTagType.end
         );
 
-        var lastStartedRegion = startedRegions[startedRegions.length - 1];
-        var content = str.substring(
+        const lastStartedRegion = startedRegions[startedRegions.length - 1];
+        const content = str.substring(
           lastStartedRegion.startRegionTag.endPosition,
           endTag.startPosition
         );
-        var finishedRegion = new Region(
+        const finishedRegion = new Region(
           lastStartedRegion.parentRegion,
           lastStartedRegion.startRegionTag,
           endTag,
@@ -126,7 +125,7 @@ class RegionProvider {
 
     if (startedRegions.length > 0) {
       let errors = "";
-      for (let err of startedRegions) {
+      for (const err of startedRegions) {
         errors += `Found a started region with no matching end tag at position ${err.startPosition}`;
       }
       throw new Error(errors);
@@ -141,36 +140,30 @@ class RegionProvider {
    * @param {string} content - The Region Content
    * @return {Promise<string>} The content with the region appended
    */
-  appendRegion(region, content) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let regionStr =
-          util.buildLineComment(
-            this.options,
-            `${this.options.startRegionMarker} ${region.name}`
-          ) +
-          `\n` +
-          `${region.content}\n` +
-          util.buildLineComment(this.options, this.options.endRegionMarker) +
-          `\n`;
+  async appendRegion(region, content) {
+    let regionStr =
+      util.buildLineComment(
+        this.options,
+        `${this.options.startRegionMarker} ${region.name}`
+      ) +
+      `\n` +
+      `${region.content}\n` +
+      util.buildLineComment(this.options, this.options.endRegionMarker) +
+      `\n`;
 
-        if (region.parentRegion) {
-          const p = new Region(
-            region.parentRegion.parentRegion,
-            region.parentRegion.startRegionTag,
-            region.parentRegion.endRegionTag,
-            regionStr
-          );
-          regionStr = await this.appendRegion(p, null);
-        }
+    if (region.parentRegion) {
+      const p = new Region(
+        region.parentRegion.parentRegion,
+        region.parentRegion.startRegionTag,
+        region.parentRegion.endRegionTag,
+        regionStr
+      );
+      regionStr = await this.appendRegion(p, null);
+    }
 
-        resolve(
-          content && content.length > 0 ? `${content}\n${regionStr}` : regionStr
-        );
-      } catch (error) {
-        reject(error);
-      }
-    });
+    return Promise.resolve(
+      content && content.length > 0 ? `${content}\n${regionStr}` : regionStr
+    );
   }
 }
 

@@ -40,7 +40,7 @@ describe("ListCommand", () => {
     // ACT
     await runCommand.run();
 
-    //ASSERT
+    // ASSERT
     expect(logger.error).toHaveBeenCalledWith(
       expect.stringMatching(/No partials available on template/)
     );
@@ -81,7 +81,7 @@ describe("ListCommand", () => {
     // ACT
     await listCommand.run();
 
-    //ASSERT
+    // ASSERT
     expect(logger.error).toHaveBeenCalledWith(
       expect.stringMatching(/The partial '.*' is not available at template/)
     );
@@ -122,7 +122,7 @@ describe("ListCommand", () => {
     // ACT
     await listCommand.run();
 
-    //ASSERT
+    // ASSERT
     expect(new Scafflater().runPartial).toHaveBeenCalledWith(
       "partial-name",
       {},
@@ -166,7 +166,7 @@ describe("ListCommand", () => {
     // ACT
     await listCommand.run();
 
-    //ASSERT
+    // ASSERT
     expect(new Scafflater().runPartial).toHaveBeenCalledWith(
       "partial-name",
       {},

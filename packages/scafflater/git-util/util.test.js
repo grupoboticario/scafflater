@@ -1,46 +1,44 @@
 /* eslint-disable no-undef */
-const { runCommand } = require('./utils')
-const { spawn } = require('child_process')
+const { runCommand } = require("./utils");
+const { spawn } = require("child_process");
 
-jest.mock('child_process')
+jest.mock("child_process");
 
-
-describe('runCommand', () => {
-
-  test('Execute Command Successfully', async () => {
+describe("runCommand", () => {
+  test("Execute Command Successfully", async () => {
     // ARRANGE
-    const putStdout = []
-    const putOn = []
+    const putStdout = [];
+    const putOn = [];
     const process = {
       stdout: {
         setEncoding: jest.fn(),
         on: (event, fn) => {
-          putStdout[event] = fn
-        }
+          putStdout[event] = fn;
+        },
       },
       stderr: {
         setEncoding: jest.fn(),
         on: jest.fn(),
       },
       on: (event, fn) => {
-        putOn[event] = fn
-      }
-    }
-    spawn.mockReturnValue(process)
+        putOn[event] = fn;
+      },
+    };
+    spawn.mockReturnValue(process);
 
     // ACT
-    const premise = runCommand('ls')
-    putStdout['data']('test_output')
-    putOn['close'](0)
+    const premise = runCommand("ls");
+    putStdout.data("test_output");
+    putOn.close(0);
 
     // ASSERT
-    await expect(premise).resolves.toBe('test_output')
-  })
+    await expect(premise).resolves.toBe("test_output");
+  });
 
-  test('Execute Command with error messages', async () => {
+  test("Execute Command with error messages", async () => {
     // ARRANGE
-    const putStderr = []
-    const putOn = []
+    const putStderr = [];
+    const putOn = [];
     const process = {
       stdout: {
         setEncoding: jest.fn(),
@@ -49,29 +47,29 @@ describe('runCommand', () => {
       stderr: {
         setEncoding: jest.fn(),
         on: (event, fn) => {
-          putStderr[event] = fn
-        }
+          putStderr[event] = fn;
+        },
       },
       on: (event, fn) => {
-        putOn[event] = fn
-      }
-    }
-    spawn.mockReturnValue(process)
+        putOn[event] = fn;
+      },
+    };
+    spawn.mockReturnValue(process);
 
     // ACT
-    const premise = runCommand('ls')
-    putStderr['data']('ERROR MESSAGE')
-    putOn['close'](1)
+    const premise = runCommand("ls");
+    putStderr.data("ERROR MESSAGE");
+    putOn.close(1);
 
     // ASSERT
-    await expect(premise)
-      .rejects
-      .toBe("Error: Command ls failed, exit code 1: ERROR MESSAGE")
-  })
+    await expect(premise).rejects.toThrow(
+      "Error: Command ls failed, exit code 1: ERROR MESSAGE"
+    );
+  });
 
-  test('Command throws an error', async () => {
+  test("Command throws an error", async () => {
     // ARRANGE
-    const putOn = []
+    const putOn = [];
     const process = {
       stdout: {
         setEncoding: jest.fn(),
@@ -82,18 +80,16 @@ describe('runCommand', () => {
         on: jest.fn(),
       },
       on: (event, fn) => {
-        putOn[event] = fn
-      }
-    }
-    spawn.mockReturnValue(process)
+        putOn[event] = fn;
+      },
+    };
+    spawn.mockReturnValue(process);
 
     // ACT
-    const premise = runCommand('ls')
-    putOn['error']('ERROR MESSAGE')
+    const premise = runCommand("ls");
+    putOn.error("ERROR MESSAGE");
 
     // ASSERT
-    await expect(premise)
-      .rejects
-      .toBe("ERROR MESSAGE")
-  })
-})
+    await expect(premise).rejects.toBe("ERROR MESSAGE");
+  });
+});

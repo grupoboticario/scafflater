@@ -3,7 +3,7 @@ const HandlebarsProcessor = require("../processors/handlebars-processor");
 
 class Annotator {
   static annotate(context, content) {
-    let _ctx = { ...context };
+    const _ctx = { ...context };
     if (context.template) {
       _ctx.parameters = maskParameters(
         _ctx.parameters,

@@ -1,6 +1,5 @@
 const { Command, flags } = require("@oclif/command");
 const Scafflater = require("scafflater");
-const TemplateManager = require("scafflater/template-manager");
 const {
   promptMissingParameters,
   spinner,

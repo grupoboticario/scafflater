@@ -1,14 +1,14 @@
 const mock = {
   storeTemplate: jest.fn(),
-  getTemplatePath: jest.fn()
-}
+  getTemplatePath: jest.fn(),
+};
 
 module.exports = class TemplateCache {
   constructor() {
-    return mock
+    return mock;
   }
 
   static getTemplateCache() {
-    return mock
+    return mock;
   }
-}
+};

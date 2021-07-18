@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 const Prompt = require("./prompt");
 const inquirer = require("inquirer");
 
@@ -21,7 +20,7 @@ test("Prompt questions", async () => {
   ];
 
   // ACT
-  const result = await Prompt.prompt(questions);
+  await Prompt.prompt(questions);
 
   // ASSERT
   expect(inquirer.prompt.mock.calls.length).toBe(1);

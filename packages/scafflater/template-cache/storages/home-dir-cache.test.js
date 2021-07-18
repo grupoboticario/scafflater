@@ -1,22 +1,24 @@
 /* eslint-disable no-undef */
-const HomeDirCache = require('./home-dir-cache')
-const os = require('os')
+const HomeDirCache = require("./home-dir-cache");
+const os = require("os");
 
-jest.mock('os')
+jest.mock("os");
 
-describe('Home Dir source', () => {
+describe("Home Dir source", () => {
   afterEach(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
-  test('Should set path to .scafflater/templates in UserDir', async () => {
+  test("Should set path to .scafflater/templates in UserDir", async () => {
     // ARRANGE
-    os.homedir.mockReturnValue('/User/Home/Dir')
+    os.homedir.mockReturnValue("/User/Home/Dir");
 
     // ACT
-    const homeDirCache = new HomeDirCache()
+    const homeDirCache = new HomeDirCache();
 
     // ASSERT
-    expect(homeDirCache.storagePath).toBe('/User/Home/Dir/.scafflater/templates')
-  })
-})
+    expect(homeDirCache.storagePath).toBe(
+      "/User/Home/Dir/.scafflater/templates"
+    );
+  });
+});

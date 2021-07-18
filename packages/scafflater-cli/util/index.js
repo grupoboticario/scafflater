@@ -4,13 +4,11 @@ const path = require("path");
 const Prompt = require("./prompt");
 const fsUtil = require("scafflater/fs-util");
 const logger = require("scafflater/logger");
-const TemplateManager = require("scafflater/template-manager");
-
 const parseParametersFlags = (parameters) => {
   const result = {};
 
   parameters.forEach((param) => {
-    let m = /(?<name>.+)(?::)(?<value>.+)/g.exec(param);
+    const m = /(?<name>.+)(?::)(?<value>.+)/g.exec(param);
     if (m.length <= 0)
       throw new Error(
         "The parameters is not in the expected pattern: <parameter-name>:<parameter-value>"

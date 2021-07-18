@@ -186,8 +186,8 @@ describe("fs-utils", () => {
     const result = await fsUtils.loadScriptsAsObjects(filePath, false);
 
     // ASSERT
-    expect(result.onEnd != undefined).toBe(true);
-    expect(result.onStart != undefined).toBe(true);
-    //expect(true).toBe(true)
+    expect(result.onEnd !== undefined).toBe(true);
+    expect(result.onStart !== undefined).toBe(true);
+    // expect(true).toBe(true)
   });
 });

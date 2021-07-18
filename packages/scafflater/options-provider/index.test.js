@@ -131,10 +131,7 @@ describe("Config Provider", () => {
     `;
 
     // ACT
-    const newContent = await new ScafflaterOptions().stripConfig(
-      content,
-      config
-    );
+    const newContent = new ScafflaterOptions().stripConfig(content, config);
 
     // ASSERT
     expect(newContent.includes("@scf-option")).toBe(false);
@@ -153,10 +150,7 @@ describe("Config Provider", () => {
     `;
 
     // ACT
-    const newConfig = await new ScafflaterOptions().getConfigFromString(
-      str,
-      config
-    );
+    const newConfig = new ScafflaterOptions().getConfigFromString(str, config);
 
     // ASSERT
     expect(newConfig.processors[0]).toBe("processor1");
@@ -168,7 +162,7 @@ describe("Config Provider", () => {
     FileSystemUtils.readFileContent.mockResolvedValue(`the file content`);
 
     // ACT
-    const newConfig = await new ScafflaterOptions().getConfigFromString(
+    const newConfig = new ScafflaterOptions().getConfigFromString(
       "some-path",
       config
     );

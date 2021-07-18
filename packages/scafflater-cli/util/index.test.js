@@ -8,7 +8,6 @@ const inquirer = require("inquirer");
 const fsUtil = require("scafflater/fs-util");
 const logger = require("scafflater/logger");
 const TemplateManager = require("scafflater/template-manager");
-const Scafflater = require("scafflater");
 
 jest.mock("inquirer");
 jest.mock("scafflater/fs-util");
@@ -69,7 +68,7 @@ describe("listPartials", () => {
     // ACT
     await listPartials(new TemplateManager({}), mockedConfig, "./");
 
-    //ASSERT
+    // ASSERT
     expect(logger.error).toHaveBeenCalledWith(
       "The template is not initialized!"
     );
@@ -94,7 +93,7 @@ describe("listPartials", () => {
     // ACT
     await listPartials(new TemplateManager({}), mockedConfig, "./");
 
-    //ASSERT
+    // ASSERT
     expect(logger.error).toHaveBeenCalledWith(
       expect.stringMatching(/Cannot get template/)
     );
@@ -122,7 +121,7 @@ describe("listPartials", () => {
     // ACT
     await listPartials(new TemplateManager({}), mockedConfig, "./");
 
-    //ASSERT
+    // ASSERT
     expect(new TemplateManager({}).getTemplateFromSource).toHaveBeenCalled();
   });
 
@@ -146,7 +145,7 @@ describe("listPartials", () => {
     // ACT
     await listPartials(new TemplateManager({}), mockedConfig, "./");
 
-    //ASSERT
+    // ASSERT
     expect(logger.error).toHaveBeenCalledWith(
       expect.stringMatching(/No partials available on template/)
     );
@@ -190,7 +189,7 @@ describe("listPartials", () => {
       "./"
     );
 
-    //ASSERT
+    // ASSERT
     expect(partials.length).toBe(2);
   });
 });

@@ -1,37 +1,41 @@
-const fsUtils = require('.')
-const fs = require('fs-extra')
-jest.mock('fs-extra')
+const fsUtils = require(".");
+const fs = require("fs-extra");
+jest.mock("fs-extra");
 
 describe("Mock glob", () => {
-  beforeEach(()=>{
+  beforeEach(() => {
     jest.clearAllMocks();
-  })
+  });
 
-  test('Write JSON with indent', async () => {
+  test("Write JSON with indent", async () => {
     // ARRANGE
-    const obj = { prop: 'prop value'} 
-    const folderPath = 'some/path'
-  
+    const obj = { prop: "prop value" };
+    const folderPath = "some/path";
+
     // ACT
-    await fsUtils.writeJSON(folderPath, obj)
-  
+    await fsUtils.writeJSON(folderPath, obj);
+
     // ASSERT
-    expect(fs.writeFile).toHaveBeenCalledWith(folderPath,
-`{
+    expect(fs.writeFile).toHaveBeenCalledWith(
+      folderPath,
+      `{
   "prop": "prop value"
-}`)
-  })
+}`
+    );
+  });
 
-  test('Write JSON without indent', async () => {
+  test("Write JSON without indent", async () => {
     // ARRANGE
-    const obj = { prop: 'prop value'} 
-    const folderPath = 'some/path'
-  
-    // ACT
-    await fsUtils.writeJSON(folderPath, obj, false)
-  
-    // ASSERT
-    expect(fs.writeFile).toHaveBeenCalledWith(folderPath, '{"prop":"prop value"}')
-  })
+    const obj = { prop: "prop value" };
+    const folderPath = "some/path";
 
-})
+    // ACT
+    await fsUtils.writeJSON(folderPath, obj, false);
+
+    // ASSERT
+    expect(fs.writeFile).toHaveBeenCalledWith(
+      folderPath,
+      '{"prop":"prop value"}'
+    );
+  });
+});

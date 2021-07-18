@@ -1,13 +1,13 @@
 const mock = {
-  getTemplate: jest.fn()
-}
+  getTemplate: jest.fn(),
+};
 
 module.exports = class TemplateSource {
   constructor() {
-    return mock
+    return mock;
   }
 
   static getTemplateSource() {
-    return mock
+    return mock;
   }
-}
+};

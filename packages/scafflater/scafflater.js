@@ -26,35 +26,26 @@ class Scafflater {
    * @return {Promise<string} Brief description of the returning value here.
    */
   async run(originPath, parameters, templatePath, targetPath = "./", ctx = {}) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const options = new ScafflaterOptions(ctx.options);
+    const options = new ScafflaterOptions(ctx.options);
 
-        const helpersPath = path.resolve(
-          templatePath,
-          options.helpersFolderName
-        );
-        const hooksPath = path.resolve(templatePath, options.hooksFolderName);
+    const helpersPath = path.resolve(templatePath, options.helpersFolderName);
+    const hooksPath = path.resolve(templatePath, options.hooksFolderName);
 
-        const _ctx = {
-          ...ctx,
-          ...{
-            originPath,
-            parameters,
-            targetPath,
-            helpersPath,
-            hooksPath,
-            options,
-          },
-        };
+    const _ctx = {
+      ...ctx,
+      ...{
+        originPath,
+        parameters,
+        targetPath,
+        helpersPath,
+        hooksPath,
+        options,
+      },
+    };
 
-        await new Generator(_ctx).generate();
+    await new Generator(_ctx).generate();
 
-        resolve();
-      } catch (error) {
-        reject(error);
-      }
-    });
+    return Promise.resolve();
   }
 
   /**
@@ -62,140 +53,121 @@ class Scafflater {
    * @param {string} sourceKey - Source Template key
    * @param {object} parameters - Parameters used to generate partials
    * @param {string} targetPath - Path where the results must be placed
-   * @return {ReturnValueDataTypeHere} Brief description of the returning value here.
+   * @return {Promise<object>} Brief description of the returning value here.
    */
   async init(sourceKey, parameters, targetPath = "./") {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const { path: templatePath, config } =
-          await this.templateManager.templateSource.getTemplate(sourceKey);
+    const { path: templatePath, config } =
+      await this.templateManager.templateSource.getTemplate(sourceKey);
 
-        const maskedParameters = maskParameters(parameters, config.parameters);
+    const maskedParameters = maskParameters(parameters, config.parameters);
 
-        const targetInfo = {
-          template: {
-            name: config.name,
-            version: config.version,
-            source: { ...config.source },
-          },
-          parameters: maskedParameters,
-          partials: [],
-        };
+    const targetInfo = {
+      template: {
+        name: config.name,
+        version: config.version,
+        source: { ...config.source },
+      },
+      parameters: maskedParameters,
+      partials: [],
+    };
 
-        const ctx = {
-          template: await this.templateManager.getTemplateInfo(
-            config.name,
-            config.version
-          ),
-          target: targetInfo,
-          options: config.options,
-        };
+    const ctx = {
+      template: await this.templateManager.getTemplateInfo(
+        config.name,
+        config.version
+      ),
+      target: targetInfo,
+      options: config.options,
+    };
 
-        await this.run(templatePath, parameters, templatePath, targetPath, ctx);
+    await this.run(templatePath, parameters, templatePath, targetPath, ctx);
 
-        const scfFile = path.resolve(targetPath, this.options.scfFileName);
-        if (!fsUtil.pathExists(scfFile)) {
-          // If the file already exists, it means that the template generate one config file. Must not override.
-          await fsUtil.writeJSON(scfFile, targetInfo);
-        }
-        resolve(scfFile);
-      } catch (error) {
-        reject(error);
-      }
-    });
+    const scfFile = path.resolve(targetPath, this.options.scfFileName);
+    if (!fsUtil.pathExists(scfFile)) {
+      // If the file already exists, it means that the template generate one config file. Must not override.
+      await fsUtil.writeJSON(scfFile, targetInfo);
+    }
+    return Promise.resolve(scfFile);
   }
 
   /**
    * Brief description of the function here.
    * @summary If the description is long, write your summary here. Otherwise, feel free to remove this.
    * @param {ParamDataTypeHere} parameterNameHere - Brief description of the parameter here. Note: For other notations of data types, please refer to JSDocs: DataTypes command.
-   * @return {Promise<string} Brief description of the returning value here.
+   * @return {Promise<string>} Brief description of the returning value here.
    */
   async runPartial(partialPath, parameters, targetPath = "./") {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const targetInfo = await fsUtil.readJSON(
-          path.join(targetPath, this.options.scfFileName)
-        );
+    const targetInfo = await fsUtil.readJSON(
+      path.join(targetPath, this.options.scfFileName)
+    );
 
-        let partialInfo = await this.templateManager.getPartial(
-          partialPath,
-          targetInfo.template.name,
-          targetInfo.template.version
-        );
+    let partialInfo = await this.templateManager.getPartial(
+      partialPath,
+      targetInfo.template.name,
+      targetInfo.template.version
+    );
 
-        if (!partialInfo) {
-          // Trying to get the template
-          // TODO: Get template by version
-          await this.templateManager.getTemplateFromSource(
-            targetInfo.template.source.key
-          );
-          partialInfo = await this.templateManager.getPartial(
-            partialPath,
-            targetInfo.template.name,
-            targetInfo.template.version
-          );
-          if (!partialInfo) {
-            resolve(null);
-            return;
-          }
-        }
-
-        const templatePath = await this.templateManager.getTemplatePath(
-          targetInfo.template.name,
-          targetInfo.template.version
-        );
-        const templateInfo = await this.templateManager.getTemplateInfo(
-          targetInfo.template.name,
-          targetInfo.template.version
-        );
-
-        const ctx = {
-          partial: partialInfo.config,
-          template: templateInfo,
-          templatePath,
-          target: targetInfo,
-          options: partialInfo.config.options,
-        };
-
-        await this.run(
-          partialInfo.path,
-          parameters,
-          templatePath,
-          targetPath,
-          ctx
-        );
-
-        if (!targetInfo.partials) {
-          targetInfo.partials = [];
-        }
-
-        const maskedParameters = maskParameters(
-          parameters,
-          partialInfo.config.parameters
-        );
-
-        if (
-          partialInfo.config.options?.logRun == null ||
-          partialInfo.config.options?.logRun == undefined ||
-          partialInfo.config.options?.logRun
-        ) {
-          targetInfo.partials.push({
-            path: `${targetInfo.template.name}/${partialPath}`,
-            parameters: maskedParameters,
-          });
-        }
-
-        resolve(
-          await fsUtil.writeJSON(
-            path.join(targetPath, this.options.scfFileName),
-            targetInfo
-          )
-        );
-      } catch (error) {
-        reject(error);
+    if (!partialInfo) {
+      // Trying to get the template
+      // TODO: Get template by version
+      await this.templateManager.getTemplateFromSource(
+        targetInfo.template.source.key
+      );
+      partialInfo = await this.templateManager.getPartial(
+        partialPath,
+        targetInfo.template.name,
+        targetInfo.template.version
+      );
+      if (!partialInfo) {
+        return Promise.resolve(null);
       }
-    });
+    }
+
+    const templatePath = await this.templateManager.getTemplatePath(
+      targetInfo.template.name,
+      targetInfo.template.version
+    );
+    const templateInfo = await this.templateManager.getTemplateInfo(
+      targetInfo.template.name,
+      targetInfo.template.version
+    );
+
+    const ctx = {
+      partial: partialInfo.config,
+      template: templateInfo,
+      templatePath,
+      target: targetInfo,
+      options: partialInfo.config.options,
+    };
+
+    await this.run(partialInfo.path, parameters, templatePath, targetPath, ctx);
+
+    if (!targetInfo.partials) {
+      targetInfo.partials = [];
+    }
+
+    const maskedParameters = maskParameters(
+      parameters,
+      partialInfo.config.parameters
+    );
+
+    if (
+      partialInfo.config.options?.logRun == null ||
+      partialInfo.config.options?.logRun === undefined ||
+      partialInfo.config.options?.logRun
+    ) {
+      targetInfo.partials.push({
+        path: `${targetInfo.template.name}/${partialPath}`,
+        parameters: maskedParameters,
+      });
+    }
+
+    return Promise.resolve(
+      await fsUtil.writeJSON(
+        path.join(targetPath, this.options.scfFileName),
+        targetInfo
+      )
+    );
   }
 }
 

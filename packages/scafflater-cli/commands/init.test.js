@@ -22,7 +22,7 @@ describe("InitCommand", () => {
     // ACT
     await initCommand.run();
 
-    //ASSERT
+    // ASSERT
     expect(logger.info).toHaveBeenCalledWith(
       "The output folder is initialized!"
     );
@@ -39,7 +39,7 @@ describe("InitCommand", () => {
     // ACT
     await initCommand.run();
 
-    //ASSERT
+    // ASSERT
     expect(new Scafflater().init).toHaveBeenCalledWith(
       "https://github.com/some/repo",
       {},

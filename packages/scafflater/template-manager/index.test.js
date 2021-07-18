@@ -1,9 +1,6 @@
-/* eslint-disable node/no-unpublished-require */
-/* eslint-disable no-undef */
 const ScafflaterOptions = require("../options-provider");
 const fsUtil = require("../fs-util");
 const TemplateCache = require("../template-cache");
-const TempDirCache = require("../template-cache/storages/temp-dir-cache");
 const TemplateSource = require("../template-source");
 const TemplateManager = require("./");
 
@@ -43,10 +40,7 @@ describe("Template Manager tests", () => {
     const templateManager = new TemplateManager();
 
     // ACT
-    const result = templateManager.getTemplatePath(
-      "some-template",
-      "some-version"
-    );
+    templateManager.getTemplatePath("some-template", "some-version");
 
     // ARRANGE
     expect(templateCache.getTemplatePath).toHaveBeenCalledTimes(1);

@@ -1,6 +1,5 @@
 const { RegionProvider } = require("../region-provider");
 const Appender = require("./appender");
-const OptionsProvider = require("../../options-provider");
 
 class RegionAppender extends Appender {
   /**
@@ -8,70 +7,61 @@ class RegionAppender extends Appender {
    * @param {Context} context The context of generation
    * @param {string} srcStr The string to be appended
    * @param {string} destStr The string where srcStr must be appended
-   * @return {ProcessResult} The process result
+   * @return {Promise<ProcessResult>} The process result
    */
-  append(context, srcStr, destStr) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const regionProvider = new RegionProvider(context.options);
-        let srcRegions = regionProvider.getRegions(srcStr);
-        if (srcRegions.length <= 0) {
-          resolve({
-            context,
-            result: destStr,
-            notAppended: srcStr,
-          });
-        }
-        let srcRegion = srcRegions[0];
+  async append(context, srcStr, destStr) {
+    const regionProvider = new RegionProvider(context.options);
+    let srcRegions = regionProvider.getRegions(srcStr);
+    if (srcRegions.length <= 0) {
+      return Promise.resolve({
+        context,
+        result: destStr,
+        notAppended: srcStr,
+      });
+    }
+    let srcRegion = srcRegions[0];
 
-        while (srcRegion) {
-          let destRegion = regionProvider
-            .getRegions(destStr)
-            .find((r) => r.name === srcRegion.name);
-          let destContent = destRegion ? destRegion.content : "";
+    while (srcRegion) {
+      const destRegion = regionProvider
+        .getRegions(destStr)
+        .find((r) => r.name === srcRegion.name);
+      let destContent = destRegion ? destRegion.content : "";
 
-          const options = await context.options.getConfigFromString(
-            srcRegion.content
-          );
-          const _ctx = {
-            ...context,
-            options,
-          };
-          destContent = (
-            await super.append(_ctx, srcRegion.content, destContent)
-          ).result;
+      const options = context.options.getConfigFromString(srcRegion.content);
+      const _ctx = {
+        ...context,
+        options,
+      };
+      destContent = (await super.append(_ctx, srcRegion.content, destContent))
+        .result;
 
-          if (destRegion) {
-            destStr =
-              destStr.substring(0, destRegion.startRegionTag.endPosition) +
-              destContent +
-              destStr.substring(destRegion.endRegionTag.startPosition);
-          } else {
-            destStr = await regionProvider.appendRegion(srcRegion, destStr);
-          }
-
-          // Removing region from srcStr, since it was appended
-          srcStr =
-            srcStr.substring(0, srcRegion.startRegionTag.startPosition) +
-            srcStr.substring(srcRegion.endRegionTag.endPosition);
-          srcRegions = regionProvider.getRegions(srcStr);
-          if (srcRegions.length <= 0) {
-            break;
-          }
-          srcRegion = srcRegions[0];
-        }
-
-        destStr = destStr.replace(/^(\s*\r?\n){2,}/gm, "\n");
-        srcStr = srcStr.replace(/^(\s*\r?\n){2,}/gm, "\n").trim();
-
-        resolve({
-          context,
-          result: destStr,
-          notAppended: srcStr,
-        });
-      } catch (e) {
-        reject(e);
+      if (destRegion) {
+        destStr =
+          destStr.substring(0, destRegion.startRegionTag.endPosition) +
+          destContent +
+          destStr.substring(destRegion.endRegionTag.startPosition);
+      } else {
+        destStr = await regionProvider.appendRegion(srcRegion, destStr);
       }
+
+      // Removing region from srcStr, since it was appended
+      srcStr =
+        srcStr.substring(0, srcRegion.startRegionTag.startPosition) +
+        srcStr.substring(srcRegion.endRegionTag.endPosition);
+      srcRegions = regionProvider.getRegions(srcStr);
+      if (srcRegions.length <= 0) {
+        break;
+      }
+      srcRegion = srcRegions[0];
+    }
+
+    destStr = destStr.replace(/^(\s*\r?\n){2,}/gm, "\n");
+    srcStr = srcStr.replace(/^(\s*\r?\n){2,}/gm, "\n").trim();
+
+    return Promise.resolve({
+      context,
+      result: destStr,
+      notAppended: srcStr,
     });
   }
 }

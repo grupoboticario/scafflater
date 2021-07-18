@@ -24,9 +24,9 @@
     "types": "lerna run types"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.14.7",
     "@oclif/dev-cli": "^1.26.0",
     "@types/jest": "^26.0.23",
-    "eslint": "^7.28.0",
     "eslint-config-oclif": "^3.1.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.4",
@@ -37,5 +37,9 @@
     "globby": "^11.0.4",
     "jest": "^27.0.4",
     "lerna": "^4.0.0"
+  },
+  "dependencies": {
+    "eslint": "^7.31.0",
+    "eslint-config-standard": "^16.0.3"
   }
 }

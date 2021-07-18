@@ -23,39 +23,28 @@ fs.require = (jsPath) => {
  * @return {Promise<string>} The found file path
  */
 fs.findFileUp = async (startPath, fileName) => {
-  return new Promise(async (resolve, reject) => {
-    const parts = path.dirname(startPath).split(path.sep);
-    parts[0] = parts[0] === "" ? "/" : parts[0];
-    while (parts.length > 0) {
-      const tryPath = path.join(...parts, fileName);
-      if (await fs.pathExists(tryPath)) {
-        resolve(tryPath);
-        return;
-      }
-      parts.pop();
+  const parts = path.dirname(startPath).split(path.sep);
+  parts[0] = parts[0] === "" ? "/" : parts[0];
+  while (parts.length > 0) {
+    const tryPath = path.join(...parts, fileName);
+    if (await fs.pathExists(tryPath)) {
+      return Promise.resolve(tryPath);
     }
-    reject(new Error("File not found"));
-  });
+    parts.pop();
+  }
+  return Promise.reject(new Error("File not found"));
 };
 
-fs.loadScriptsAsObjects = (folderPath, npmInstall = false) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const jsList = await fs.listJsScripts(folderPath, npmInstall);
-      const result = {};
+fs.loadScriptsAsObjects = async (folderPath, npmInstall = false) => {
+  const jsList = await fs.listJsScripts(folderPath, npmInstall);
+  const result = {};
 
-      for (const key in jsList) {
-        if (jsList.hasOwnProperty(key)) {
-          const js = jsList[key];
-          result[js.jsName] = js.object;
-        }
-      }
+  for (const key in jsList) {
+    const js = jsList[key];
+    result[js.jsName] = js.object;
+  }
 
-      resolve(result);
-    } catch (error) {
-      reject(error);
-    }
-  });
+  return Promise.resolve(result);
 };
 
 /**
@@ -71,42 +60,37 @@ fs.loadScriptsAsObjects = (folderPath, npmInstall = false) => {
  * @param {boolean} npmInstall - If true, will run 'npm install' in the parent package
  * @return {Promise<JsFile>} The loaded scripts details
  */
-fs.listJsScripts = (folderPath, npmInstall = false) => {
-  return new Promise(async (resolve, reject) => {
-    if (!folderPath || !(await fs.pathExists(folderPath))) {
-      resolve([]);
-      return;
+fs.listJsScripts = async (folderPath, npmInstall = false) => {
+  if (!folderPath || !(await fs.pathExists(folderPath))) {
+    return Promise.resolve([]);
+  }
+
+  const jsList = await fs.listFilesDeeply(folderPath, "/*.js");
+  if (!jsList) {
+    return Promise.resolve([]);
+  }
+
+  if (npmInstall) {
+    await npmInstallExec(folderPath);
+  }
+
+  const result = [];
+  for (const js of jsList) {
+    try {
+      if (js.endsWith(".test.js")) continue;
+
+      result.push({
+        filePath: js,
+        fileName: path.basename(js),
+        object: fs.require(js),
+        jsName: path.basename(js, ".js"),
+      });
+    } catch (error) {
+      return Promise.reject(error);
     }
+  }
 
-    const jsList = await fs.listFilesDeeply(folderPath, "/*.js");
-    if (!jsList) {
-      resolve([]);
-      return;
-    }
-
-    if (npmInstall) {
-      await npmInstallExec(folderPath);
-    }
-
-    const result = [];
-    for (const js of jsList) {
-      try {
-        if (js.endsWith(".test.js")) continue;
-
-        result.push({
-          filePath: js,
-          fileName: path.basename(js),
-          object: fs.require(js),
-          jsName: path.basename(js, ".js"),
-        });
-      } catch (error) {
-        reject(error);
-        return;
-      }
-    }
-
-    resolve(result);
-  });
+  return Promise.resolve(result);
 };
 
 /**
@@ -145,16 +129,10 @@ fs.copyEnsuringDest = async (src, dest) => {
  * @returns {Promise<string>} The File content
  */
 fs.readFileContent = async (filePath) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      if (!(await fs.exists(filePath))) {
-        resolve(null);
-      }
-      resolve((await fs.readFile(filePath)).toString());
-    } catch (error) {
-      reject(error);
-    }
-  });
+  if (!(await fs.exists(filePath))) {
+    return Promise.resolve(null);
+  }
+  return Promise.resolve((await fs.readFile(filePath)).toString());
 };
 
 /**
@@ -163,18 +141,12 @@ fs.readFileContent = async (filePath) => {
  * @returns {Promise<object>} The Json object
  */
 fs.readJSON = async (filePath) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      if (!(await fs.exists(filePath))) {
-        resolve(null);
-      }
-      const content = (await fs.readFile(filePath)).toString();
+  if (!(await fs.exists(filePath))) {
+    return Promise.resolve(null);
+  }
+  const content = (await fs.readFile(filePath)).toString();
 
-      resolve(JSON.parse(stripJsonComments(content)));
-    } catch (error) {
-      reject(error);
-    }
-  });
+  return Promise.resolve(JSON.parse(stripJsonComments(content)));
 };
 
 /**
