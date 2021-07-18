@@ -1,9 +1,5 @@
 {
-  "cSpell.words": [
-    "Appender",
-    "appenders",
-    "deepmerge"
-  ],
+  "cSpell.words": ["Appender", "appenders", "deepmerge"],
   "sonarlint.connectedMode.project": {
     "connectionId": "chicoribas_SonarCloud",
     "projectKey": "chicoribas_scafflater"
@@ -14,5 +10,9 @@
   "sonarlint.output.showVerboseLogs": true,
   "files.associations": {
     ".scafflater": "jsonc"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
 }

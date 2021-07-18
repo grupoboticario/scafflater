@@ -61,15 +61,24 @@ class Scafflater {
 
     const maskedParameters = maskParameters(parameters, config.parameters);
 
-    const targetInfo = {
-      template: {
-        name: config.name,
-        version: config.version,
-        source: { ...config.source },
-      },
-      parameters: maskedParameters,
-      partials: [],
+    let targetInfo = {
+      templates: [
+        {
+          name: config.name,
+          version: config.version,
+          source: { ...config.source },
+          parameters: maskedParameters,
+        },
+      ],
     };
+    const scfFile = path.resolve(targetPath, this.options.scfFileName);
+
+    if (await fsUtil.pathExists(scfFile)) {
+      const existingTargetInfo = await fsUtil.readJSON(scfFile);
+      if (!existingTargetInfo.templates) existingTargetInfo.templates = [];
+      existingTargetInfo.templates.push(targetInfo.templates[0]);
+      targetInfo = existingTargetInfo;
+    }
 
     const ctx = {
       template: await this.templateManager.getTemplateInfo(
@@ -82,11 +91,7 @@ class Scafflater {
 
     await this.run(templatePath, parameters, templatePath, targetPath, ctx);
 
-    const scfFile = path.resolve(targetPath, this.options.scfFileName);
-    if (!fsUtil.pathExists(scfFile)) {
-      // If the file already exists, it means that the template generate one config file. Must not override.
-      await fsUtil.writeJSON(scfFile, targetInfo);
-    }
+    await fsUtil.writeJSON(scfFile, targetInfo);
     return Promise.resolve(scfFile);
   }
 

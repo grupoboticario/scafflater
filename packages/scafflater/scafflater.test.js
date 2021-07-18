@@ -38,13 +38,7 @@ describe("Scafflater", () => {
         ],
       },
     });
-    templateManager.getPartial.mockResolvedValueOnce({
-      config: {},
-      path: "the/partial/path",
-    });
-    templateManager.getTemplatePath.mockResolvedValueOnce(
-      "/some/path/to/template"
-    );
+    fsUtil.pathExists.mockResolvedValue(true);
     fsUtil.readJSON.mockResolvedValueOnce({
       template: {
         name: "some-template",
@@ -65,10 +59,124 @@ describe("Scafflater", () => {
 
     // ASSERT
     expect(fsUtil.writeJSON.mock.calls[0][0]).toBe("/some/target/.scafflater");
-    expect(fsUtil.writeJSON.mock.calls[0][1].parameters.password).toBe(
-      "******"
-    );
+    expect(fsUtil.writeJSON.mock.calls[0][1].templates.length).toBe(1);
+    expect(
+      fsUtil.writeJSON.mock.calls[0][1].templates[0].parameters.password
+    ).toBe("******");
+    expect(
+      fsUtil.writeJSON.mock.calls[0][1].templates[0].parameters.password
+    ).toBe("******");
     expect(generator.constructor.mock.calls[0][0].options.annotate).toBe(false);
+  });
+
+  test("Target has .scafflater file, should append new template", async () => {
+    // ARRANGE
+    const parameters = {};
+    templateManager.templateSource.getTemplate.mockResolvedValue({
+      path: "the/template/path",
+      config: {
+        name: "new-template",
+        version: "new-template-version",
+        source: {
+          key: "new-template-source-key",
+        },
+        parameters: [
+          {
+            name: "password",
+            mask: true,
+          },
+        ],
+      },
+    });
+    fsUtil.pathExists.mockResolvedValue(true);
+    fsUtil.readJSON.mockResolvedValueOnce({
+      templates: [
+        {
+          name: "existing-template",
+          version: "existing-template-version",
+          source: {
+            key: "existing-template-source-key",
+          },
+        },
+      ],
+    });
+
+    // ACT
+    const scafflater = new Scafflater({ annotate: false });
+    await scafflater.init(
+      "some/template/source/key",
+      parameters,
+      "/some/target"
+    );
+
+    // ASSERT
+    expect(fsUtil.writeJSON).toBeCalledWith("/some/target/.scafflater", {
+      templates: [
+        {
+          name: "existing-template",
+          version: "existing-template-version",
+          source: {
+            key: "existing-template-source-key",
+          },
+        },
+        {
+          name: "new-template",
+          version: "new-template-version",
+          source: {
+            key: "new-template-source-key",
+          },
+          parameters: {
+            password: "******",
+          },
+        },
+      ],
+    });
+  });
+
+  test("Target does not have .scafflater file, should append new template", async () => {
+    // ARRANGE
+    const parameters = {};
+    templateManager.templateSource.getTemplate.mockResolvedValue({
+      path: "the/template/path",
+      config: {
+        name: "new-template",
+        version: "version-existing-template",
+        source: {
+          name: "some-source",
+        },
+        parameters: [
+          {
+            name: "password",
+            mask: true,
+          },
+        ],
+      },
+    });
+    fsUtil.pathExists.mockResolvedValue(false);
+
+    // ACT
+    const scafflater = new Scafflater({ annotate: false });
+    await scafflater.init(
+      "some/template/source/key",
+      parameters,
+      "/some/target"
+    );
+
+    // ASSERT
+    expect(fsUtil.writeJSON).toBeCalledWith("/some/target/.scafflater", {
+      templates: [
+        {
+          name: "new-template",
+          version: "version-existing-template",
+          source: {
+            name: "some-source",
+          },
+          parameters: {
+            password: "******",
+          },
+        },
+      ],
+    });
   });
 
   test("No local partial found, but it exists on source", async () => {
