@@ -1,23 +1,22 @@
-const OptionsProvider = require('../../../options-provider')
-const lineComment = require('./lineComment')
+const ScafflaterOptions = require("../../../options-provider");
+const lineComment = require("./lineComment");
 
-
-test('lineComment handlebars helper', () => {
+test("lineComment handlebars helper", () => {
   // ARRANGE
-  const context = { }
+  const context = {};
   const mockOptions = {
     fn: jest.fn(),
-    data:{
+    data: {
       root: {
-        config: new OptionsProvider()
-      }
-    }
-  }
-  mockOptions.fn.mockReturnValue("some comment")
+        options: new ScafflaterOptions(),
+      },
+    },
+  };
+  mockOptions.fn.mockReturnValue("some comment");
 
   // ACT
-  const comment = lineComment(context, mockOptions)
+  const comment = lineComment(context, mockOptions);
 
   // ASSERT
-  expect(comment).toBe("# some comment")
-})
+  expect(comment).toBe("# some comment");
+});

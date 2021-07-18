@@ -1,4 +1,4 @@
-const OptionsProvider = require("../options-provider");
+const ScafflaterOptions = require("../options-provider");
 
 /**
  * TemplateSource factory.
@@ -6,10 +6,10 @@ const OptionsProvider = require("../options-provider");
 class TemplateSource {
   /**
    * Template Source constructor.
-   * @param {?object} config - Scafflater configuration. If null, will get the default configuration.
+   * @param {?ScafflaterOptions} options - Scafflater Options. If null, will get the default options.
    */
-  constructor(config = {}) {
-    this.config = { ...new OptionsProvider(), ...config };
+  constructor(options = {}) {
+    this.options = new ScafflaterOptions(options);
   }
 
   /**
@@ -31,7 +31,7 @@ class TemplateSource {
    * @return {TemplateSource} An specialized instance of TemplateSource.
    */
   static getTemplateSource(config) {
-    config = { ...new OptionsProvider(), ...config };
+    config = { ...new ScafflaterOptions(), ...config };
 
     if (!config.sources[config.source]) {
       throw new Error(`There's no module for source '${config.source}'`);

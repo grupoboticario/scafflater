@@ -2,7 +2,7 @@ const TemplateManager = require("./template-manager");
 const Generator = require("./generator");
 const fsUtil = require("./fs-util");
 const path = require("path");
-const OptionsProvider = require("./options-provider");
+const ScafflaterOptions = require("./options-provider");
 const { maskParameters } = require("./util");
 
 /**
@@ -11,12 +11,12 @@ const { maskParameters } = require("./util");
 class Scafflater {
   /**
    * Scafflater constructor.
-   * @param {?object} config - Scafflater configuration. If null, will get the default configuration.
+   * @param {ScafflaterOptions} options - Scafflater configuration. If null, will get the default configuration.
    * @param {string} sourceKey - The source key
    */
-  constructor(config = {}, templateManager = null) {
-    this.config = { ...new OptionsProvider(), ...config };
-    this.templateManager = templateManager ?? new TemplateManager(this.config);
+  constructor(options = {}, templateManager = null) {
+    this.options = new ScafflaterOptions(options);
+    this.templateManager = templateManager ?? new TemplateManager(this.options);
   }
 
   /**
@@ -28,16 +28,16 @@ class Scafflater {
   async run(originPath, parameters, templatePath, targetPath = "./", ctx = {}) {
     return new Promise(async (resolve, reject) => {
       try {
-        const config = {
-          ...this.config,
-          ...ctx.config,
-        };
+        const options = new ScafflaterOptions({
+          ...this.options,
+          ...ctx.options,
+        });
 
         const helpersPath = path.resolve(
           templatePath,
-          config.helpersFolderName
+          options.helpersFolderName
         );
-        const hooksPath = path.resolve(templatePath, config.hooksFolderName);
+        const hooksPath = path.resolve(templatePath, options.hooksFolderName);
 
         const _ctx = {
           ...ctx,
@@ -47,7 +47,7 @@ class Scafflater {
             targetPath,
             helpersPath,
             hooksPath,
-            config,
+            options,
           },
         };
 
@@ -95,7 +95,7 @@ class Scafflater {
 
         await this.run(templatePath, parameters, templatePath, targetPath, ctx);
 
-        const scfFile = path.resolve(targetPath, this.config.scfFileName);
+        const scfFile = path.resolve(targetPath, this.options.scfFileName);
         if (!fsUtil.pathExists(scfFile)) {
           // If the file already exists, it means that the template generate one config file. Must not override.
           await fsUtil.writeJSON(scfFile, targetInfo);
@@ -117,7 +117,7 @@ class Scafflater {
     return new Promise(async (resolve, reject) => {
       try {
         const targetInfo = await fsUtil.readJSON(
-          path.join(targetPath, this.config.scfFileName)
+          path.join(targetPath, this.options.scfFileName)
         );
 
         let partialInfo = await this.templateManager.getPartial(
@@ -189,7 +189,7 @@ class Scafflater {
 
         resolve(
           await fsUtil.writeJSON(
-            path.join(targetPath, this.config.scfFileName),
+            path.join(targetPath, this.options.scfFileName),
             targetInfo
           )
         );

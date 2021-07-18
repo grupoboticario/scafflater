@@ -1,5 +1,5 @@
 const Handlebars = require("handlebars");
-const { execSync } = require("child_process");
+const ScafflaterOptions = require("../options-provider");
 
 const maskParameters = (parameters, templateParameters) => {
   if (!templateParameters || !parameters) return parameters;
@@ -15,22 +15,17 @@ const maskParameters = (parameters, templateParameters) => {
 
 /**
  * Builds a line comment based on config.lineCommentTemplate.
- * @param {ConfigProvider} config - The configuration
+ * @param {ScafflaterOptions} options - The configuration
  * @param {string} comment - The comment content
  * @return {string} The comment
  */
-const buildLineComment = (config, comment) => {
-  return Handlebars.compile(config.lineCommentTemplate, { noEscape: true })({
+const buildLineComment = (options, comment) => {
+  return Handlebars.compile(options.lineCommentTemplate, { noEscape: true })({
     comment,
   });
-};
-
-const npmInstall = (packagePath) => {
-  execSync("npm install", { cwd: packagePath });
 };
 
 module.exports = {
   maskParameters,
   buildLineComment,
-  npmInstall,
 };

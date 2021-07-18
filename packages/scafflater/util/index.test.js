@@ -1,24 +1,9 @@
 const { maskParameters, buildLineComment, npmInstall } = require("./");
 const OptionsProvider = require("../options-provider");
-const { execSync } = require("child_process");
-
-jest.mock("child_process");
 
 describe("util", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  test("npmInstall", async () => {
-    // ARRANGE
-
-    // ACT
-    await npmInstall("some/folder");
-
-    // ASSERT
-    expect(execSync).toHaveBeenCalledWith("npm install", {
-      cwd: "some/folder",
-    });
   });
 
   test("Mask Parameters", () => {

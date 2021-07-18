@@ -1,6 +1,6 @@
-const util = require('../../../util')
-const handlebarsProcessor = new (require('../handlebars-processor'))()
+const util = require("../../../util");
+const handlebarsProcessor = new (require("../handlebars-processor"))();
 
 module.exports = (context, options) => {
-  return util.buildLineComment(options.data.root.config, options.fn(context))
-}
+  return util.buildLineComment(options.data.root.options, options.fn(context));
+};

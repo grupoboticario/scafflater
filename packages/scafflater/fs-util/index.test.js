@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 const fsUtils = require("./");
 const path = require("path");
-const util = require("../util");
-jest.mock("../util");
+const npmInstall = require("../util/npmInstall");
+jest.mock("../util/npmInstall");
 
 describe("fs-utils", () => {
   beforeEach(() => {
@@ -170,7 +170,7 @@ describe("fs-utils", () => {
     expect(result.length).toBe(2);
     expect(resultDoesNotExists.length).toBe(0);
     expect(resultEmptyFolder.length).toBe(0);
-    expect(util.npmInstall).toHaveBeenCalled();
+    expect(npmInstall).toHaveBeenCalled();
   });
 
   test("loadScriptsAsObjects", async () => {

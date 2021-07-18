@@ -1,7 +1,7 @@
-const OptionsProvider = require('../../options-provider')
-const RegionAppender = require('./region-appender')
+const ScafflaterOptions = require("../../options-provider");
+const RegionAppender = require("./region-appender");
 
-test('Append to an existing region', async () => {
+test("Append to an existing region", async () => {
   // ARRANGE
   const src = `This content is not in regions
   # @scf-region test-region
@@ -22,7 +22,7 @@ test('Append to an existing region', async () => {
 
   # @end-scf-region
 
-  And this one is not in region too`
+  And this one is not in region too`;
   const dst = `
   # @scf-region test-region
 
@@ -41,14 +41,14 @@ test('Append to an existing region', async () => {
   other existing content
 
   # @end-scf-region
-  `
+  `;
   const context = {
-    config: { ...new OptionsProvider(), annotate: false }
-  }
-  const regionAppender = new RegionAppender()
+    options: new ScafflaterOptions({ annotate: false }),
+  };
+  const regionAppender = new RegionAppender();
 
   // ACT
-  const result = await regionAppender.append(context, src, dst)
+  const result = await regionAppender.append(context, src, dst);
 
   // ASSERT
   expect(result.result).toEqual(`
@@ -75,13 +75,13 @@ test('Append to an existing region', async () => {
   other new content
 
   # @end-scf-region
-  `)
+  `);
   expect(result.notAppended).toEqual(`This content is not in regions
 
-  And this one is not in region too`)
-})
+  And this one is not in region too`);
+});
 
-test('Replace an existing region', async () => {
+test("Replace an existing region", async () => {
   // ARRANGE
   const src = `
   # @scf-region test-region
@@ -89,7 +89,7 @@ test('Replace an existing region', async () => {
 
   some new content
 
-  # @end-scf-region`
+  # @end-scf-region`;
   const dst = `This content is not in regions
   # @scf-region test-region
 
@@ -97,15 +97,15 @@ test('Replace an existing region', async () => {
 
   # @end-scf-region
 
-  And this one is not in region too`
-  
+  And this one is not in region too`;
+
   const context = {
-    config: { ...new OptionsProvider(), annotate: false }
-  }
-  const regionAppender = new RegionAppender()
+    options: new ScafflaterOptions({ annotate: false }),
+  };
+  const regionAppender = new RegionAppender();
 
   // ACT
-  const result = await regionAppender.append(context, src, dst)
+  const result = await regionAppender.append(context, src, dst);
 
   // ASSERT
   expect(result.result).toEqual(`This content is not in regions
@@ -116,10 +116,10 @@ test('Replace an existing region', async () => {
 
   # @end-scf-region
 
-  And this one is not in region too`)
-})
+  And this one is not in region too`);
+});
 
-test('Append to non existing region, should create region', async () => {
+test("Append to non existing region, should create region", async () => {
   // ARRANGE
   const src = `
   # @scf-region new-test-region
@@ -138,17 +138,17 @@ test('Append to non existing region, should create region', async () => {
 
   other new content
 
-  # @end-scf-region`
+  # @end-scf-region`;
   const dst = `
   some content without regions
-  `
+  `;
   const context = {
-    config: { ...new OptionsProvider(), annotate: false }
-  }
-  const regionAppender = new RegionAppender()
+    options: new ScafflaterOptions({ annotate: false }),
+  };
+  const regionAppender = new RegionAppender();
 
   // ACT
-  const result = await regionAppender.append(context, src, dst)
+  const result = await regionAppender.append(context, src, dst);
 
   // ASSERT
   expect(result.result).toEqual(`
@@ -170,6 +170,6 @@ test('Append to non existing region, should create region', async () => {
   other new content
 
 # @end-scf-region
-`)
-  expect(result.notAppended).toEqual('')
-})
+`);
+  expect(result.notAppended).toEqual("");
+});

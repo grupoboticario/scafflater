@@ -1,7 +1,8 @@
 const TemplateSource = require("./");
 const fsUtil = require("../fs-util");
 const path = require("path");
-const OptionsProvider = require("../options-provider");
+const ScafflaterOptions = require("../options-provider");
+const minimatch = require("minimatch");
 
 class LocalFolderTemplateSource extends TemplateSource {
   /**
@@ -14,11 +15,10 @@ class LocalFolderTemplateSource extends TemplateSource {
   }
   /**
    * Template Source constructor.
-   * @param {?object} config - Scafflater configuration. If null, will get the default configuration.
+   * @param {ScafflaterOptions} options - Scafflater configuration. If null, will get the default configuration.
    */
-  constructor(config = {}) {
-    config = { ...new OptionsProvider(), ...config };
-    super(config);
+  constructor(options = {}) {
+    super(options);
   }
 
   /**
@@ -32,7 +32,13 @@ class LocalFolderTemplateSource extends TemplateSource {
     return new Promise(async (resolve, reject) => {
       try {
         const out = outputDir ? outputDir : await fsUtil.getTempFolder();
-        await fsUtil.copy(sourceKey, out);
+
+        const _this = this;
+        await fsUtil.copy(sourceKey, out, {
+          filter: function (sourcePath) {
+            return !_this.options.ignores(sourceKey, sourcePath);
+          },
+        });
         const config = await fsUtil.readJSON(path.join(out, ".scafflater"));
 
         // TODO: Validate template configuration

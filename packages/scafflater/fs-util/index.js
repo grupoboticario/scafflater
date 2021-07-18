@@ -5,7 +5,7 @@ const glob = require("glob");
 const path = require("path");
 const { EOL } = require("os");
 const stripJsonComments = require("strip-json-comments");
-const util = require("../util");
+const npmInstallExec = require("../util/npmInstall");
 
 /**
  * Loads js
@@ -85,7 +85,7 @@ fs.listJsScripts = (folderPath, npmInstall = false) => {
     }
 
     if (npmInstall) {
-      util.npmInstall(path.dirname(folderPath));
+      npmInstallExec(folderPath);
     }
 
     const result = [];

@@ -1,75 +1,79 @@
-const { RegionProvider } = require('../region-provider')
-const Appender = require('./appender')
-const OptionsProvider = require('../../options-provider')
+const { RegionProvider } = require("../region-provider");
+const Appender = require("./appender");
+const OptionsProvider = require("../../options-provider");
 
 class RegionAppender extends Appender {
-
-  /** 
-  * Process the input.
-  * @param {Context} context The context of generation
-  * @param {string} srcStr The string to be appended
-  * @param {string} destStr The string where srcStr must be appended
-  * @return {ProcessResult} The process result
-  */
+  /**
+   * Process the input.
+   * @param {Context} context The context of generation
+   * @param {string} srcStr The string to be appended
+   * @param {string} destStr The string where srcStr must be appended
+   * @return {ProcessResult} The process result
+   */
   append(context, srcStr, destStr) {
     return new Promise(async (resolve, reject) => {
       try {
-        const regionProvider = new RegionProvider(context.config)
-        let srcRegions = regionProvider.getRegions(srcStr)
+        const regionProvider = new RegionProvider(context.options);
+        let srcRegions = regionProvider.getRegions(srcStr);
         if (srcRegions.length <= 0) {
           resolve({
             context,
             result: destStr,
-            notAppended: srcStr
-          })
+            notAppended: srcStr,
+          });
         }
-        let srcRegion = srcRegions[0]
+        let srcRegion = srcRegions[0];
 
         while (srcRegion) {
-          let destRegion = regionProvider.getRegions(destStr).find(r => r.name === srcRegion.name)
-          let destContent = destRegion ? destRegion.content : ''
+          let destRegion = regionProvider
+            .getRegions(destStr)
+            .find((r) => r.name === srcRegion.name);
+          let destContent = destRegion ? destRegion.content : "";
 
-          const config = await OptionsProvider.extractConfigFromString(srcRegion.content, context.config)
-          const _ctx = { 
+          const options = await context.options.getConfigFromString(
+            srcRegion.content
+          );
+          const _ctx = {
             ...context,
-            config
-          }
-          destContent = (await super.append(_ctx, srcRegion.content, destContent)).result
+            options,
+          };
+          destContent = (
+            await super.append(_ctx, srcRegion.content, destContent)
+          ).result;
 
           if (destRegion) {
             destStr =
               destStr.substring(0, destRegion.startRegionTag.endPosition) +
               destContent +
-              destStr.substring(destRegion.endRegionTag.startPosition)
+              destStr.substring(destRegion.endRegionTag.startPosition);
           } else {
-            destStr = await regionProvider.appendRegion(srcRegion, destStr)
+            destStr = await regionProvider.appendRegion(srcRegion, destStr);
           }
 
           // Removing region from srcStr, since it was appended
           srcStr =
             srcStr.substring(0, srcRegion.startRegionTag.startPosition) +
-            srcStr.substring(srcRegion.endRegionTag.endPosition)
-          srcRegions = regionProvider.getRegions(srcStr)
+            srcStr.substring(srcRegion.endRegionTag.endPosition);
+          srcRegions = regionProvider.getRegions(srcStr);
           if (srcRegions.length <= 0) {
-            break
+            break;
           }
-          srcRegion = srcRegions[0]
+          srcRegion = srcRegions[0];
         }
 
-
-        destStr = destStr.replace(/^(\s*\r?\n){2,}/gm, '\n')
-        srcStr = srcStr.replace(/^(\s*\r?\n){2,}/gm, '\n').trim()
+        destStr = destStr.replace(/^(\s*\r?\n){2,}/gm, "\n");
+        srcStr = srcStr.replace(/^(\s*\r?\n){2,}/gm, "\n").trim();
 
         resolve({
           context,
           result: destStr,
-          notAppended: srcStr
-        })
+          notAppended: srcStr,
+        });
       } catch (e) {
-        reject(e)
+        reject(e);
       }
-    })
+    });
   }
 }
 
-module.exports = RegionAppender
+module.exports = RegionAppender;

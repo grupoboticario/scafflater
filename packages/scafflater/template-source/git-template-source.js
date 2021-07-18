@@ -1,10 +1,10 @@
-const TemplateSource = require("./");
+const LocalFolderTemplateSource = require("./local-folder-template-source");
 const GitUtil = require("../git-util");
 const fsUtil = require("../fs-util");
 const path = require("path");
 const OptionsProvider = require("../options-provider");
 
-class GitTemplateSource extends TemplateSource {
+class GitTemplateSource extends LocalFolderTemplateSource {
   /**
    * Checks if the sourceKey is valid for this TemplateSource
    * @param {string} sourceKey - The source key to be validated.
@@ -31,38 +31,34 @@ class GitTemplateSource extends TemplateSource {
    * @return {object.config} The template config.
    */
   async getTemplate(sourceKey, outputDir = null) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const out = outputDir ? outputDir : await fsUtil.getTempFolder();
-        await GitUtil.clone(
-          sourceKey,
-          out,
-          this.config.github_username,
-          this.config.github_password
-        );
-        const config = await fsUtil.readJSON(path.join(out, ".scafflater"));
+    const pathToClone = await fsUtil.getTempFolder();
+    await GitUtil.clone(
+      sourceKey,
+      pathToClone,
+      this.options.github_username,
+      this.options.github_password
+    );
 
-        // TODO: Validate template configuration
+    const { path: out } = await super.getTemplate(pathToClone, outputDir);
+    const config = await fsUtil.readJSON(path.join(out, ".scafflater"));
 
-        resolve({
-          path: out,
-          config: {
-            name: config.name,
-            version: config.version,
-            source: {
-              name: "github",
-              key: sourceKey,
-              github: {
-                baseUrl: this.config.github_baseUrl,
-                baseUrlApi: this.config.github_baseUrlApi,
-              },
-            },
-            parameters: config.parameters,
+    // TODO: Validate template configuration
+
+    return Promise.resolve({
+      path: out,
+      config: {
+        name: config.name,
+        version: config.version,
+        source: {
+          name: "github",
+          key: sourceKey,
+          github: {
+            baseUrl: this.options.github_baseUrl,
+            baseUrlApi: this.options.github_baseUrlApi,
           },
-        });
-      } catch (error) {
-        reject(error);
-      }
+        },
+        parameters: config.parameters,
+      },
     });
   }
 }

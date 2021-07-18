@@ -30,19 +30,19 @@ describe("Github template source", () => {
 
   test("Config with username and password", () => {
     // ARRANGE
-    const config = {
+    const options = {
       github_username: "some-user",
       github_password: "the-secret-password",
     };
 
     // ACT
-    const ts = new TemplateSource(config);
+    const ts = new TemplateSource(options);
 
     // ASSERT
-    expect(ts.config.github_username).toBe("some-user");
-    expect(ts.config.github_password).toBe("the-secret-password");
-    expect(ts.config.github_baseUrlApi).toBe("https://api.github.com");
-    expect(ts.config.github_baseUrl).toBe("https://github.com");
+    expect(ts.options.github_username).toBe("some-user");
+    expect(ts.options.github_password).toBe("the-secret-password");
+    expect(ts.options.github_baseUrlApi).toBe("https://api.github.com");
+    expect(ts.options.github_baseUrl).toBe("https://github.com");
   });
 
   test("Should clone to the folder in parameter", async () => {
@@ -77,7 +77,6 @@ describe("Github template source", () => {
       },
     });
     expect(GitUtil.clone.mock.calls[0][0]).toBe(repo);
-    expect(GitUtil.clone.mock.calls[0][1]).toBe(virtualFolder);
   });
 
   test("Should clone to a temp folder", async () => {

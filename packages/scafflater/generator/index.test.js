@@ -1,67 +1,71 @@
 /* eslint-disable no-undef */
-const fsUtil = require('../fs-util')
-const OptionsProvider = require('../options-provider')
-const Generator = require('./')
-const { annotate } = require('./annotator/annotator')
+const fsUtil = require("../fs-util");
+const ScafflaterOptions = require("../options-provider");
+const Generator = require("./");
+const { annotate } = require("./annotator/annotator");
 
-jest.mock('../fs-util')
+jest.mock("../fs-util");
 
-describe('Generator Tests', () => {
+describe("Generator Tests", () => {
   afterEach(() => {
-    jest.clearAllMocks()
-    jest.restoreAllMocks()
-  })
-  
-  test('Render a simple file', async () => {
+    jest.clearAllMocks();
+    jest.restoreAllMocks();
+  });
+
+  test("Render a simple file", async () => {
     // ARRANGE
     const ctx = {
-      templatePath: '/template/path',
+      templatePath: "/template/path",
       template: {
-        name: 'test-template',
-        type: 'template',
-        version: '0.0.1',
+        name: "test-template",
+        type: "template",
+        version: "0.0.1",
         config: {
-          lineCommentTemplate: '# {{comment}}',
+          lineCommentTemplate: "# {{comment}}",
         },
       },
-      originPath: '/source/path',
+      originPath: "/source/path",
       partial: {
-        name: '_init',
-        type: 'init',
+        name: "_init",
+        type: "init",
       },
-      targetPath: '/target/path',
-      parameters: { test: 'a sample test' },
-      config: { ...new OptionsProvider(), ...{annotate: true} }
-    }
+      targetPath: "/target/path",
+      parameters: { test: "a sample test" },
+      options: new ScafflaterOptions({ annotate: true }),
+    };
     fsUtil.getDirTreeSync.mockReturnValue({
-      path: 'just/a/sample/test.txt',
-      name: 'test.txt',
+      path: "just/a/sample/test.txt",
+      name: "test.txt",
       size: 100,
-      type: 'file',
-      extension: '.txt',
-    })
+      type: "file",
+      extension: ".txt",
+    });
 
-    fsUtil.readFileContent.mockImplementation(path => {
-      if (path.startsWith(ctx.targetPath))
-        return 'existing content';
+    fsUtil.readFileContent.mockImplementation((path) => {
+      if (path.startsWith(ctx.targetPath)) return "existing content";
 
-      return '{{parameters.test}}'
-    })
-    fsUtil.pathExists.mockImplementation(path => {
-      if (path.startsWith(ctx.targetPath) || path.includes('hbs-builtin-helpers'))
+      return "{{parameters.test}}";
+    });
+    fsUtil.pathExists.mockImplementation((path) => {
+      if (
+        path.startsWith(ctx.targetPath) ||
+        path.includes("hbs-builtin-helpers")
+      )
         return true;
-    })
-    fsUtil.listFilesByExtensionDeeply.mockResolvedValue(['lineComment.js'])
-    fsUtil.require.mockReturnValue(require('./processors/hbs-builtin-helpers/lineComment'))
-    fsUtil.loadScriptsAsObjects.mockResolvedValue([])
-    const generator = new Generator(ctx)
+    });
+    fsUtil.listFilesByExtensionDeeply.mockResolvedValue(["lineComment.js"]);
+    fsUtil.require.mockReturnValue(
+      require("./processors/hbs-builtin-helpers/lineComment")
+    );
+    fsUtil.loadScriptsAsObjects.mockResolvedValue([]);
+    const generator = new Generator(ctx);
 
     // ACT
-    await generator.generate()
+    await generator.generate();
 
     // ASSERT
-    expect(fsUtil.saveFile.mock.calls.length).toBe(1)
-    expect(fsUtil.saveFile.mock.calls[0][0]).toBe('/target/path/test.txt')
+    expect(fsUtil.saveFile.mock.calls.length).toBe(1);
+    expect(fsUtil.saveFile.mock.calls[0][0]).toBe("/target/path/test.txt");
     expect(fsUtil.saveFile.mock.calls[0][1]).toBe(`existing content
 
 # @scf-region
@@ -72,74 +76,72 @@ describe('Generator Tests', () => {
 
 a sample test
 
-# @end-scf-region`)
-  })
+# @end-scf-region`);
+  });
 
-  test('Annotate masked parameters', async () => {
+  test("Annotate masked parameters", async () => {
     // ARRANGE
     const ctx = {
-      templatePath: '/template/path',
+      templatePath: "/template/path",
       template: {
-        name: 'test-template',
-        type: 'template',
-        version: '0.0.1',
+        name: "test-template",
+        type: "template",
+        version: "0.0.1",
         config: {
-          lineCommentTemplate: '# {{comment}}',
+          lineCommentTemplate: "# {{comment}}",
         },
         parameters: [
           {
-            name: 'password',
-            mask: true
-          }
-        ]
+            name: "password",
+            mask: true,
+          },
+        ],
       },
-      originPath: '/source/path',
+      originPath: "/source/path",
       partial: {
-        name: '_init',
-        type: 'init',
+        name: "_init",
+        type: "init",
         parameters: [
           {
-            name: 'otherPassword',
-            mask: true
-          }
-        ]
+            name: "otherPassword",
+            mask: true,
+          },
+        ],
       },
-      targetPath: '/target/path',
-      parameters: { 
-        test: 'a sample test',
-        password: 'password',
-        otherPassword: 'other-password',
+      targetPath: "/target/path",
+      parameters: {
+        test: "a sample test",
+        password: "password",
+        otherPassword: "other-password",
       },
-      config: { ...new OptionsProvider(), ...{annotate: true}}
-    }
+      options: new ScafflaterOptions({ annotate: true }),
+    };
     fsUtil.getDirTreeSync.mockReturnValue({
-      path: 'just/a/sample/test.txt',
-      name: 'test.txt',
+      path: "just/a/sample/test.txt",
+      name: "test.txt",
       size: 100,
-      type: 'file',
-      extension: '.txt',
-    })
+      type: "file",
+      extension: ".txt",
+    });
 
-    fsUtil.readFileContent.mockImplementation(path => {
-      if (path.startsWith(ctx.targetPath))
-        return 'existing content';
+    fsUtil.readFileContent.mockImplementation((path) => {
+      if (path.startsWith(ctx.targetPath)) return "existing content";
 
-      return '{{parameters.test}}'
-    })
-    fsUtil.pathExists.mockImplementation(path => {
-      if (path.startsWith(ctx.targetPath))
-        return true;
-    })
-    fsUtil.loadScriptsAsObjects.mockResolvedValue([])
-    fsUtil.listFilesByExtensionDeeply.mockResolvedValue([])
-    const generator = new Generator(ctx)
+      return "{{parameters.test}}";
+    });
+    fsUtil.pathExists.mockImplementation((path) => {
+      if (path.startsWith(ctx.targetPath)) return true;
+    });
+    fsUtil.loadScriptsAsObjects.mockResolvedValue([]);
+    fsUtil.listFilesByExtensionDeeply.mockResolvedValue([]);
+    const generator = new Generator(ctx);
 
     // ACT
-    await generator.generate()
+    await generator.generate();
 
     // ASSERT
-    expect(fsUtil.saveFile.mock.calls.length).toBe(1)
-    expect(fsUtil.saveFile.mock.calls[0][0]).toBe('/target/path/test.txt')
+    expect(fsUtil.saveFile.mock.calls.length).toBe(1);
+    expect(fsUtil.saveFile.mock.calls[0][0]).toBe("/target/path/test.txt");
     expect(fsUtil.saveFile.mock.calls[0][1]).toBe(`existing content
 
 # @scf-region
@@ -152,284 +154,297 @@ a sample test
 
 a sample test
 
-# @end-scf-region`)
-  })
+# @end-scf-region`);
+  });
 
-  test('Does not render an ignored file', async () => {
+  test("Does not render an ignored file", async () => {
     // ARRANGE
     const ctx = {
-      templatePath: '/template/path',
+      templatePath: "/template/path",
       template: {
-        name: 'test-template',
-        type: 'template',
-        version: '0.0.1',
-        config: {
-          lineCommentTemplate: '# {{comment}}',
+        name: "test-template",
+        type: "template",
+        version: "0.0.1",
+        options: {
+          lineCommentTemplate: "# {{comment}}",
         },
       },
-      originPath: '/source/path',
+      originPath: "/source/path",
       partial: {
-        name: '_init',
-        type: 'init',
+        name: "_init",
+        type: "init",
       },
-      targetPath: '/target/path',
-      parameters: { test: 'a sample test' },
-      config: new OptionsProvider()
-    }
+      targetPath: "/target/path",
+      parameters: { test: "a sample test" },
+      options: new ScafflaterOptions(),
+    };
     fsUtil.getDirTreeSync.mockReturnValue({
-      path: 'just/a/sample/test.txt',
-      name: 'test.txt',
+      path: "just/a/sample/test.txt",
+      name: "test.txt",
       size: 100,
-      type: 'file',
-      extension: '.txt',
-    })
-    fsUtil.loadScriptsAsObjects.mockResolvedValue([])
-    fsUtil.listFilesByExtensionDeeply.mockResolvedValue([])
-    fsUtil.readFileContent.mockImplementation(path => {
+      type: "file",
+      extension: ".txt",
+    });
+    fsUtil.loadScriptsAsObjects.mockResolvedValue([]);
+    fsUtil.listFilesByExtensionDeeply.mockResolvedValue([]);
+    fsUtil.readFileContent.mockImplementation((path) => {
       return `
       # @scf-option {"ignore":true}
       
       the file content
-      `
-    })
-    const generator = new Generator(ctx)
+      `;
+    });
+    const generator = new Generator(ctx);
 
     // ACT
-    await generator.generate()
+    await generator.generate();
 
     // ASSERT
-    expect(fsUtil.saveFile.mock.calls.length).toBe(0)
-  })
+    expect(fsUtil.saveFile.mock.calls.length).toBe(0);
+  });
 
-  test('Does not render an empty file name config', async () => {
+  test("Does not render an empty file name config", async () => {
     // ARRANGE
     const ctx = {
-      templatePath: '/template/path',
+      templatePath: "/template/path",
       template: {
-        name: 'test-template',
-        type: 'template',
-        version: '0.0.1',
-        config: {
-          lineCommentTemplate: '# {{comment}}',
+        name: "test-template",
+        type: "template",
+        version: "0.0.1",
+        options: {
+          lineCommentTemplate: "# {{comment}}",
         },
       },
-      originPath: '/source/path',
+      originPath: "/source/path",
       partial: {
-        name: '_init',
-        type: 'init',
+        name: "_init",
+        type: "init",
       },
-      targetPath: '/target/path',
-      parameters: { test: 'a sample test' },
-      config: new OptionsProvider()
-    }
+      targetPath: "/target/path",
+      parameters: { test: "a sample test" },
+      options: new ScafflaterOptions(),
+    };
     fsUtil.getDirTreeSync.mockReturnValue({
-      path: 'just/a/sample/test.txt',
-      name: 'test.txt',
+      path: "just/a/sample/test.txt",
+      name: "test.txt",
       size: 100,
-      type: 'file',
-      extension: '.txt',
-    })
-    fsUtil.loadScriptsAsObjects.mockResolvedValue([])
-    fsUtil.listFilesByExtensionDeeply.mockResolvedValue([])
-    fsUtil.readFileContent.mockImplementation(path => {
+      type: "file",
+      extension: ".txt",
+    });
+    fsUtil.loadScriptsAsObjects.mockResolvedValue([]);
+    fsUtil.listFilesByExtensionDeeply.mockResolvedValue([]);
+    fsUtil.readFileContent.mockImplementation((path) => {
       return `
       # @scf-option {"targetName":""}
       
       the file content
-      `
-    })
-    const generator = new Generator(ctx)
+      `;
+    });
+    const generator = new Generator(ctx);
 
     // ACT
-    await generator.generate()
+    await generator.generate();
 
     // ASSERT
-    expect(fsUtil.saveFile.mock.calls.length).toBe(0)
-  })
+    expect(fsUtil.saveFile.mock.calls.length).toBe(0);
+  });
 
-  test('Save the file with name config', async () => {
+  test("Save the file with name config", async () => {
     // ARRANGE
     const ctx = {
-      templatePath: '/template/path',
+      templatePath: "/template/path",
       template: {
-        name: 'test-template',
-        type: 'template',
-        version: '0.0.1',
-        config: {
-          lineCommentTemplate: '# {{comment}}',
+        name: "test-template",
+        type: "template",
+        version: "0.0.1",
+        options: {
+          lineCommentTemplate: "# {{comment}}",
         },
       },
-      originPath: '/source/path',
+      originPath: "/source/path",
       partial: {
-        name: '_init',
-        type: 'init',
+        name: "_init",
+        type: "init",
       },
-      targetPath: '/target/path',
-      parameters: { test: 'a sample test' },
-      config: new OptionsProvider()
-    }
+      targetPath: "/target/path",
+      parameters: { test: "a sample test" },
+      options: new ScafflaterOptions(),
+    };
     fsUtil.getDirTreeSync.mockReturnValue({
-      path: 'just/a/sample/test.txt',
-      name: 'test.txt',
+      path: "just/a/sample/test.txt",
+      name: "test.txt",
       size: 100,
-      type: 'file',
-      extension: '.txt',
-    })
-    fsUtil.loadScriptsAsObjects.mockResolvedValue([])
-    fsUtil.listFilesByExtensionDeeply.mockResolvedValue([])
-    fsUtil.readFileContent.mockImplementation(path => {
+      type: "file",
+      extension: ".txt",
+    });
+    fsUtil.loadScriptsAsObjects.mockResolvedValue([]);
+    fsUtil.listFilesByExtensionDeeply.mockResolvedValue([]);
+    fsUtil.readFileContent.mockImplementation((path) => {
       return `
       # @scf-option {"targetName":"other-name.txt"}
       
       the file content
-      `
-    })
-    const generator = new Generator(ctx)
+      `;
+    });
+    const generator = new Generator(ctx);
 
     // ACT
-    await generator.generate()
+    await generator.generate();
 
     // ASSERT
-    expect(fsUtil.saveFile.mock.calls.length).toBe(1)
-    expect(fsUtil.saveFile.mock.calls[0][0]).toBe('/target/path/other-name.txt')
-  })
+    expect(fsUtil.saveFile.mock.calls.length).toBe(1);
+    expect(fsUtil.saveFile.mock.calls[0][0]).toBe(
+      "/target/path/other-name.txt"
+    );
+  });
 
-  test('Render parameters in the folder and file paths', async () => {
+  test("Render parameters in the folder and file paths", async () => {
     // ARRANGE
-    fsUtil.getDirTreeSync.mockReturnValue(
-      {
-        path: 'the-partial-folder', // must be ignored
-        name: 'the-partial-folder',
-        size: 200,
-        type: 'directory',
-        children: [{
-          path: '{{parameters.folderName}}',
-          name: '{{parameters.folderName}}',
+    fsUtil.getDirTreeSync.mockReturnValue({
+      path: "the-partial-folder", // must be ignored
+      name: "the-partial-folder",
+      size: 200,
+      type: "directory",
+      children: [
+        {
+          path: "{{parameters.folderName}}",
+          name: "{{parameters.folderName}}",
           size: 200,
-          type: 'directory',
-          children: [{
-            path: '{{parameters.folderName}}/{{parameters.fileName}}.txt',
-            name: '{{parameters.fileName}}.txt',
-            size: 100,
-            type: 'file',
-            extension: '.txt',
-          }],
-        }],
-      })
-    fsUtil.readFileContent.mockReturnValue('{{parameters.test}}')
-    const ctx = {
-      originPath: '/source/path',
-      partial: {
-        name: '_init',
-        type: 'init',
-      },
-      targetPath: '/target/path',
-      parameters: {
-        test: 'a sample test',
-        folderName: 'folder-name',
-        fileName: 'file-name',
-      },
-      templatePath: '/template/path',
-      template: {
-        name: 'test-template',
-        type: 'template',
-        version: '0.0.1',
-      },
-      config: { ...new OptionsProvider(), annotate: false }
-    }
-    fsUtil.pathExists.mockImplementation(path => {
-      if (path.startsWith(ctx.targetPath))
-        return false;
-    })
-    fsUtil.loadScriptsAsObjects.mockResolvedValue([])
-    fsUtil.listFilesByExtensionDeeply.mockResolvedValue([])
-    
-    const generator = new Generator(ctx)
-
-    // ACT
-    await generator.generate()
-
-    // ASSERT
-    expect(fsUtil.saveFile.mock.calls.length).toBe(1)
-    expect(fsUtil.saveFile.mock.calls[0][0]).toBe('/target/path/folder-name/file-name.txt')
-    expect(fsUtil.saveFile.mock.calls[0][1]).toBe('a sample test')
-  })
-
-  test('Does not render empty paths', async () => {
-    // ARRANGE
-    fsUtil.getDirTreeSync.mockReturnValue(
-      {
-        path: '/container/folder',
-        name: 'folder',
-        size: 200,
-        type: 'directory',
-        children: [{
-          path: '/container/folder/{{parameters.folderName}}',
-          name: '{{parameters.folderName}}',
-          size: 200,
-          type: 'directory',
-          children: [{
-            path: '/container/folder/{{parameters.folderName}}/{{parameters.fileName}}.txt',
-            name: '{{parameters.fileName}}.txt',
-            size: 100,
-            type: 'file',
-            extension: '.txt',
-          },
-          {
-            path: '/container/folder/{{parameters.folderName}}/{{#if parameters.shouldRenderFile}}{{parameters.fileName}}.txt{{/if}}',
-            name: '{{#if parameters.shouldRenderFile}}{{parameters.fileName}}.txt{{/if}}',
-            size: 100,
-            type: 'file',
-            extension: '.txt',
-          },
-          {
-            path: '/container/folder/{{parameters.folderName}}/{{#if parameters.shouldRenderFolder}}another-folder{{/if}}',
-            name: '{{#if parameters.shouldRenderFolder}}another-folder{{/if}}',
-            size: 200,
-            type: 'directory',
-            children: [{
-              path: '{{parameters.folderName}}/{{#if parameters.shouldRenderFolder}}another-folder{{/if}}/file.txt',
-              name: 'file.txt',
+          type: "directory",
+          children: [
+            {
+              path: "{{parameters.folderName}}/{{parameters.fileName}}.txt",
+              name: "{{parameters.fileName}}.txt",
               size: 100,
-              type: 'file',
-              extension: '.txt',
-            }],
-          }],
-        }],
-      })
-    fsUtil.readFileContent.mockReturnValue('{{parameters.test}}')
-    fsUtil.loadScriptsAsObjects.mockResolvedValue([])
-    fsUtil.listFilesByExtensionDeeply.mockResolvedValue([])
+              type: "file",
+              extension: ".txt",
+            },
+          ],
+        },
+      ],
+    });
+    fsUtil.readFileContent.mockReturnValue("{{parameters.test}}");
     const ctx = {
-      originPath: '/source/path',
+      originPath: "/source/path",
       partial: {
-        name: '_init',
-        type: 'init',
+        name: "_init",
+        type: "init",
       },
-      targetPath: '/target/path',
+      targetPath: "/target/path",
       parameters: {
-        test: 'a sample test',
-        folderName: 'folder-name',
-        fileName: 'file-name',
+        test: "a sample test",
+        folderName: "folder-name",
+        fileName: "file-name",
+      },
+      templatePath: "/template/path",
+      template: {
+        name: "test-template",
+        type: "template",
+        version: "0.0.1",
+      },
+      options: new ScafflaterOptions({ annotate: false }),
+    };
+    fsUtil.pathExists.mockImplementation((path) => {
+      if (path.startsWith(ctx.targetPath)) return false;
+    });
+    fsUtil.loadScriptsAsObjects.mockResolvedValue([]);
+    fsUtil.listFilesByExtensionDeeply.mockResolvedValue([]);
+
+    const generator = new Generator(ctx);
+
+    // ACT
+    await generator.generate();
+
+    // ASSERT
+    expect(fsUtil.saveFile.mock.calls.length).toBe(1);
+    expect(fsUtil.saveFile.mock.calls[0][0]).toBe(
+      "/target/path/folder-name/file-name.txt"
+    );
+    expect(fsUtil.saveFile.mock.calls[0][1]).toBe("a sample test");
+  });
+
+  test("Does not render empty paths", async () => {
+    // ARRANGE
+    fsUtil.getDirTreeSync.mockReturnValue({
+      path: "/container/folder",
+      name: "folder",
+      size: 200,
+      type: "directory",
+      children: [
+        {
+          path: "/container/folder/{{parameters.folderName}}",
+          name: "{{parameters.folderName}}",
+          size: 200,
+          type: "directory",
+          children: [
+            {
+              path: "/container/folder/{{parameters.folderName}}/{{parameters.fileName}}.txt",
+              name: "{{parameters.fileName}}.txt",
+              size: 100,
+              type: "file",
+              extension: ".txt",
+            },
+            {
+              path: "/container/folder/{{parameters.folderName}}/{{#if parameters.shouldRenderFile}}{{parameters.fileName}}.txt{{/if}}",
+              name: "{{#if parameters.shouldRenderFile}}{{parameters.fileName}}.txt{{/if}}",
+              size: 100,
+              type: "file",
+              extension: ".txt",
+            },
+            {
+              path: "/container/folder/{{parameters.folderName}}/{{#if parameters.shouldRenderFolder}}another-folder{{/if}}",
+              name: "{{#if parameters.shouldRenderFolder}}another-folder{{/if}}",
+              size: 200,
+              type: "directory",
+              children: [
+                {
+                  path: "{{parameters.folderName}}/{{#if parameters.shouldRenderFolder}}another-folder{{/if}}/file.txt",
+                  name: "file.txt",
+                  size: 100,
+                  type: "file",
+                  extension: ".txt",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+    fsUtil.readFileContent.mockReturnValue("{{parameters.test}}");
+    fsUtil.loadScriptsAsObjects.mockResolvedValue([]);
+    fsUtil.listFilesByExtensionDeeply.mockResolvedValue([]);
+    const ctx = {
+      originPath: "/source/path",
+      partial: {
+        name: "_init",
+        type: "init",
+      },
+      targetPath: "/target/path",
+      parameters: {
+        test: "a sample test",
+        folderName: "folder-name",
+        fileName: "file-name",
         shouldRenderFolder: false,
         shouldRenderFile: false,
       },
-      templatePath: '/template/path',
+      templatePath: "/template/path",
       template: {
-        name: 'test-template',
-        type: 'template',
-        version: '0.0.1',
+        name: "test-template",
+        type: "template",
+        version: "0.0.1",
       },
-      config: { ...new OptionsProvider(), annotate: false }
-    }
-    const generator = new Generator(ctx)
+      options: new ScafflaterOptions({ annotate: false }),
+    };
+    const generator = new Generator(ctx);
 
     // ACT
-    await generator.generate()
+    await generator.generate();
 
     // ASSERT
-    expect(fsUtil.saveFile.mock.calls.length).toBe(1)
-    expect(fsUtil.saveFile.mock.calls[0][0]).toBe('/target/path/folder-name/file-name.txt')
-    expect(fsUtil.saveFile.mock.calls[0][1]).toBe('a sample test')
-  })
-})
+    expect(fsUtil.saveFile.mock.calls.length).toBe(1);
+    expect(fsUtil.saveFile.mock.calls[0][0]).toBe(
+      "/target/path/folder-name/file-name.txt"
+    );
+    expect(fsUtil.saveFile.mock.calls[0][1]).toBe("a sample test");
+  });
+});
