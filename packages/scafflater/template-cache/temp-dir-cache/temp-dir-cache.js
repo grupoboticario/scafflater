@@ -1,10 +1,11 @@
-const OptionsProvider = require("../../options-provider");
+const OptionsProvider = require("../../options");
 const FileSystemUtils = require("../../fs-util");
-const DirCache = require("./dir-cache");
+const DirCache = require("../dir-cache/dir-cache");
 
 /**
  * Stores templates in the local file system
- * @extends DirCache
+ *
+ * @augments DirCache
  */
 class TempDirCache extends DirCache {
   constructor(config = {}) {

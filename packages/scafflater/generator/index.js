@@ -4,6 +4,7 @@ const Processor = require("./processors/processor");
 const Appender = require("./appenders/appender");
 const HandlebarsProcessor = require("./processors/handlebars-processor");
 const prettier = require("prettier");
+const ScafflaterOptions = require("../options");
 
 /**
  * @typedef {object} Context
@@ -18,9 +19,9 @@ const prettier = require("prettier");
 class Generator {
   /**
    * Brief description of the function here.
+   *
    * @summary If the description is long, write your summary here. Otherwise, feel free to remove this.
-   * @param {Context} context - The context to generate
-   * @return {ReturnValueDataTypeHere} Brief description of the returning value here.
+   * @param {object} context - The context to generate
    */
   constructor(context) {
     this.context = context;
@@ -157,9 +158,10 @@ class Generator {
 
   /**
    * Loads and merge the options of file or folder with the context options
-   * @param {object} tree
-   * @param {Context} context
-   * @return {Promise<OptionsProvider.ScafflaterOptions>} Brief description of the returning value here.
+   *
+   * @param {object} tree The directory item to load options
+   * @param {Context} context The context to load options
+   * @returns {Promise<ScafflaterOptions>} Brief description of the returning value here.
    */
   async loadOptions(tree, context) {
     if (tree.type === "directory") {

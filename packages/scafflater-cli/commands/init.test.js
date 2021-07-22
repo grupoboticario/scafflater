@@ -1,40 +1,59 @@
-jest.mock("scafflater/fs-util");
-jest.mock("scafflater/logger");
-jest.mock("scafflater/template-manager");
-jest.mock("scafflater");
-
 const InitCommand = require("./init");
-const fsUtil = require("scafflater/fs-util");
 const logger = require("scafflater/logger");
-const Scafflater = require("scafflater");
+const { Scafflater, TemplateManager } = require("scafflater");
+const Config = require("scafflater/scafflater-config/config");
+const {
+  LocalTemplate,
+} = require("scafflater/scafflater-config/local-template");
+
+jest.mock("scafflater");
+jest.mock("scafflater/logger");
 
 describe("InitCommand", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.resetAllMocks();
+  });
+
+  const templateManager = new TemplateManager();
+  const mockedScafflater = {
+    templateManager: templateManager,
+    init: jest.fn(),
+  };
+  Scafflater.mockImplementation(() => {
+    return mockedScafflater;
   });
 
   test("Template is already initialized, should abort", async () => {
     // ARRANGE
-    fsUtil.pathExistsSync.mockReturnValue(true);
-    const initCommand = new InitCommand([], {});
+    jest
+      .spyOn(templateManager, "getTemplateFromSource")
+      .mockResolvedValue(new LocalTemplate("/some/path", "some-template"));
+    jest.spyOn(Config, "fromLocalPath").mockResolvedValue({
+      config: {
+        templates: [
+          {
+            name: "some-template",
+          },
+        ],
+      },
+    });
+    const initCommand = new InitCommand(["https://github.com/some/repo"], {});
 
     // ACT
     await initCommand.run();
 
     // ASSERT
     expect(logger.info).toHaveBeenCalledWith(
-      "The output folder is initialized!"
+      "The template is already initialized!"
     );
   });
 
   test("Template is not initialized, should initialize it", async () => {
-    // ARRANGE
-    fsUtil.pathExistsSync.mockReturnValue(false);
+    jest
+      .spyOn(templateManager, "getTemplateFromSource")
+      .mockResolvedValue(new LocalTemplate("/some/path", "some-new-template"));
+    jest.spyOn(Config, "fromLocalPath").mockResolvedValue(null);
     const initCommand = new InitCommand(["https://github.com/some/repo"], {});
-    new Scafflater().templateManager.getTemplateFromSource.mockResolvedValue({
-      parameters: [],
-    });
 
     // ACT
     await initCommand.run();

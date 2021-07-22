@@ -4,8 +4,7 @@ const { spawn } = require("child_process");
  *
  * @param {string} command the command to run
  * @param {string[]} args the arguments to pass the command
- * @param {stream} logStream the log streamer to capture log messages
- * @return {Promise<string>} Promise of output message
+ * @returns {Promise<string>} Promise of output message
  */
 const runCommand = (command, args) => {
   return new Promise((resolve, reject) => {

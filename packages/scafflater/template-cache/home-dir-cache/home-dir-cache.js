@@ -1,11 +1,12 @@
 const os = require("os");
 const path = require("path");
-const OptionsProvider = require("../../options-provider");
-const DirCache = require("./dir-cache");
+const OptionsProvider = require("../../options");
+const DirCache = require("../dir-cache");
 
 /**
  * Stores templates in the local file system.
- * @extends DirCache
+ *
+ * @augments DirCache
  */
 class HomeDirCache extends DirCache {
   constructor(config = {}) {

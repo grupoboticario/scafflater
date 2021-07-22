@@ -9,7 +9,8 @@ const npmInstallExec = require("../util/npmInstall");
 
 /**
  * Loads js
- * @param {string} jsPath
+ *
+ * @param {string} jsPath The js path to load
  * @returns {object} Loaded script
  */
 fs.require = (jsPath) => {
@@ -18,9 +19,10 @@ fs.require = (jsPath) => {
 
 /**
  * Looks for file uo.
+ *
  * @param {string} startPath - Path to start search
  * @param {string} fileName - File name to look for
- * @return {Promise<string>} The found file path
+ * @returns {Promise<string>} The found file path
  */
 fs.findFileUp = async (startPath, fileName) => {
   const parts = path.dirname(startPath).split(path.sep);
@@ -48,7 +50,7 @@ fs.loadScriptsAsObjects = async (folderPath, npmInstall = false) => {
 };
 
 /**
- * @typedef {Object} JsFile
+ * @typedef {object} JsFile
  * @property {string} filePath - The js file path
  * @property {string} fileName - The js file name
  * @property {object} object - The object loaded with required
@@ -56,9 +58,10 @@ fs.loadScriptsAsObjects = async (folderPath, npmInstall = false) => {
  */
 /**
  * Lists js scripts in a folder name.
+ *
  * @param {string} folderPath - Folder to list scripts
  * @param {boolean} npmInstall - If true, will run 'npm install' in the parent package
- * @return {Promise<JsFile>} The loaded scripts details
+ * @returns {Promise<JsFile>} The loaded scripts details
  */
 fs.listJsScripts = async (folderPath, npmInstall = false) => {
   if (!folderPath || !(await fs.pathExists(folderPath))) {
@@ -95,7 +98,7 @@ fs.listJsScripts = async (folderPath, npmInstall = false) => {
 
 /**
  * Returns a temp folder path
- * @returns {string} A temp folder path
+ *
  * @returns {Promise<string>} The temp path
  */
 fs.getTempFolder = async () => {
@@ -104,8 +107,8 @@ fs.getTempFolder = async () => {
 
 /**
  * Returns a temp folder path
- * @returns {string} A temp folder path
- * @returns {string} The temp path
+ *
+ * @returns {Promise<string>} The temp path
  */
 fs.getTempFolderSync = () => {
   return fs.mkdtempSync(os.tmpdir());
@@ -113,9 +116,10 @@ fs.getTempFolderSync = () => {
 
 /**
  * Copies folder and files, creating the dest folder if it does not exists.
+ *
  * @param {string} src - Source
  * @param {string} dest - Destiny
- * @returns {Promise}
+ * @returns {Promise<void>}
  */
 fs.copyEnsuringDest = async (src, dest) => {
   await fs.ensureDir(dest);
@@ -124,8 +128,8 @@ fs.copyEnsuringDest = async (src, dest) => {
 
 /**
  * Gets file
+ *
  * @param {string} filePath - Source
- * @returns {string} The read file content
  * @returns {Promise<string>} The File content
  */
 fs.readFileContent = async (filePath) => {
@@ -137,6 +141,7 @@ fs.readFileContent = async (filePath) => {
 
 /**
  * Reads an Json file
+ *
  * @param {string} filePath - Source
  * @returns {Promise<object>} The Json object
  */
@@ -150,9 +155,11 @@ fs.readJSON = async (filePath) => {
 };
 
 /**
- * Reads an Json file
+ * Writes an Json file
+ *
  * @param {string} filePath - Source
- * @param {string} filePath - Source
+ * @param {object} obj Object to save
+ * @param {boolean} indent True, if the file should be saved indented
  * @returns {Promise<object>} The Json object
  */
 fs.writeJSON = async (filePath, obj, indent = true) => {
@@ -161,10 +168,11 @@ fs.writeJSON = async (filePath, obj, indent = true) => {
 
 /**
  * Saves the file, ensuring that destiny folder exists and formatting text if it is an append operation.
+ *
  * @param {string} filePath - Source
  * @param {string} data - Data to be saved
  * @param {boolean} append - Appends data in file. The file is created if does not exists. Default = true
- * @returns {Promise}
+ * @returns {Promise<void>}
  */
 fs.saveFile = async (filePath, data, append = true) => {
   const option = { flag: "w" };
@@ -178,9 +186,10 @@ fs.saveFile = async (filePath, data, append = true) => {
 
 /**
  * Returns the directory tree
+ *
  * @param {string} folderPath - The path to build the tree
  * @param {boolean} includeFiles - If true, the files will be included in the list
- * @return {Promise<object>} The tree
+ * @returns {Promise<object>} The tree
  */
 fs.getDirTreeSync = (folderPath, includeFiles = true) => {
   const options = {};
@@ -193,9 +202,10 @@ fs.getDirTreeSync = (folderPath, includeFiles = true) => {
 
 /**
  * List files in directory tree
+ *
  * @param {string} folderPath - Path to look for files
  * @param {string} filePattern - Glob pattern to filter files
- * @return {Promise<string[]>} List of file names
+ * @returns {Promise<string[]>} List of file names
  */
 fs.listFilesDeeply = async (folderPath, filePattern) => {
   return new Promise((resolve, reject) => {
@@ -209,9 +219,10 @@ fs.listFilesDeeply = async (folderPath, filePattern) => {
 
 /**
  * List files in directory tree by extension
+ *
  * @param {string} folderPath - Path to look for files
  * @param {string} extension - Glob pattern to filter files
- * @return {Promise<string[]>} List of file names
+ * @returns {Promise<string[]>} List of file names
  */
 fs.listFilesByExtensionDeeply = async (folderPath, extension) => {
   return fs.listFilesDeeply(folderPath, `/**/*.${extension}`);
@@ -219,9 +230,10 @@ fs.listFilesByExtensionDeeply = async (folderPath, extension) => {
 
 /**
  * List files in directory tree by name
+ *
  * @param {string} folderPath - Path to look for files
  * @param {string} fileName - Glob pattern to filter files
- * @return {Promise<string[]>} List of file names
+ * @returns {Promise<string[]>} List of file names
  */
 fs.listFilesByNameDeeply = async (folderPath, fileName) => {
   return fs.listFilesDeeply(folderPath, `/**/${fileName}`);

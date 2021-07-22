@@ -1,47 +1,50 @@
 const { Command, flags } = require("@oclif/command");
-const Scafflater = require("scafflater");
+const { Scafflater } = require("scafflater");
 const TemplateSource = require("scafflater/template-source");
 const { promptMissingParameters, spinner } = require("../util");
-const fsUtil = require("scafflater/fs-util");
-const path = require("path");
 const logger = require("scafflater/logger");
-const OptionsProvider = require("scafflater/options-provider");
+const ScafflaterOptions = require("scafflater/options");
+const Config = require("scafflater/scafflater-config/config");
+const chalk = require("chalk");
 
 class InitCommand extends Command {
   async run() {
     try {
       const { args: iniArgs, flags: initFlags } = this.parse(InitCommand);
 
-      const config = {
-        ...new OptionsProvider(),
-        ...{
-          cacheStorage: initFlags.cache,
-        },
-      };
+      const config = new ScafflaterOptions({
+        cacheStorage: initFlags.cache,
+      });
       config.source = TemplateSource.resolveTemplateSourceFromSourceKey(
         config,
         iniArgs.source
       );
       const scafflater = new Scafflater(config);
 
-      if (
-        fsUtil.pathExistsSync(path.join(initFlags.output, config.scfFileName))
-      ) {
-        logger.info("The output folder is initialized!");
-        logger.info("Aborting!");
-        return;
-      }
-
-      let templateConfig;
+      let localTemplate;
       await spinner(`Getting template from ${iniArgs.source}`, async () => {
-        templateConfig = await scafflater.templateManager.getTemplateFromSource(
+        localTemplate = await scafflater.templateManager.getTemplateFromSource(
           iniArgs.source
         );
       });
 
+      let outputConfig = (await Config.fromLocalPath(initFlags.output))?.config;
+      if (!outputConfig) {
+        outputConfig = new Config();
+      }
+      if (outputConfig.templates.find((t) => t.name === localTemplate.name)) {
+        logger.info(`The template is already initialized!`);
+        logger.info(
+          `Run ${chalk.bgBlack.yellowBright(
+            "scafflater-cli partial:list"
+          )} to see available partials`
+        );
+        return;
+      }
+
       const parameters = await promptMissingParameters(
         initFlags.parameters,
-        templateConfig.parameters
+        localTemplate.parameters
       );
 
       await spinner("Running template initialization", async () => {

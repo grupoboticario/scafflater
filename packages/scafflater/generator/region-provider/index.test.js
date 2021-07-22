@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-const OptionsProvider = require("../../options-provider");
+const OptionsProvider = require("../../options");
 const { RegionProvider, Region, RegionTag, RegionTagType } = require(".");
 
 test("List regions in a well formatted content", () => {

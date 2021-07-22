@@ -1,176 +1,383 @@
-jest.mock("scafflater/fs-util");
-jest.mock("scafflater/logger");
-jest.mock("scafflater/template-manager");
-jest.mock("scafflater");
-jest.mock("inquirer");
-
-const RunCommand = require("./run");
-const fsUtil = require("scafflater/fs-util");
+const RunPartialCommand = require("./run");
 const logger = require("scafflater/logger");
+const { Scafflater, TemplateManager, TemplateCache } = require("scafflater");
+const Config = require("scafflater/scafflater-config/config");
+const {
+  LocalTemplate,
+  LocalPartial,
+} = require("scafflater/scafflater-config/local-template");
 const inquirer = require("inquirer");
-const Scafflater = require("scafflater");
+
+jest.mock("scafflater/scafflater-config/config");
+jest.mock("inquirer");
+jest.mock("scafflater");
+jest.mock("scafflater/logger");
 
 describe("ListCommand", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.resetAllMocks();
+    jest.restoreAllMocks();
   });
 
-  test("Template does not have partials, should error it", async () => {
+  test("Folder does not have a initialized template, should info.", async () => {
     // ARRANGE
-    fsUtil.pathExistsSync.mockReturnValue(true);
-    fsUtil.readJSON.mockResolvedValue({
-      template: {
-        name: "some-template",
-        version: "some-version",
-        source: {
-          key: "some-gh-repo",
-        },
-      },
+    const templateCache = new TemplateCache();
+    const templateManager = new TemplateManager();
+    templateManager.templateCache = templateCache;
+    const mockedScafflater = {
+      templateManager,
+      templateCache,
+      init: jest.fn(),
+    };
+    Scafflater.mockImplementation(() => {
+      return mockedScafflater;
     });
-    new Scafflater().templateManager.getTemplateFromSource.mockResolvedValue({
-      parameters: [],
-    });
-    new Scafflater().templateManager.templateCache.getTemplatePath.mockResolvedValueOnce(
-      "some/path"
-    );
-    new Scafflater().templateManager.listPartials.mockResolvedValueOnce([]);
-    const runCommand = new RunCommand([], {});
+    Config.fromLocalPath.mockResolvedValue(null);
+    const listCommand = new RunPartialCommand([], {});
 
     // ACT
-    await runCommand.run();
+    await listCommand.run();
 
     // ASSERT
-    expect(logger.error).toHaveBeenCalledWith(
-      expect.stringMatching(/No partials available on template/)
+    expect(logger.info).toHaveBeenCalledWith("No initialized template found!");
+  });
+
+  test("Has initializes Templates, but the templates are not in cache. Should get template from source and error if it could not be loaded.", async () => {
+    // ARRANGE
+    const templateCache = new TemplateCache();
+    const templateManager = new TemplateManager();
+    templateManager.templateCache = templateCache;
+    const mockedScafflater = {
+      templateManager,
+      templateCache,
+      init: jest.fn(),
+    };
+    Scafflater.mockImplementation(() => {
+      return mockedScafflater;
+    });
+
+    Config.fromLocalPath.mockResolvedValue({
+      config: {
+        templates: [
+          {
+            name: "some-template",
+            source: {
+              key: "http://some/url/to/template",
+            },
+          },
+          {
+            name: "some-other-template",
+            source: {
+              key: "http://some/url/to/other-template",
+            },
+          },
+        ],
+      },
+    });
+    templateCache.getTemplate.mockResolvedValue(null);
+    templateManager.getTemplateFromSource.mockResolvedValueOnce(
+      new LocalTemplate(
+        "/some/template/path",
+        "some-template",
+        "The template",
+        "0.0.1",
+        [
+          new LocalPartial(
+            "/some/partial/path",
+            "the-partial",
+            "This is an partial"
+          ),
+          new LocalPartial("/some/partial/path", "the-partial"),
+        ]
+      )
+    );
+    const listCommand = new RunPartialCommand(["some-partial"], {});
+
+    // ACT
+    await listCommand.run();
+
+    // ASSERT
+    expect(templateManager.getTemplateFromSource).toHaveBeenNthCalledWith(
+      1,
+      "http://some/url/to/template"
+    );
+    expect(templateManager.getTemplateFromSource).toHaveBeenNthCalledWith(
+      2,
+      "http://some/url/to/other-template"
+    );
+    expect(logger.error).toHaveBeenNthCalledWith(
+      1,
+      expect.stringMatching(/Could not get template/)
     );
   });
 
-  test("Template is available, has partials, the partial was informed by parameter but is invalid, should log error", async () => {
+  test("Has initializes Templates, has partials but the partial does not exist. Should Info.", async () => {
     // ARRANGE
-    fsUtil.pathExistsSync.mockReturnValue(true);
-    fsUtil.readJSON.mockResolvedValue({
-      template: {
-        name: "some-template",
-        version: "some-version",
-        source: {
-          key: "some-gh-repo",
-        },
+    const templateCache = new TemplateCache();
+    const templateManager = new TemplateManager();
+    templateManager.templateCache = templateCache;
+    const mockedScafflater = {
+      templateManager,
+      templateCache,
+      init: jest.fn(),
+    };
+    Scafflater.mockImplementation(() => {
+      return mockedScafflater;
+    });
+
+    Config.fromLocalPath.mockResolvedValue({
+      config: {
+        templates: [
+          {
+            name: "some-template",
+          },
+        ],
       },
     });
-    const listCommand = new RunCommand(["some-invalid-partial"], {});
-    new Scafflater().templateManager.templateCache.getTemplatePath.mockResolvedValueOnce(
-      "some/path"
+    templateCache.getTemplate.mockResolvedValueOnce(
+      new LocalTemplate(
+        "/some/template/path",
+        "some-template",
+        "The template",
+        "0.0.1",
+        [
+          new LocalPartial(
+            "/some/partial/path",
+            "the-partial",
+            "This is an partial"
+          ),
+        ]
+      )
     );
-    new Scafflater().templateManager.listPartials.mockResolvedValueOnce([
-      {
-        config: {
-          type: "partial",
-          name: "partial-name",
-          description: "Partial Description",
-        },
-      },
-      {
-        config: {
-          type: "partial2",
-          name: "partial2-name",
-        },
-      },
-    ]);
+    templateCache.getTemplate.mockResolvedValueOnce(null);
+    const listCommand = new RunPartialCommand(["some-invalid-partial"], {});
 
     // ACT
     await listCommand.run();
 
     // ASSERT
     expect(logger.error).toHaveBeenCalledWith(
-      expect.stringMatching(/The partial '.*' is not available at template/)
+      expect.stringMatching(
+        /The partial '.*' is not available on any initialized template/
+      )
     );
   });
 
-  test("Template is available, has partials, the partial was informed by parameter and is invalid, should execute", async () => {
+  test("Has initializes Templates, and the partial is an Argument is available on many templates. Should prompt.", async () => {
     // ARRANGE
-    fsUtil.pathExistsSync.mockReturnValue(true);
-    fsUtil.readJSON.mockResolvedValue({
-      template: {
-        name: "some-template",
-        version: "some-version",
-        source: {
-          key: "some-gh-repo",
-        },
+    const templateCache = new TemplateCache();
+    const templateManager = new TemplateManager();
+    templateManager.templateCache = templateCache;
+    const mockedScafflater = {
+      templateManager,
+      templateCache,
+      init: jest.fn(),
+    };
+    Scafflater.mockImplementation(() => {
+      return mockedScafflater;
+    });
+
+    Config.fromLocalPath.mockResolvedValue({
+      config: {
+        templates: [
+          {
+            name: "some-template",
+          },
+          {
+            name: "other-template",
+          },
+        ],
       },
     });
-    const listCommand = new RunCommand(["partial-name"], {});
-    new Scafflater().templateManager.templateCache.getTemplatePath.mockResolvedValueOnce(
-      "some/path"
+    templateCache.getTemplate.mockResolvedValueOnce(
+      new LocalTemplate(
+        "/some/template/path",
+        "some-template",
+        "The template",
+        "0.0.1",
+        [
+          new LocalPartial(
+            "/some/partial/path",
+            "the-partial",
+            "This is an partial"
+          ),
+        ]
+      )
     );
-    new Scafflater().templateManager.listPartials.mockResolvedValueOnce([
-      {
-        config: {
-          type: "partial",
-          name: "partial-name",
-          description: "Partial Description",
-        },
-      },
-      {
-        config: {
-          type: "partial2",
-          name: "partial2-name",
-        },
-      },
-    ]);
-
-    // ACT
+    templateCache.getTemplate.mockResolvedValueOnce(
+      new LocalTemplate(
+        "/some/other/template/path",
+        "other-template",
+        "The other template",
+        "0.0.1",
+        [
+          new LocalPartial(
+            "/some/partial/path",
+            "the-partial",
+            "This is an partial in another template"
+          ),
+        ]
+      )
+    );
+    inquirer.prompt = jest.fn().mockResolvedValue({
+      localPartial: new LocalPartial(
+        "/some/partial/path",
+        "the-partial",
+        "This is an partial in another template"
+      ),
+    });
+    const listCommand = new RunPartialCommand(["the-partial"], {});
+    // ACT;
     await listCommand.run();
-
-    // ASSERT
-    expect(new Scafflater().runPartial).toHaveBeenCalledWith(
-      "partial-name",
-      {},
-      "./"
-    );
+    // ASSERT;
+    expect(inquirer.prompt).toHaveBeenCalledTimes(1);
   });
 
-  test("Template is available, has partials, the partial was not informed by parameter, should prompt and execute", async () => {
+  test("Has initializes Templates, and the partial is not informed. Should prompt.", async () => {
     // ARRANGE
-    fsUtil.pathExistsSync.mockReturnValue(true);
-    fsUtil.readJSON.mockResolvedValue({
-      template: {
-        name: "some-template",
-        version: "some-version",
-        source: {
-          key: "some-gh-repo",
-        },
+    const templateCache = new TemplateCache();
+    const templateManager = new TemplateManager();
+    templateManager.templateCache = templateCache;
+    const mockedScafflater = {
+      templateManager,
+      templateCache,
+      init: jest.fn(),
+    };
+    Scafflater.mockImplementation(() => {
+      return mockedScafflater;
+    });
+
+    Config.fromLocalPath.mockResolvedValue({
+      config: {
+        templates: [
+          {
+            name: "some-template",
+          },
+          {
+            name: "other-template",
+          },
+        ],
       },
     });
-    const listCommand = new RunCommand([], {});
-    new Scafflater().templateManager.templateCache.getTemplatePath.mockResolvedValueOnce(
-      "some/path"
+    templateCache.getTemplate.mockResolvedValueOnce(
+      new LocalTemplate(
+        "/some/template/path",
+        "some-template",
+        "The template",
+        "0.0.1",
+        [
+          new LocalPartial(
+            "/some/partial/path",
+            "the-partial",
+            "This is an partial"
+          ),
+        ]
+      )
     );
-    new Scafflater().templateManager.listPartials.mockResolvedValueOnce([
-      {
-        config: {
-          type: "partial",
-          name: "partial-name",
-          description: "Partial Description",
-        },
-      },
-      {
-        config: {
-          type: "partial2",
-          name: "partial2-name",
-        },
-      },
-    ]);
-    inquirer.prompt.mockResolvedValue({ partialName: "partial-name" });
-
-    // ACT
+    templateCache.getTemplate.mockResolvedValueOnce(
+      new LocalTemplate(
+        "/some/other/template/path",
+        "other-template",
+        "The other template",
+        "0.0.1",
+        [
+          new LocalPartial(
+            "/some/partial/path",
+            "the-partial",
+            "This is an partial in another template"
+          ),
+        ]
+      )
+    );
+    inquirer.prompt = jest.fn().mockResolvedValue({
+      localPartial: new LocalPartial(
+        "/some/partial/path",
+        "the-partial",
+        "This is an partial in another template"
+      ),
+    });
+    const listCommand = new RunPartialCommand([], {});
+    // ACT;
     await listCommand.run();
+    // ASSERT;
+    expect(inquirer.prompt).toHaveBeenCalledTimes(1);
+  });
 
-    // ASSERT
-    expect(new Scafflater().runPartial).toHaveBeenCalledWith(
-      "partial-name",
-      {},
-      "./"
+  test("Has initializes Templates, and the template is an Argument. Should prompt only template partials.", async () => {
+    // ARRANGE
+    const templateCache = new TemplateCache();
+    const templateManager = new TemplateManager();
+    templateManager.templateCache = templateCache;
+    const mockedScafflater = {
+      templateManager,
+      templateCache,
+      init: jest.fn(),
+      runPartial: jest.fn(),
+    };
+    Scafflater.mockImplementation(() => {
+      return mockedScafflater;
+    });
+
+    Config.fromLocalPath.mockResolvedValue({
+      config: {
+        templates: [
+          {
+            name: "some-template",
+          },
+          {
+            name: "other-template",
+          },
+        ],
+      },
+    });
+    templateCache.getTemplate.mockResolvedValueOnce(
+      new LocalTemplate(
+        "/some/template/path",
+        "some-template",
+        "The template",
+        "0.0.1",
+        [
+          new LocalPartial(
+            "/some/partial/path",
+            "the-partial",
+            "This is an partial"
+          ),
+        ]
+      )
+    );
+    templateCache.getTemplate.mockResolvedValueOnce(
+      new LocalTemplate(
+        "/some/other/template/path",
+        "other-template",
+        "The other template",
+        "0.0.1",
+        [
+          new LocalPartial(
+            "/some/partial/path",
+            "the-partial",
+            "This is an partial in another template"
+          ),
+        ]
+      )
+    );
+    inquirer.prompt = jest.fn().mockResolvedValue({
+      availablePartial: {
+        templateName: "some-template",
+        ...new LocalPartial(
+          "/some/partial/path",
+          "the-partial",
+          "This is an partial in another template"
+        ),
+      },
+    });
+    const listCommand = new RunPartialCommand(["-t", "some-template"], {});
+    // ACT;
+    await listCommand.run();
+    // ASSERT;
+    expect(inquirer.prompt).toHaveBeenCalledTimes(1);
+    expect(logger.log).toHaveBeenCalledWith(
+      "notice",
+      expect.stringMatching(/Partial results appended to output!/)
     );
   });
 });

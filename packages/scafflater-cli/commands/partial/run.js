@@ -1,88 +1,171 @@
 const { Command, flags } = require("@oclif/command");
-const Scafflater = require("scafflater");
-const {
-  promptMissingParameters,
-  spinner,
-  listPartials,
-} = require("../../util");
-const fsUtil = require("scafflater/fs-util");
-const path = require("path");
+const { Scafflater } = require("scafflater");
+const { promptMissingParameters, spinner } = require("../../util");
 const logger = require("scafflater/logger");
 const chalk = require("chalk");
 const inquirer = require("inquirer");
-const OptionsProvider = require("scafflater/options-provider");
+const ScafflaterOptions = require("scafflater/options");
+const Config = require("scafflater/scafflater-config/config");
+const {
+  LocalTemplate,
+  LocalPartial,
+} = require("scafflater/scafflater-config/local-template");
+
+/**
+ * A class to relate partial with templates.
+ *
+ * @class LocalPartialTemplate
+ * @augments LocalPartial
+ */
+class LocalPartialTemplate extends LocalPartial {
+  /**
+   * @param {string} templateName The template name
+   * @param {LocalPartial} localPartial the local partial
+   */
+  constructor(templateName, localPartial) {
+    super();
+    Object.assign(this, localPartial);
+    this.templateName = templateName;
+  }
+}
 
 class RunPartialCommand extends Command {
   async run() {
     try {
       const { args: runArgs, flags: runFlags } = this.parse(RunPartialCommand);
 
-      const config = {
-        ...new OptionsProvider(),
-        ...{
-          cacheStorage: runFlags.cache,
-        },
-      };
-      const outputInfoPath = path.join(runFlags.output, config.scfFileName);
-      const outputInfo = await fsUtil.readJSON(outputInfoPath);
-      config.source = outputInfo.template.source.name;
+      const options = new ScafflaterOptions({
+        cacheStorage: runFlags.cache,
+      });
+      const scafflater = new Scafflater(options);
 
-      const scafflater = new Scafflater(config);
-
-      const partials = await listPartials(
-        scafflater.templateManager,
-        config,
-        runFlags.output
-      );
-      if (!partials || partials.length <= 0) {
+      // Getting info from target path
+      const outputConfig = (await Config.fromLocalPath(runFlags.output))
+        ?.config;
+      if (!outputConfig || outputConfig.templates.length <= 0) {
+        logger.info(`No initialized template found!`);
+        logger.info(
+          `Run ${chalk.bgBlack.yellowBright(
+            "scafflater-cli init [TEMPLATE_ADDRESS]"
+          )} to initialize one template.`
+        );
         return;
       }
 
-      let partial = null;
-      if (runArgs.PARTIAL_NAME && runArgs.PARTIAL_NAME.length > 0) {
-        // Validating partialName flag
-        partial = partials.find((p) => {
-          return p.config.name === runArgs.PARTIAL_NAME;
+      // Checking and loading templates
+      /**
+       * @type {LocalTemplate[]}
+       */
+      const localTemplates = [];
+      try {
+        await spinner(`Getting templates`, async (spinnerControl) => {
+          for (const ranTemplate of outputConfig.templates) {
+            spinnerControl.text = `Getting ${chalk.bold(
+              ranTemplate.name
+            )} from ${chalk.underline(ranTemplate.key)}`;
+            let localTemplate =
+              await scafflater.templateManager.templateCache.getTemplate(
+                ranTemplate.name,
+                ranTemplate.version
+              );
+            if (!localTemplate) {
+              localTemplate =
+                await scafflater.templateManager.getTemplateFromSource(
+                  ranTemplate.source.key
+                );
+            }
+            if (!localTemplate) {
+              throw new Error(
+                `Could not get template '${chalk.bold(
+                  ranTemplate.name
+                )}' from ${chalk.underline(ranTemplate.key)}`
+              );
+            }
+
+            localTemplates.push(localTemplate);
+          }
         });
-        if (!partial) {
-          logger.error(
-            `The partial '${chalk.bold(
+      } catch (error) {
+        logger.error(error.message);
+        return;
+      }
+
+      // Create a list of all available template, related with theirs templates
+      let availablePartials = localTemplates.flatMap((lt) =>
+        lt.partials.map((lp) => new LocalPartialTemplate(lt.name, lp))
+      );
+
+      // Filtering by partial name, if is an argument
+      if (runArgs.PARTIAL_NAME) {
+        availablePartials = availablePartials.filter(
+          (ap) => ap.name === runArgs.PARTIAL_NAME
+        );
+      }
+
+      if (runFlags.template) {
+        availablePartials = availablePartials.filter(
+          (ap) => ap.templateName === runFlags.template
+        );
+      }
+
+      if (availablePartials.length > 1 || runFlags.template) {
+        const availableTemplateNames = availablePartials
+          .map((ap) => ap.templateName)
+          .filter((value, index, self) => self.indexOf(value) === index);
+        if (availableTemplateNames.length > 1) {
+          // Just print additional message to guide the user
+          logger.print(
+            `There are many available ${chalk.bold(
               runArgs.PARTIAL_NAME
-            )}' is not available at template '${chalk.bold(
-              outputInfo.template.name
-            )}' (version ${chalk.bold(outputInfo.template.version)})`
+            )} on initialized templates`
           );
-          logger.error(
-            `Run '${chalk.bold(
-              "scafflater-cli partial:list"
-            )}' to see the partials for this template`
-          );
-          return;
         }
-      } else {
+
+        const choices = availableTemplateNames.flatMap((tn) =>
+          [new inquirer.Separator(chalk.bold(tn.toUpperCase()))].concat(
+            availablePartials
+              .filter((ap) => ap.templateName === tn)
+              .map((ap) => {
+                return {
+                  name: ap.name,
+                  short: ap.name,
+                  value: ap,
+                };
+              })
+          )
+        );
+
         const prompt = await inquirer.prompt([
           {
             type: "rawlist",
-            name: "partialName",
-            message: "Which partial do you want to?",
-            choices: partials
-              .filter((p) => p.config.type === "partial")
-              .map((p) => p.config.name),
+            name: "availablePartial",
+            message: "Which partial do you want to run?",
+            choices: choices,
           },
         ]);
-        partial = partials.find((p) => {
-          return p.config.name === prompt.partialName;
-        });
+
+        availablePartials = [prompt.availablePartial];
       }
+
+      if (availablePartials.length !== 1) {
+        logger.error(
+          `The partial '${chalk.bold(
+            runArgs.PARTIAL_NAME
+          )}' is not available on any initialized template`
+        );
+      }
+
+      const localPartial = availablePartials[0];
 
       const parameters = await promptMissingParameters(
         runFlags.parameters,
-        partial.config.parameters
+        localPartial.parameters
       );
 
       await spinner("Running partial template", async () => {
         await scafflater.runPartial(
-          partial.config.name,
+          localPartial.templateName,
+          localPartial.name,
           parameters,
           runFlags.output
         );
@@ -110,6 +193,10 @@ RunPartialCommand.args = [
 
 const caches = ["homeDir", "tempDir"];
 RunPartialCommand.flags = {
+  template: flags.string({
+    char: "t",
+    description: "The template which contains the partial to be run",
+  }),
   output: flags.string({
     char: "o",
     description: "The output folder",

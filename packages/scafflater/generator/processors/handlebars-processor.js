@@ -5,7 +5,8 @@ const path = require("path");
 
 /**
  * Compile and apply the handlebar js on input
- * @extends Processor
+ *
+ * @augments Processor
  */
 class HandlebarsProcessor extends Processor {
   constructor() {

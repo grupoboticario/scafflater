@@ -1,3 +1,4 @@
+const ScafflaterOptions = require("../../options");
 const util = require("../../util");
 const RegionTagType = {
   Unknown: 0,
@@ -52,6 +53,7 @@ class Region {
 class RegionProvider {
   /**
    * Constructor
+   *
    * @param {ScafflaterOptions} options - Scafflater Options
    */
   constructor(options) {
@@ -60,8 +62,9 @@ class RegionProvider {
 
   /**
    * Get regions from a string
+   *
    * @param {string} str - String to be analyzed
-   * @return {Region[]} A list of regions
+   * @returns {Region[]} A list of regions
    */
   getRegions(str) {
     const completedRegions = [];
@@ -136,9 +139,10 @@ class RegionProvider {
 
   /**
    * Appends region to a content
+   *
    * @param {Region} region - The Region
    * @param {string} content - The Region Content
-   * @return {Promise<string>} The content with the region appended
+   * @returns {Promise<string>} The content with the region appended
    */
   async appendRegion(region, content) {
     let regionStr =

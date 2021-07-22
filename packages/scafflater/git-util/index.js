@@ -11,9 +11,11 @@ const { URL } = require("url");
 class GitUtil {
   /**
    * Clones a repo to a local path.
+   *
    * @param {string} repo - Repository (<owner>/<repository>)
    * @param {string} localPath - Local path where the repos will be cloned
-   * @param {string} [baseGitHubUrl] - Github base path
+   * @param {string} username The github user
+   * @param {string} password The github password
    * @returns {Promise} The command messages
    */
   static async clone(repo, localPath, username = null, password = null) {
@@ -70,7 +72,10 @@ class GitUtil {
 
   /**
    * Clones a repo to a temp path.
+   *
    * @param {string} repo - Repository (<owner>/<repository>)
+   * @param {string} username The github user
+   * @param {string} password The github password
    * @returns {Promise<string>} The path where repo was cloned
    */
   static async cloneToTempPath(repo, username = null, password = null) {

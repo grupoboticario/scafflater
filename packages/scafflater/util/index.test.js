@@ -1,5 +1,5 @@
 const { maskParameters, buildLineComment } = require("./");
-const OptionsProvider = require("../options-provider");
+const OptionsProvider = require("../options");
 
 describe("util", () => {
   beforeEach(() => {

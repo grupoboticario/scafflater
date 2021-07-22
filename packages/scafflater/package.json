@@ -2,7 +2,7 @@
   "name": "scafflater",
   "description": "Scafflater - Scaffold using templates",
   "version": "0.0.60",
-  "main": "scafflater.js",
+  "main": "./index.js",
   "scripts": {
     "test": "jest",
     "types": "tsc --declaration --allowJs --emitDeclarationOnly --outDir types"
@@ -22,7 +22,7 @@
     "url": "https://github.com/chicoribas/scafflater/issues"
   },
   "homepage": "https://github.com/chicoribas/scafflater#readme",
-  "types": "./types/scafflater.d.ts",
+  "types": "./types/index.d.ts",
   "engines": {
     "node": ">=10.0.0"
   },
@@ -42,5 +42,8 @@
     "typescript": "^4.3.5",
     "version-sort": "^0.1.1",
     "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^9.0.12"
   }
 }

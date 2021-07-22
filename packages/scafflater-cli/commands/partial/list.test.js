@@ -1,90 +1,107 @@
-jest.mock("scafflater/fs-util");
-jest.mock("scafflater/logger");
-jest.mock("scafflater/template-manager");
-jest.mock("scafflater");
-
 const ListCommand = require("./list");
-const fsUtil = require("scafflater/fs-util");
 const logger = require("scafflater/logger");
-const Scafflater = require("scafflater");
+const { Scafflater, TemplateManager } = require("scafflater");
+const Config = require("scafflater/scafflater-config/config");
+const {
+  LocalTemplate,
+  LocalPartial,
+} = require("scafflater/scafflater-config/local-template");
+
+jest.mock("scafflater");
+jest.mock("scafflater/logger");
 
 describe("ListCommand", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.resetAllMocks();
   });
 
-  test("Template does not have partials, should error it", async () => {
+  const templateManager = new TemplateManager();
+  const mockedScafflater = {
+    templateManager: templateManager,
+    init: jest.fn(),
+  };
+  Scafflater.mockImplementation(() => {
+    return mockedScafflater;
+  });
+
+  test("Folder does not have a initialized template, should info.", async () => {
     // ARRANGE
-    fsUtil.pathExistsSync.mockReturnValue(true);
-    fsUtil.readJSON.mockResolvedValue({
-      template: {
-        name: "some-template",
-        version: "some-version",
-        source: {
-          key: "some-gh-repo",
-        },
-      },
-    });
-    new Scafflater().templateManager.templateCache.getTemplatePath.mockResolvedValueOnce(
-      "some/path"
-    );
-    new Scafflater().templateManager.listPartials.mockResolvedValueOnce([]);
+    jest.spyOn(Config, "fromLocalPath").mockResolvedValue(null);
     const listCommand = new ListCommand([], {});
 
     // ACT
     await listCommand.run();
 
     // ASSERT
-    expect(logger.error).toHaveBeenCalledWith(
-      expect.stringMatching(/No partials available on template/)
-    );
+    expect(logger.info).toHaveBeenCalledWith("No initialized template found!");
   });
 
-  test("Template is available and has partials, should print it", async () => {
+  test("Folder has initialized templates and those have partials, should print the partials.", async () => {
     // ARRANGE
-    fsUtil.pathExistsSync.mockReturnValue(true);
-    fsUtil.readJSON.mockResolvedValue({
-      template: {
-        name: "some-template",
-        version: "some-version",
-        source: {
-          key: "some-gh-repo",
-        },
+    jest.spyOn(Config, "fromLocalPath").mockResolvedValue({
+      config: {
+        templates: [
+          {
+            name: "some-template",
+          },
+        ],
       },
     });
-    const listCommand = new ListCommand([], {});
-    new Scafflater().templateManager.templateCache.getTemplatePath.mockResolvedValueOnce(
-      "some/path"
+    templateManager.getTemplate.mockResolvedValue(
+      new LocalTemplate(
+        "/some/template/path",
+        "some-template",
+        "The template",
+        "0.0.1",
+        [
+          new LocalPartial(
+            "/some/partial/path",
+            "the-partial",
+            "This is an partial"
+          ),
+          new LocalPartial("/some/partial/path", "the-partial"),
+        ]
+      )
     );
-    new Scafflater().templateManager.listPartials.mockResolvedValueOnce([
-      {
-        config: {
-          type: "partial",
-          name: "partial-name",
-          description: "Partial Description",
-        },
-      },
-      {
-        config: {
-          type: "partial2",
-          name: "partial2-name",
-        },
-      },
-    ]);
+    const listCommand = new ListCommand([], {});
 
     // ACT
     await listCommand.run();
 
     // ASSERT
     expect(logger.print).toHaveBeenCalledWith(
-      expect.stringMatching(/PARTIALS/)
+      expect.stringMatching(/ *the-partial *This is an partial/)
     );
-    expect(logger.print).toHaveBeenCalledWith(
-      expect.stringMatching(/ {2}partial-name\tPartial Description/)
+  });
+
+  test("Folder has initialized templates but the templates does not have partials, should info.", async () => {
+    // ARRANGE
+    jest.spyOn(Config, "fromLocalPath").mockResolvedValue({
+      config: {
+        templates: [
+          {
+            name: "some-template",
+          },
+        ],
+      },
+    });
+    templateManager.getTemplate.mockResolvedValue(
+      new LocalTemplate(
+        "/some/template/path",
+        "some-template",
+        "The template",
+        "0.0.1",
+        []
+      )
     );
+    const listCommand = new ListCommand([], {});
+
+    // ACT
+    await listCommand.run();
+
+    // ASSERT
     expect(logger.print).toHaveBeenCalledWith(
-      expect.stringMatching(/ {2}partial2-name\t/)
+      expect.stringMatching(/No partials available/)
     );
   });
 });

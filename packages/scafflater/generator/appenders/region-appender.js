@@ -4,10 +4,11 @@ const Appender = require("./appender");
 class RegionAppender extends Appender {
   /**
    * Process the input.
-   * @param {Context} context The context of generation
+   *
+   * @param {object} context The context of generation
    * @param {string} srcStr The string to be appended
    * @param {string} destStr The string where srcStr must be appended
-   * @return {Promise<ProcessResult>} The process result
+   * @returns {Promise<object>} The process result
    */
   async append(context, srcStr, destStr) {
     const regionProvider = new RegionProvider(context.options);

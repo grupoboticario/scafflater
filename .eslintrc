@@ -12,18 +12,14 @@
     "plugin:jest/recommended",
     "plugin:node/recommended",
     "plugin:prettier/recommended",
-    "plugin:promise/recommended"
+    "plugin:promise/recommended",
+    "plugin:jsdoc/recommended"
   ],
-  "plugins": [
-    "jest",
-    "prettier"
-  ],
-  //"parser": "@babel/eslint-parser",
-  // "ignorePatterns": [
-  //   "lcov-report"
-  // ],
+  "plugins": ["jest", "prettier", "@babel", "jsdoc"],
+  "parser": "@babel/eslint-parser",
   "parserOptions": {
-    "ecmaVersion": 12
+    "ecmaVersion": 12,
+    "requireConfigFile": false
   },
   "rules": {
     "space-before-function-parent": 0

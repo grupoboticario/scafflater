@@ -1,8 +1,9 @@
 /**
  * Validates input against an regex
+ *
  * @param {object} question - Question used in inquirer
  * @param {string} input - The user entry
- * @return {ReturnValueDataTypeHere} Brief description of the returning value here.
+ * @returns {(boolean|string)} True if the input is valid or if the regex is not informed.
  */
 function validate(question, input) {
   if (!question.regex) return true;

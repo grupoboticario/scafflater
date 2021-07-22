@@ -1,11 +1,21 @@
 /* eslint-disable no-undef */
-const Scafflater = require("./scafflater");
-const fsUtil = require("./fs-util");
-const TemplateManager = require("./template-manager");
-const Generator = require("./generator");
-const OptionsProvider = require("./options-provider");
+const { Scafflater } = require("./scafflater");
+const { TemplateManager } = require("./template-manager");
+const ScafflaterOptions = require("./options");
+const {
+  LocalTemplate,
+  LocalPartial,
+} = require("./scafflater-config/local-template");
+const Config = require("./scafflater-config/config");
+const RanTemplate = require("./scafflater-config/ran-template");
+const RanPartial = require("./scafflater-config/ran-partial");
+const Source = require("./scafflater-config/source");
+const TemplateSource = require("./template-source");
+const { TemplateCache } = require("./template-cache");
 
-jest.mock("./template-manager");
+jest.mock("./scafflater-config/config");
+jest.mock("./template-source");
+jest.mock("./template-cache");
 jest.mock("./fs-util");
 jest.mock("./generator");
 
@@ -14,256 +24,218 @@ describe("Scafflater", () => {
     jest.resetAllMocks();
   });
 
-  const generator = new Generator();
-  const templateManager = new TemplateManager();
-  templateManager.config = new OptionsProvider();
+  const templateSource = new TemplateSource();
+  const templateCache = new TemplateCache();
+  const templateManager = new TemplateManager(templateCache, templateSource);
+  templateManager.config = new ScafflaterOptions();
 
-  test("Simple init", async () => {
-    // ARRANGE
-    const parameters = {
-      domain: "vs-one",
-      systemDescription: "aaaaaaaa",
-      systemName: "aaaaaaa",
-      systemTeam: "vs-one-team",
-      password: "password",
+  describe("Init", () => {
+    test("First template init", async () => {
+      // ARRANGE
+      const parameters = {
+        domain: "vs-one",
+        systemDescription: "aaaaaaaa",
+        systemName: "aaaaaaa",
+        systemTeam: "vs-one-team",
+        password: "password",
+      };
+      jest.spyOn(templateManager, "getTemplateFromSource").mockResolvedValue(
+        new LocalTemplate(
+          "/template/path",
+          "template",
+          "Template",
+          "0.0.1",
+          [],
+          [],
+          [
+            {
+              name: "password",
+              mask: true,
+            },
+          ]
+        )
+      );
+      Config.fromLocalPath.mockResolvedValue(null);
+      const mockedConfig = {
+        templates: [],
+        save: jest.fn(),
+      };
+      Config.mockReturnValue(mockedConfig);
+
+      // ACT
+      const scafflater = new Scafflater({ annotate: false }, templateManager);
+      await scafflater.init(
+        "some/template/source/key",
+        parameters,
+        "/some/target"
+      );
+
+      // ASSERT
+      expect(mockedConfig.templates.length).toBe(1);
+      expect(mockedConfig.save).toBeCalledWith("/some/target");
+    });
+
+    test("Not First template init", async () => {
+      // ARRANGE
+      const parameters = {
+        domain: "vs-one",
+        systemDescription: "aaaaaaaa",
+        systemName: "aaaaaaa",
+        systemTeam: "vs-one-team",
+        password: "password",
+      };
+      templateManager.getTemplateFromSource.mockResolvedValue(
+        new LocalTemplate(
+          "/template/path",
+          "template",
+          "Template",
+          "0.0.1",
+          [],
+          [],
+          [
+            {
+              name: "password",
+              mask: true,
+            },
+          ]
+        )
+      );
+      const mockedConfig = {
+        config: {
+          templates: [
+            {
+              name: "existing-template",
+              version: "existing-template-version",
+              source: {
+                name: "some-source",
+                key: "existing-template-source-key",
+              },
+            },
+          ],
+          save: jest.fn(),
+        },
+      };
+      Config.fromLocalPath.mockResolvedValue(mockedConfig);
+
+      // ACT
+      const scafflater = new Scafflater({ annotate: false }, templateManager);
+      await scafflater.init(
+        "some/template/source/key",
+        parameters,
+        "/some/target"
+      );
+
+      // ASSERT
+      expect(mockedConfig.config.templates.length).toBe(2);
+      expect(mockedConfig.config.save).toBeCalledWith("/some/target");
+    });
+  });
+
+  describe("Run Partial", () => {
+    const mockedConfig = {
+      config: {
+        templates: [
+          new RanTemplate(
+            "template",
+            "0.0.1",
+            new Source("some-source", "existing-template-source-key"),
+            [],
+            [new RanPartial("some-ran-partial", "This partial was ran")]
+          ),
+        ],
+        save: jest.fn(),
+      },
     };
-    templateManager.templateSource.getTemplate.mockResolvedValue({
-      path: "the/template/path",
-      config: {
-        parameters: [
-          {
-            name: "password",
-            mask: true,
-          },
-        ],
-      },
-    });
-    fsUtil.pathExists.mockResolvedValue(true);
-    fsUtil.readJSON.mockResolvedValueOnce({
-      template: {
-        name: "some-template",
-        version: "some-version",
-        source: {
-          key: "the-template-source-key",
-        },
-      },
-    });
-
-    // ACT
-    const scafflater = new Scafflater({ annotate: false });
-    await scafflater.init(
-      "some/template/source/key",
-      parameters,
-      "/some/target"
+    const mockedLocalTemplate = new LocalTemplate(
+      "/some/path",
+      "template",
+      "Local Template",
+      "0.0.1",
+      [
+        new LocalPartial(
+          "/some/path/to/partial",
+          "some-partial",
+          "This partial",
+          {},
+          [
+            {
+              name: "password",
+              mask: true,
+            },
+          ]
+        ),
+      ]
     );
 
-    // ASSERT
-    expect(fsUtil.writeJSON.mock.calls[0][0]).toBe("/some/target/.scafflater");
-    expect(fsUtil.writeJSON.mock.calls[0][1].templates.length).toBe(1);
-    expect(
-      fsUtil.writeJSON.mock.calls[0][1].templates[0].parameters.password
-    ).toBe("******");
-    expect(
-      fsUtil.writeJSON.mock.calls[0][1].templates[0].parameters.password
-    ).toBe("******");
-    expect(generator.constructor.mock.calls[0][0].options.annotate).toBe(false);
-  });
+    test("The template is not initialized yet. Should throw", async () => {
+      // ARRANGE
+      Config.fromLocalPath.mockResolvedValue(mockedConfig);
+      const scafflater = new Scafflater({ annotate: false }, templateManager);
 
-  test("Target has .scafflater file, should append new template", async () => {
-    // ARRANGE
-    const parameters = {};
-    templateManager.templateSource.getTemplate.mockResolvedValue({
-      path: "the/template/path",
-      config: {
-        name: "new-template",
-        version: "new-template-version",
-        source: {
-          key: "new-template-source-key",
-        },
-        parameters: [
-          {
-            name: "password",
-            mask: true,
-          },
-        ],
-      },
-    });
-    fsUtil.pathExists.mockResolvedValue(true);
-    fsUtil.readJSON.mockResolvedValueOnce({
-      templates: [
-        {
-          name: "existing-template",
-          version: "existing-template-version",
-          source: {
-            key: "existing-template-source-key",
-          },
-        },
-      ],
+      // ACT & ASSERT
+      await expect(
+        scafflater.runPartial("some-not-init-template", "the-partial")
+      ).rejects.toThrow(
+        "some-not-init-template: no initialized template found. You must init it before using."
+      );
     });
 
-    // ACT
-    const scafflater = new Scafflater({ annotate: false });
-    await scafflater.init(
-      "some/template/source/key",
-      parameters,
-      "/some/target"
-    );
+    test("The template is initialized, but it could not be recovered. Should throw", async () => {
+      // ARRANGE
+      Config.fromLocalPath.mockResolvedValue(mockedConfig);
+      jest.spyOn(templateManager, "getTemplate").mockResolvedValue(null);
+      const scafflater = new Scafflater({ annotate: false }, templateManager);
 
-    // ASSERT
-    expect(fsUtil.writeJSON).toBeCalledWith("/some/target/.scafflater", {
-      templates: [
-        {
-          name: "existing-template",
-          version: "existing-template-version",
-          source: {
-            key: "existing-template-source-key",
-          },
-        },
-        {
-          name: "new-template",
-          version: "new-template-version",
-          source: {
-            key: "new-template-source-key",
-          },
-          parameters: {
-            password: "******",
-          },
-        },
-      ],
-    });
-  });
-
-  test("Target does not have .scafflater file, should append new template", async () => {
-    // ARRANGE
-    const parameters = {};
-    templateManager.templateSource.getTemplate.mockResolvedValue({
-      path: "the/template/path",
-      config: {
-        name: "new-template",
-        version: "version-existing-template",
-        source: {
-          name: "some-source",
-        },
-        parameters: [
-          {
-            name: "password",
-            mask: true,
-          },
-        ],
-      },
-    });
-    fsUtil.pathExists.mockResolvedValue(false);
-
-    // ACT
-    const scafflater = new Scafflater({ annotate: false });
-    await scafflater.init(
-      "some/template/source/key",
-      parameters,
-      "/some/target"
-    );
-
-    // ASSERT
-    expect(fsUtil.writeJSON).toBeCalledWith("/some/target/.scafflater", {
-      templates: [
-        {
-          name: "new-template",
-          version: "version-existing-template",
-          source: {
-            name: "some-source",
-          },
-          parameters: {
-            password: "******",
-          },
-        },
-      ],
-    });
-  });
-
-  test("No local partial found, but it exists on source", async () => {
-    // ARRANGE
-    const parameters = {
-      domain: "vs-one",
-      systemDescription: "aaaaaaaa",
-      systemName: "aaaaaaa",
-      systemTeam: "vs-one-team",
-      password: "password",
-    };
-    templateManager.templateSource.getTemplate.mockResolvedValue({
-      path: "the/template/path",
-    });
-    templateManager.getPartial.mockResolvedValueOnce(null);
-    templateManager.getPartial.mockResolvedValueOnce({
-      config: {
-        parameters: [
-          {
-            name: "password",
-            mask: true,
-          },
-        ],
-      },
-      path: "the/partial/path",
-    });
-    templateManager.getTemplatePath.mockResolvedValueOnce(
-      "/some/path/to/template"
-    );
-    fsUtil.readJSON.mockResolvedValueOnce({
-      template: {
-        name: "some-template",
-        version: "some-version",
-        source: {
-          key: "the-template-source-key",
-        },
-      },
+      // ACT & ASSERT
+      await expect(
+        scafflater.runPartial("template", "the-partial")
+      ).rejects.toThrow(
+        "template: cannot load template from source ('some-source': 'existing-template-source-key')."
+      );
     });
 
-    // ACT
-    const scafflater = new Scafflater({});
-    await scafflater.runPartial("some-partial", parameters, "/some/target");
+    test("No local partial found, and does not exists on source. Should throw.", async () => {
+      // ARRANGE
+      Config.fromLocalPath.mockResolvedValue(mockedConfig);
+      jest
+        .spyOn(templateManager, "getTemplate")
+        .mockResolvedValue(mockedLocalTemplate);
+      jest
+        .spyOn(templateManager, "getTemplateFromSource")
+        .mockResolvedValue(mockedLocalTemplate);
+      const scafflater = new Scafflater({ annotate: false }, templateManager);
 
-    // ASSERT
-    expect(templateManager.getTemplateFromSource.mock.calls[0][0]).toBe(
-      "the-template-source-key"
-    );
-    expect(fsUtil.writeJSON.mock.calls[0][0]).toBe("/some/target/.scafflater");
-    expect(
-      fsUtil.writeJSON.mock.calls[0][1].partials[0].parameters.password
-    ).toBe("******");
-  });
-
-  test("No local partial found, and it does not exists on source too", async () => {
-    // ARRANGE
-    const parameters = {
-      domain: "vs-one",
-      systemDescription: "aaaaaaaa",
-      systemName: "aaaaaaa",
-      systemTeam: "vs-one-team",
-    };
-    templateManager.templateSource.getTemplate.mockResolvedValue({
-      path: "the/template/path",
-    });
-    templateManager.getPartial.mockResolvedValue(null);
-    templateManager.getTemplatePath.mockResolvedValueOnce(
-      "/some/path/to/template"
-    );
-    fsUtil.readJSON.mockResolvedValueOnce({
-      template: {
-        name: "some-template",
-        version: "some-version",
-        source: {
-          key: "the-template-source-key",
-        },
-      },
+      // ACT & ASSERT
+      await expect(
+        scafflater.runPartial("template", "this-partial-doesn't-exist")
+      ).rejects.toThrow(
+        "this-partial-doesn't-exist: cannot load partial from template 'template' ('some-source': 'existing-template-source-key')."
+      );
     });
 
-    // ACT
-    const scafflater = new Scafflater({});
-    const result = await scafflater.runPartial(
-      "some-partial",
-      parameters,
-      "/some/target"
-    );
+    test("No local partial found, and it does not exists on source too", async () => {
+      // ARRANGE
+      const parameters = {
+        password: "some-password",
+      };
+      Config.fromLocalPath.mockResolvedValue(mockedConfig);
+      templateManager.getTemplate.mockResolvedValue(mockedLocalTemplate);
+      templateManager.getTemplateFromSource.mockResolvedValue(
+        mockedLocalTemplate
+      );
+      const scafflater = new Scafflater({ annotate: false }, templateManager);
 
-    // ASSERT
-    expect(result).toBe(null);
+      // ACT
+      await scafflater.runPartial(
+        "template",
+        "some-partial",
+        parameters,
+        "/some/target"
+      );
+
+      // ASSERT
+      expect(mockedConfig.config.templates[0].partials.length).toBe(2);
+      expect(mockedConfig.config.save).toBeCalledWith("/some/target");
+    });
   });
 });

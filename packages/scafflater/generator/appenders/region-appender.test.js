@@ -1,4 +1,4 @@
-const ScafflaterOptions = require("../../options-provider");
+const ScafflaterOptions = require("../../options");
 const RegionAppender = require("./region-appender");
 
 test("Append to an existing region", async () => {

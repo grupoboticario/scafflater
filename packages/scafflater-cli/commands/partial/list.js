@@ -1,43 +1,63 @@
 const { Command, flags } = require("@oclif/command");
-const { listPartials } = require("../../util");
-const fsUtil = require("scafflater/fs-util");
-const path = require("path");
 const logger = require("scafflater/logger");
 const chalk = require("chalk");
-const OptionsProvider = require("scafflater/options-provider");
-const Scafflater = require("scafflater");
+const ScafflaterOptions = require("scafflater/options");
+const { Scafflater } = require("scafflater");
+const Config = require("scafflater/scafflater-config/config");
+const cliui = require("cliui");
 
 class ListPartialCommand extends Command {
   async run() {
     try {
       const { flags: listFlags } = this.parse(ListPartialCommand);
 
-      const config = {
-        ...new OptionsProvider(),
-        ...{
-          cacheStorage: listFlags.cache,
-        },
-      };
-      const outputInfoPath = path.join(listFlags.output, config.scfFileName);
-      const outputInfo = await fsUtil.readJSON(outputInfoPath);
-      config.source = outputInfo.template.source.name;
+      const options = new ScafflaterOptions({
+        cacheStorage: listFlags.cache,
+      });
+      const scafflater = new Scafflater(options);
 
-      const scafflater = new Scafflater(config);
+      const outputConfig = (await Config.fromLocalPath(listFlags.output))
+        ?.config;
 
-      const partials = await listPartials(
-        scafflater.templateManager,
-        config,
-        listFlags.output
-      );
-      if (!partials || partials.length <= 0) {
+      if (!outputConfig || outputConfig.templates.length <= 0) {
+        logger.info(`No initialized template found!`);
+        logger.info(
+          `Run ${chalk.bgBlack.yellowBright(
+            "scafflater-cli init [TEMPLATE_ADDRESS]"
+          )} to initialize one template.`
+        );
         return;
       }
 
-      logger.print(chalk.bold("\nPARTIALS"));
-      partials.forEach((p) =>
-        logger.print(`  ${p.config.name}\t${p.config.description ?? ""}`)
-      );
-      logger.print("");
+      const ui = cliui({ wrap: true });
+
+      for (const template of outputConfig.templates) {
+        const localTemplate = await scafflater.templateManager.getTemplate(
+          template.name,
+          template.version,
+          template.source
+        );
+
+        ui.div({
+          text: chalk.bold(`\n${template.name.toUpperCase()}`),
+        });
+
+        if (localTemplate.partials.length <= 0) {
+          ui.div(`\t${chalk.italic("No partials available")}`);
+        } else {
+          ui.div(
+            localTemplate.partials.reduce(
+              (accumulator, currentTemplate) =>
+                accumulator +
+                `  ${currentTemplate.name}  \t${
+                  currentTemplate.description ?? ""
+                }\n`,
+              ""
+            )
+          );
+        }
+      }
+      logger.print(ui.toString());
     } catch (error) {
       logger.error(error);
     }

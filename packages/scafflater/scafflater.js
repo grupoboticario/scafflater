@@ -1,9 +1,11 @@
-const TemplateManager = require("./template-manager");
+const { TemplateManager } = require("./template-manager");
 const Generator = require("./generator");
-const fsUtil = require("./fs-util");
 const path = require("path");
-const ScafflaterOptions = require("./options-provider");
+const ScafflaterOptions = require("./options");
 const { maskParameters } = require("./util");
+const Config = require("./scafflater-config/config");
+const RanTemplate = require("./scafflater-config/ran-template");
+const RanPartial = require("./scafflater-config/ran-partial");
 
 /**
  * Scafflater class
@@ -11,19 +13,25 @@ const { maskParameters } = require("./util");
 class Scafflater {
   /**
    * Scafflater constructor.
+   *
    * @param {ScafflaterOptions} options - Scafflater configuration. If null, will get the default configuration.
-   * @param {string} sourceKey - The source key
+   * @param {TemplateManager} templateManager The template manager
    */
   constructor(options = {}, templateManager = null) {
     this.options = new ScafflaterOptions(options);
-    this.templateManager = templateManager ?? new TemplateManager(this.options);
+    this.templateManager =
+      templateManager ?? TemplateManager.fromOptions(options);
   }
 
   /**
    * Run scafflater
-   * @param {ParamDataTypeHere} parameterNameHere - Brief description of the parameter here. Note: For other notations of data types, please refer to JSDocs: DataTypes command.
    *
-   * @return {Promise<string} Brief description of the returning value here.
+   * @param {string} originPath The path where the template or partial is stored
+   * @param {object} parameters Parameters for the generation process
+   * @param {string} templatePath The template path
+   * @param {string} targetPath The path where code must be generated
+   * @param {object} ctx The context of generation
+   * @returns {Promise<void>}
    */
   async run(originPath, parameters, templatePath, targetPath = "./", ctx = {}) {
     const options = new ScafflaterOptions(ctx.options);
@@ -49,131 +57,128 @@ class Scafflater {
   }
 
   /**
-   * Initializes the basic structure for this scafflater template.
+   * Initializes the basic structure for scafflater template.
+   *
    * @param {string} sourceKey - Source Template key
-   * @param {object} parameters - Parameters used to generate partials
+   * @param {object} parameters - Parameters used to generate the template
    * @param {string} targetPath - Path where the results must be placed
-   * @return {Promise<object>} Brief description of the returning value here.
+   * @returns {Promise<void>}
    */
   async init(sourceKey, parameters, targetPath = "./") {
-    const { path: templatePath, config } =
-      await this.templateManager.templateSource.getTemplate(sourceKey);
+    const localTemplate = await this.templateManager.getTemplateFromSource(
+      sourceKey
+    );
 
-    const maskedParameters = maskParameters(parameters, config.parameters);
+    const maskedParameters = maskParameters(
+      parameters,
+      localTemplate.parameters
+    );
 
-    let targetInfo = {
-      templates: [
-        {
-          name: config.name,
-          version: config.version,
-          source: { ...config.source },
-          parameters: maskedParameters,
-        },
-      ],
-    };
-    const scfFile = path.resolve(targetPath, this.options.scfFileName);
-
-    if (await fsUtil.pathExists(scfFile)) {
-      const existingTargetInfo = await fsUtil.readJSON(scfFile);
-      if (!existingTargetInfo.templates) existingTargetInfo.templates = [];
-      existingTargetInfo.templates.push(targetInfo.templates[0]);
-      targetInfo = existingTargetInfo;
+    let targetConfig = (await Config.fromLocalPath(targetPath))?.config;
+    if (!targetConfig) {
+      targetConfig = new Config(null, null, []);
     }
 
     const ctx = {
-      template: await this.templateManager.getTemplateInfo(
-        config.name,
-        config.version
-      ),
-      target: targetInfo,
-      options: config.options,
+      template: localTemplate,
+      target: targetConfig,
+      options: localTemplate.options,
     };
 
-    await this.run(templatePath, parameters, templatePath, targetPath, ctx);
+    await this.run(
+      localTemplate.folderPath,
+      parameters,
+      localTemplate.folderPath,
+      targetPath,
+      ctx
+    );
 
-    await fsUtil.writeJSON(scfFile, targetInfo);
-    return Promise.resolve(scfFile);
+    targetConfig.templates.push(
+      new RanTemplate(
+        localTemplate.name,
+        localTemplate.version,
+        this.templateManager.templateSource.getSource(sourceKey),
+        maskedParameters
+      )
+    );
+
+    await targetConfig.save(targetPath);
   }
 
   /**
    * Brief description of the function here.
+   *
    * @summary If the description is long, write your summary here. Otherwise, feel free to remove this.
-   * @param {ParamDataTypeHere} parameterNameHere - Brief description of the parameter here. Note: For other notations of data types, please refer to JSDocs: DataTypes command.
-   * @return {Promise<string>} Brief description of the returning value here.
+   * @param {string} templateName The template name thar includes the partial
+   * @param {string} partialName The partial name
+   * @param {object} parameters Parameters used to generate partials
+   * @param {string} targetPath Path where the results must be placed
+   * @returns {Promise<string>} Brief description of the returning value here.
    */
-  async runPartial(partialPath, parameters, targetPath = "./") {
-    const targetInfo = await fsUtil.readJSON(
-      path.join(targetPath, this.options.scfFileName)
-    );
+  async runPartial(templateName, partialName, parameters, targetPath = "./") {
+    const targetConfig = (await Config.fromLocalPath(targetPath))?.config;
 
-    let partialInfo = await this.templateManager.getPartial(
-      partialPath,
-      targetInfo.template.name,
-      targetInfo.template.version
+    const ranTemplate = targetConfig.templates.find(
+      (t) => t.name === templateName
     );
-
-    if (!partialInfo) {
-      // Trying to get the template
-      // TODO: Get template by version
-      await this.templateManager.getTemplateFromSource(
-        targetInfo.template.source.key
+    if (!ranTemplate) {
+      throw new Error(
+        `${templateName}: no initialized template found. You must init it before using.`
       );
-      partialInfo = await this.templateManager.getPartial(
-        partialPath,
-        targetInfo.template.name,
-        targetInfo.template.version
-      );
-      if (!partialInfo) {
-        return Promise.resolve(null);
-      }
     }
 
-    const templatePath = await this.templateManager.getTemplatePath(
-      targetInfo.template.name,
-      targetInfo.template.version
+    let localTemplate = await this.templateManager.getTemplate(
+      ranTemplate.name,
+      ranTemplate.version,
+      ranTemplate.source
     );
-    const templateInfo = await this.templateManager.getTemplateInfo(
-      targetInfo.template.name,
-      targetInfo.template.version
+    if (!localTemplate) {
+      throw new Error(
+        `${templateName}: cannot load template from source ('${ranTemplate.source.name}': '${ranTemplate.source.key}').`
+      );
+    }
+
+    let localPartial = localTemplate.partials.find(
+      (p) => p.name === partialName
     );
+    if (!localPartial) {
+      localTemplate = await this.templateManager.getTemplateFromSource(
+        ranTemplate.source.key
+      );
+      localPartial = localTemplate.partials.find((p) => p.name === partialName);
+    }
+
+    if (!localPartial) {
+      throw new Error(
+        `${partialName}: cannot load partial from template '${templateName}' ('${ranTemplate.source.name}': '${ranTemplate.source.key}').`
+      );
+    }
 
     const ctx = {
-      partial: partialInfo.config,
-      template: templateInfo,
-      templatePath,
-      target: targetInfo,
-      options: partialInfo.config.options,
+      partial: localPartial,
+      template: localTemplate,
+      templatePath: localTemplate.folderPath,
+      target: targetConfig,
+      options: localPartial.options,
     };
 
-    await this.run(partialInfo.path, parameters, templatePath, targetPath, ctx);
-
-    if (!targetInfo.partials) {
-      targetInfo.partials = [];
-    }
-
-    const maskedParameters = maskParameters(
+    await this.run(
+      localPartial.folderPath,
       parameters,
-      partialInfo.config.parameters
+      localTemplate.folderPath,
+      targetPath,
+      ctx
     );
 
-    if (
-      partialInfo.config.options?.logRun == null ||
-      partialInfo.config.options?.logRun === undefined ||
-      partialInfo.config.options?.logRun
-    ) {
-      targetInfo.partials.push({
-        path: `${targetInfo.template.name}/${partialPath}`,
-        parameters: maskedParameters,
-      });
-    }
-
-    return Promise.resolve(
-      await fsUtil.writeJSON(
-        path.join(targetPath, this.options.scfFileName),
-        targetInfo
+    ranTemplate.partials.push(
+      new RanPartial(
+        partialName,
+        maskParameters(parameters, localTemplate.parameters)
       )
     );
+
+    await targetConfig.save(targetPath);
   }
 }
 
-module.exports = Scafflater;
+module.exports = { Scafflater };
