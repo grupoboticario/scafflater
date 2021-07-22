@@ -62,12 +62,14 @@ describe("ListCommand", () => {
           {
             name: "some-template",
             source: {
+              name: "some-source",
               key: "http://some/url/to/template",
             },
           },
           {
             name: "some-other-template",
             source: {
+              name: "some-source",
               key: "http://some/url/to/other-template",
             },
           },
@@ -130,6 +132,10 @@ describe("ListCommand", () => {
         templates: [
           {
             name: "some-template",
+            source: {
+              name: "some-source",
+              key: "http://some-template/url",
+            },
           },
         ],
       },
@@ -182,9 +188,17 @@ describe("ListCommand", () => {
         templates: [
           {
             name: "some-template",
+            source: {
+              name: "some-source",
+              key: "http://some-template/url",
+            },
           },
           {
             name: "other-template",
+            source: {
+              name: "some-source",
+              key: "http://some-template/url",
+            },
           },
         ],
       },
@@ -252,9 +266,17 @@ describe("ListCommand", () => {
         templates: [
           {
             name: "some-template",
+            source: {
+              name: "some-source",
+              key: "http://some-template/url",
+            },
           },
           {
             name: "other-template",
+            source: {
+              name: "some-source",
+              key: "http://some-template/url",
+            },
           },
         ],
       },
@@ -323,9 +345,17 @@ describe("ListCommand", () => {
         templates: [
           {
             name: "some-template",
+            source: {
+              name: "some-source",
+              key: "http://some-template/url",
+            },
           },
           {
             name: "other-template",
+            source: {
+              name: "some-source",
+              key: "http://some-template/url",
+            },
           },
         ],
       },

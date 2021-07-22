@@ -209,11 +209,15 @@ fs.getDirTreeSync = (folderPath, includeFiles = true) => {
  */
 fs.listFilesDeeply = async (folderPath, filePattern) => {
   return new Promise((resolve, reject) => {
-    glob(filePattern, { root: folderPath }, (err, files) => {
-      if (err) reject(err);
-      if (!files || files.length <= 0) resolve(null);
-      resolve(files);
-    });
+    try {
+      glob(filePattern, { root: folderPath }, (err, files) => {
+        if (err) reject(err);
+        if (!files || files.length <= 0) resolve(null);
+        resolve(files);
+      });
+    } catch (error) {
+      reject(error);
+    }
   });
 };
 

@@ -8,12 +8,16 @@ const { exec } = require("child_process");
  */
 function npmInstall(packagePath) {
   return new Promise((resolve, reject) => {
-    exec("npm install", { cwd: packagePath }, (err) => {
-      if (err) {
-        reject(err);
-      }
-      resolve();
-    });
+    try {
+      exec("npm install", { cwd: packagePath }, (err) => {
+        if (err) {
+          reject(err);
+        }
+        resolve();
+      });
+    } catch (error) {
+      reject(error);
+    }
   });
 }
 

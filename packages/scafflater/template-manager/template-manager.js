@@ -57,7 +57,7 @@ class TemplateManager {
    *
    * @param {string} templateName Template name
    * @param {string} templateVersion Template Version. If null, the latest stored version is returned.
-   * @param {Source} source The template source.
+   * @param {Source} source The template source. If the template is not cached, use this to try getting the template from source.
    * @returns {Promise<LocalTemplate>} The cached template path. Returns null if the template is not in cache.
    */
   async getTemplate(templateName, templateVersion = null, source = null) {
@@ -66,7 +66,7 @@ class TemplateManager {
       templateVersion
     );
 
-    if (!template) {
+    if (!template && source) {
       template = this.getTemplateFromSource(source.key);
     }
 

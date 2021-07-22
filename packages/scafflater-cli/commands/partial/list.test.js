@@ -43,6 +43,10 @@ describe("ListCommand", () => {
         templates: [
           {
             name: "some-template",
+            source: {
+              name: "some-source",
+              key: "http://some-template/url",
+            },
           },
         ],
       },
@@ -81,6 +85,10 @@ describe("ListCommand", () => {
         templates: [
           {
             name: "some-template",
+            source: {
+              name: "some-source",
+              key: "http://some-template/url",
+            },
           },
         ],
       },

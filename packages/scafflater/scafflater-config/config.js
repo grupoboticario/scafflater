@@ -22,11 +22,15 @@ const Source = require("./source");
  */
 const listScafflaterFiles = async (folderPath) => {
   return new Promise((resolve, reject) => {
-    glob(`/**/.scafflater`, { root: folderPath }, (err, files) => {
-      if (err) reject(err);
-      if (!files || files.length <= 0) resolve([]);
-      resolve(files);
-    });
+    try {
+      glob(`/**/.scafflater`, { root: folderPath }, (err, files) => {
+        if (err) reject(err);
+        if (!files || files.length <= 0) resolve([]);
+        resolve(files);
+      });
+    } catch (error) {
+      reject(error);
+    }
   });
 };
 

@@ -8,34 +8,38 @@ const { spawn } = require("child_process");
  */
 const runCommand = (command, args) => {
   return new Promise((resolve, reject) => {
-    let scriptOutput = "";
-    const process = spawn(command, args);
+    try {
+      let scriptOutput = "";
+      const process = spawn(command, args);
 
-    process.stdout.setEncoding("utf8");
-    process.stdout.on("data", (data) => {
-      data = data.toString();
-      scriptOutput += data;
-    });
+      process.stdout.setEncoding("utf8");
+      process.stdout.on("data", (data) => {
+        data = data.toString();
+        scriptOutput += data;
+      });
 
-    process.stderr.on("data", (data) => {
-      data = data.toString();
-      scriptOutput += data;
-    });
+      process.stderr.on("data", (data) => {
+        data = data.toString();
+        scriptOutput += data;
+      });
 
-    process.on("error", (error) => {
-      return reject(error);
-    });
+      process.on("error", (error) => {
+        return reject(error);
+      });
 
-    process.on("close", (code) => {
-      if (code !== 0) {
-        return reject(
-          new Error(
-            `Error: Command ${command} failed, exit code ${code}: ${scriptOutput}`
-          )
-        );
-      }
-      return resolve(scriptOutput);
-    });
+      process.on("close", (code) => {
+        if (code !== 0) {
+          return reject(
+            new Error(
+              `Error: Command ${command} failed, exit code ${code}: ${scriptOutput}`
+            )
+          );
+        }
+        return resolve(scriptOutput);
+      });
+    } catch (error) {
+      reject(error);
+    }
   });
 };
 
