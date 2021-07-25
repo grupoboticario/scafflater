@@ -4,6 +4,8 @@ const fsUtil = require("../fs-util");
 const ScafflaterOptions = require("../options");
 const { LocalTemplate } = require("../scafflater-config/local-template");
 const Source = require("../scafflater-config/source");
+const ScafflaterFileNotFoundError = require("../errors/ScafflaterFileNotFoundError");
+const { TemplateDefinitionNotFound } = require("../errors");
 
 class GitTemplateSource extends LocalFolderTemplateSource {
   /**
@@ -41,9 +43,17 @@ class GitTemplateSource extends LocalFolderTemplateSource {
       this.options.githubPassword
     );
 
-    const localSource = await super.getTemplate(pathToClone, outputDir);
-
-    return localSource;
+    try {
+      return await super.getTemplate(pathToClone, outputDir);
+    } catch (error) {
+      if (error instanceof ScafflaterFileNotFoundError) {
+        throw new ScafflaterFileNotFoundError(`${sourceKey}/.scafflater`);
+      }
+      if (error instanceof TemplateDefinitionNotFound) {
+        throw new TemplateDefinitionNotFound(`${sourceKey}/.scafflater`);
+      }
+      throw error;
+    }
   }
 
   /**

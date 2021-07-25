@@ -4,13 +4,45 @@ const GitUtil = require("../git-util");
 const fsUtil = require("../fs-util");
 const TemplateSource = require("./");
 const { LocalTemplate } = require("../scafflater-config/local-template");
+const {
+  ScafflaterFileNotFoundError,
+  TemplateDefinitionNotFound,
+} = require("../errors");
 
 jest.mock("../git-util");
 jest.mock("../fs-util");
 
-describe("Github template source", () => {
+describe("getTemplate", () => {
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  test(".scafflater file not found", async () => {
+    // ARRANGE
+    fsUtil.pathExists.mockResolvedValue(false);
+    const gitTemplateSource = new GitTemplateSource();
+
+    // ACT && ASSERT
+    await expect(
+      gitTemplateSource.getTemplate(
+        "http://some/github/path",
+        "/some/virtual/folder"
+      )
+    ).rejects.toThrow(ScafflaterFileNotFoundError);
+  });
+  test("Template definition not found on .scafflater", async () => {
+    // ARRANGE
+    fsUtil.pathExists.mockResolvedValue(true);
+    jest.spyOn(LocalTemplate, "loadFromPath").mockResolvedValue(null);
+    const gitTemplateSource = new GitTemplateSource();
+
+    // ACT && ASSERT
+    await expect(
+      gitTemplateSource.getTemplate(
+        "http://some/github/path",
+        "/some/virtual/folder"
+      )
+    ).rejects.toThrow(TemplateDefinitionNotFound);
   });
 
   test("Valid source key", () => {
@@ -51,6 +83,7 @@ describe("Github template source", () => {
     const repo = "some/repo";
     const virtualFolder = "/some/virtual/folder";
     const gitTemplateSource = new GitTemplateSource();
+    fsUtil.pathExists.mockResolvedValue(true);
     jest
       .spyOn(LocalTemplate, "loadFromPath")
       .mockResolvedValue([
