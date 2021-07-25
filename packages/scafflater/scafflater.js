@@ -170,12 +170,14 @@ class Scafflater {
       ctx
     );
 
-    ranTemplate.partials.push(
-      new RanPartial(
-        partialName,
-        maskParameters(parameters, localTemplate.parameters)
-      )
-    );
+    if (localPartial.options.logRun) {
+      ranTemplate.partials.push(
+        new RanPartial(
+          partialName,
+          maskParameters(parameters, localTemplate.parameters)
+        )
+      );
+    }
 
     await targetConfig.save(targetPath);
   }

@@ -23,6 +23,10 @@ class DirCache extends TemplateCache {
    * @returns {Promise<LocalTemplate>} The local template
    */
   async getTemplate(templateName, templateVersion = null) {
+    if (!(await fsUtil.pathExists(this.storagePath))) {
+      return null;
+    }
+
     const templates = (
       await LocalTemplate.loadFromPath(this.storagePath)
     )?.filter((t) => t.name === templateName);

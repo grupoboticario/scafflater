@@ -62,7 +62,7 @@ class RunPartialCommand extends Command {
           for (const ranTemplate of outputConfig.templates) {
             spinnerControl.text = `Getting ${chalk.bold(
               ranTemplate.name
-            )} from ${chalk.underline(ranTemplate.key)}`;
+            )} from ${chalk.underline(ranTemplate.source.key)}`;
             let localTemplate =
               await scafflater.templateManager.templateCache.getTemplate(
                 ranTemplate.name,
@@ -153,6 +153,7 @@ class RunPartialCommand extends Command {
             runArgs.PARTIAL_NAME
           )}' is not available on any initialized template`
         );
+        return;
       }
 
       const localPartial = availablePartials[0];

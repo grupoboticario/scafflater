@@ -1,3 +1,4 @@
+const ScafflaterOptions = require("../../options");
 const JsonAppender = require("./json-appender");
 
 const destJson = `{
@@ -12,7 +13,9 @@ const destJson = `{
 
 test("Append Json", async () => {
   // ARRANGE
-  const srcJson = `{
+  const srcJson = `
+  // @scf-option { "some": "config" }
+  {
     "new-property": "the property",
     "objectProperty": {
       "new-object-prop": 10
@@ -25,7 +28,11 @@ test("Append Json", async () => {
   const jsonAppender = new JsonAppender();
 
   // ACT
-  const result = await jsonAppender.append({}, srcJson, destJson);
+  const result = await jsonAppender.append(
+    { options: new ScafflaterOptions() },
+    srcJson,
+    destJson
+  );
 
   // ASSERT
   expect(JSON.parse(result.result)).toStrictEqual(

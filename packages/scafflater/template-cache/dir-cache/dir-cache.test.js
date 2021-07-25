@@ -22,6 +22,7 @@ describe("Dir template Cache", () => {
       "0.0.1"
     );
     jest.spyOn(LocalTemplate, "loadFromPath").mockResolvedValue([t]);
+    fsUtil.pathExists.mockResolvedValue(true);
     // ACT
     const templateOk = await dirCache.getTemplate("template", "0.0.1");
     const templateNotFound = await dirCache.getTemplate(
@@ -61,6 +62,7 @@ describe("Dir template Cache", () => {
           "0.0.3"
         ),
       ]);
+    fsUtil.pathExists.mockResolvedValue(true);
 
     // ACT
     const templateOk = await dirCache.getTemplate("template");

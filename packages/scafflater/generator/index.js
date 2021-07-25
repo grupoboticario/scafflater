@@ -28,9 +28,9 @@ class Generator {
     this.context.targetPath = path.resolve(context.targetPath);
     this.ignoredFiles = [context.options.scfFileName];
     this.ignoredFolders = [
-      context.options.partialsFolderName,
-      context.options.hooksFolderName,
-      context.options.helpersFolderName,
+      path.resolve(context.templatePath, context.options.partialsFolderName),
+      path.resolve(context.templatePath, context.options.hooksFolderName),
+      path.resolve(context.templatePath, context.options.helpersFolderName),
       ".git",
       "node_modules",
     ];
@@ -73,7 +73,7 @@ class Generator {
   async _generate(ctx, tree) {
     if (
       (tree.type === "directory" &&
-        this.ignoredFolders.indexOf(tree.name) >= 0) ||
+        this.ignoredFolders.indexOf(tree.path) >= 0) ||
       (tree.type === "file" && this.ignoredFiles.indexOf(tree.name) >= 0)
     ) {
       return Promise.resolve();

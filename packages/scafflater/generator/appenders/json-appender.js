@@ -13,8 +13,8 @@ class JsonAppender extends Appender {
   append(context, srcStr, destStr) {
     return new Promise((resolve, reject) => {
       try {
-        let src = JSON.parse(srcStr);
-        const dst = JSON.parse(destStr);
+        let src = JSON.parse(context.options.stripConfig(srcStr));
+        const dst = destStr ? JSON.parse(destStr) : {};
 
         src = merge(dst, src);
 
