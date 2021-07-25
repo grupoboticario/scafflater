@@ -50,9 +50,9 @@ class ScafflaterOptions {
   appenders = ["./appenders/region-appender", "./appenders/appender"];
 
   scfFileName = ".scafflater";
-  partialsFolderName = "_partials";
-  hooksFolderName = "_hooks";
-  helpersFolderName = "_helpers";
+  partialsFolderName = "partials";
+  hooksFolderName = "hooks";
+  helpersFolderName = "helpers";
 
   cacheStorage = "tempDir";
   cacheStorages = {

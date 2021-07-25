@@ -148,7 +148,7 @@ describe("Local Template", () => {
           },
         },
         {
-          folderPath: "/some-path/template-1/_partials/partial-1-1",
+          folderPath: "/some-path/template-1/partials/partial-1-1",
           config: {
             partial: {
               name: "partial-1-1",
@@ -157,7 +157,7 @@ describe("Local Template", () => {
           },
         },
         {
-          folderPath: "/some-path/template-1/_partials/partial-1-2",
+          folderPath: "/some-path/template-1/partials/partial-1-2",
           config: {
             partial: {
               name: "partial-1-2",
@@ -175,7 +175,7 @@ describe("Local Template", () => {
           },
         },
         {
-          folderPath: "/some-path/template-2/_partials/partial-2-1",
+          folderPath: "/some-path/template-2/partials/partial-2-1",
           config: {
             partial: {
               name: "partial-2-1",

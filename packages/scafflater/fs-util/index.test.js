@@ -122,7 +122,7 @@ describe("fs-utils", () => {
       __dirname,
       ".test-resources",
       "template-sample",
-      "_hooks",
+      "hooks",
       "onHook.js"
     );
 
@@ -144,7 +144,7 @@ describe("fs-utils", () => {
       __dirname,
       ".test-resources",
       "template-sample",
-      "_hooks"
+      "hooks"
     );
     const filePathDoesNotExists = path.resolve(
       __dirname,
@@ -179,7 +179,7 @@ describe("fs-utils", () => {
       __dirname,
       ".test-resources",
       "template-sample",
-      "_hooks"
+      "hooks"
     );
 
     // ACT
