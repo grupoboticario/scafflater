@@ -213,16 +213,18 @@ describe("Scafflater", () => {
       );
     });
 
-    test("No local partial found, and it does not exists on source too", async () => {
+    test("No local partial found but it does exists on source too. Should execute", async () => {
       // ARRANGE
       const parameters = {
         password: "some-password",
       };
       Config.fromLocalPath.mockResolvedValue(mockedConfig);
-      templateManager.getTemplate.mockResolvedValue(mockedLocalTemplate);
-      templateManager.getTemplateFromSource.mockResolvedValue(
-        mockedLocalTemplate
-      );
+      jest
+        .spyOn(templateManager, "getTemplate")
+        .mockResolvedValue(mockedLocalTemplate);
+      jest
+        .spyOn(templateManager, "getTemplateFromSource")
+        .mockResolvedValue(mockedLocalTemplate);
       const scafflater = new Scafflater({ annotate: false }, templateManager);
 
       // ACT

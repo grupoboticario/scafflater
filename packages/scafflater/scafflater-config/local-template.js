@@ -31,7 +31,7 @@ class LocalTemplate {
     this.partials = partials;
     this.parameters = parameters;
     this.folderPath = folderPath;
-    this.options = options;
+    this.options = new ScafflaterOptions(options);
   }
 
   /**
@@ -165,7 +165,7 @@ class LocalPartial {
   constructor(folderPath, name, description, options = {}, parameters = []) {
     this.name = name;
     this.description = description;
-    this.options = options;
+    this.options = new ScafflaterOptions(options);
     this.parameters = parameters;
     this.folderPath = folderPath;
   }

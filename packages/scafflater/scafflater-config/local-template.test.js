@@ -1,5 +1,6 @@
 const { LocalPartial, LocalTemplate } = require("./local-template");
 const Config = require("./config");
+const ScafflaterOptions = require("../options");
 
 jest.mock("fs-extra");
 jest.mock("./config");
@@ -96,7 +97,7 @@ describe("Local Template", () => {
           "The Partial Description"
         )
       );
-      expect(partial.options).toStrictEqual({});
+      expect(partial.options).toStrictEqual(new ScafflaterOptions());
       expect(partial.parameters).toStrictEqual([]);
     });
   });
