@@ -3,6 +3,7 @@ const ScafflaterOptions = require("../options");
 const Generator = require("./");
 
 jest.mock("../fs-util");
+jest.mock("isbinaryfile");
 
 describe("Generator Tests", () => {
   afterEach(() => {

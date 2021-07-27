@@ -5,6 +5,7 @@ const Appender = require("./appenders/appender");
 const HandlebarsProcessor = require("./processors/handlebars-processor");
 const prettier = require("prettier");
 const ScafflaterOptions = require("../options");
+const { isBinaryFile } = require("isbinaryfile");
 
 /**
  * @typedef {object} Context
@@ -119,14 +120,6 @@ class Generator {
 
     if (tree.type === "file") {
       const filePath = path.join(ctx.originPath, tree.name);
-      const fileContent = await fsUtil.readFileContent(filePath);
-
-      const processors = _ctx.options.processors.map((p) => new (require(p))());
-      const srcContent = Processor.runProcessorsPipeline(
-        processors,
-        _ctx,
-        fileContent
-      );
 
       const targetPath = path.join(ctx.targetPath, targetName);
       let targetContent = "";
@@ -134,23 +127,39 @@ class Generator {
         targetContent = await fsUtil.readFileContent(targetPath);
       }
 
-      const appenders = _ctx.options.appenders.map((a) => new (require(a))());
-      let result = await Appender.runAppendersPipeline(
-        appenders,
-        _ctx,
-        srcContent,
-        targetContent
-      );
+      if (!(await isBinaryFile(filePath))) {
+        const fileContent = await fsUtil.readFileContent(filePath);
 
-      result = _ctx.options.stripConfig(result);
+        const processors = _ctx.options.processors.map(
+          (p) => new (require(p))()
+        );
+        const srcContent = Processor.runProcessorsPipeline(
+          processors,
+          _ctx,
+          fileContent
+        );
 
-      try {
-        result = prettier.format(result, { filepath: targetPath });
-      } catch (error) {
-        // Just to quiet prettier errors
+        const appenders = _ctx.options.appenders.map((a) => new (require(a))());
+        let result = await Appender.runAppendersPipeline(
+          appenders,
+          _ctx,
+          srcContent,
+          targetContent
+        );
+
+        result = _ctx.options.stripConfig(result);
+
+        try {
+          result = prettier.format(result, { filepath: targetPath });
+        } catch (error) {
+          // Just to quiet prettier errors
+        }
+
+        promises.push(fsUtil.saveFile(targetPath, result, false));
+      } else {
+        await fsUtil.ensureDir(path.dirname(targetPath));
+        promises.push(fsUtil.copyFile(filePath, targetPath));
       }
-
-      promises.push(fsUtil.saveFile(targetPath, result, false));
     }
 
     return Promise.all(promises);

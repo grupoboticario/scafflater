@@ -33,6 +33,7 @@ class HandlebarsProcessor extends Processor {
       folderPath,
       "js"
     )) {
+      if (js.endsWith(".test.js")) continue;
       const helperFunction = fsUtil.require(js);
       const helperName = path.basename(js, ".js");
       Handlebars.registerHelper(helperName, helperFunction);

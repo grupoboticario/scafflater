@@ -48,6 +48,7 @@ class Scafflater {
         helpersPath,
         hooksPath,
         options,
+        templatePath,
       },
     };
 
