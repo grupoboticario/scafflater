@@ -100,6 +100,7 @@ describe("Config Provider", () => {
     # @scf-option {"annotate":false}
     # @scf-option {"ignore":true}
     # @scf-option {"targetName":"some-name"}
+    {{!-- @scf-option  { "appenders": ["./appenders/json-appender"] } --}}
     
     the file content
     `);
@@ -115,6 +116,7 @@ describe("Config Provider", () => {
     expect(newConfig.annotate).toStrictEqual(false);
     expect(newConfig.ignore).toStrictEqual(true);
     expect(newConfig.lineCommentTemplate).toStrictEqual("// {{comment}}");
+    expect(newConfig.appenders).toStrictEqual(["./appenders/json-appender"]);
   });
 
   test("Remove config from file template", async () => {

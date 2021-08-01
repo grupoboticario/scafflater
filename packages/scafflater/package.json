@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "chalk": "^4.1.1",
+    "change-case": "^4.1.2",
     "deepmerge": "^4.2.2",
     "directory-tree": "^2.2.9",
     "fs-extra": "^10.0.0",
@@ -37,14 +38,20 @@
     "isbinaryfile": "^4.0.8",
     "isomorphic-git": "^1.8.3",
     "js-yaml": "^4.1.0",
+    "lower-case": "^2.0.2",
+    "lower-case-first": "^2.0.2",
     "minimatch": "^3.0.4",
     "prettier": "^2.3.2",
     "strip-json-comments": "^3.1.1",
+    "title-case": "^3.0.3",
     "typescript": "^4.3.5",
+    "upper-case": "^2.0.2",
+    "upper-case-first": "^2.0.2",
     "version-sort": "^0.1.1",
     "winston": "^3.3.3"
   },
   "devDependencies": {
-    "@types/fs-extra": "^9.0.12"
+    "@types/fs-extra": "^9.0.12",
+    "mock-fs": "^5.0.0"
   }
 }

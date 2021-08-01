@@ -1,7 +1,7 @@
 const path = require("path");
 const fsUtil = require("../fs-util");
 const { RegionProvider } = require("../generator/region-provider");
-const ignore = require("ignore");
+const { ignores } = require("../util");
 
 /**
  * @class ScafflaterOptions
@@ -31,6 +31,7 @@ class ScafflaterOptions {
    * @type {(boolean|string[])} ignore
    */
   ignore;
+
   logRun = true;
   annotate = false;
   annotationTemplate = `{{#lineComment this}}{{{options.startRegionMarker}}}{{/lineComment}}
@@ -45,12 +46,19 @@ class ScafflaterOptions {
 
 {{#lineComment this}}{{{options.endRegionMarker}}}{{/lineComment}}`;
 
+  /**
+   * Append Strategy
+   *
+   * @description Valid values are 'append' and 'replate'
+   * @type {string}
+   */
   appendStrategy = "append";
 
   processors = ["./processors/handlebars-processor"];
   appenders = ["./appenders/region-appender", "./appenders/appender"];
 
   scfFileName = ".scafflater";
+  initFolderName = "scf-init";
   partialsFolderName = "scf-partials";
   hooksFolderName = "scf-hooks";
   helpersFolderName = "scf-helpers";
@@ -72,6 +80,14 @@ class ScafflaterOptions {
   githubUsername = null;
   githubPassword = null;
 
+  ignores(basePath, folderOrFile) {
+    if (Array.isArray(this.ignore)) {
+      return ignores(basePath, folderOrFile, this.ignore);
+    } else {
+      return Boolean(this.ignore);
+    }
+  }
+
   /**
    * Loads Folder Options
    *
@@ -89,18 +105,6 @@ class ScafflaterOptions {
       }
     }
     return Promise.resolve(new ScafflaterOptions(result));
-  }
-
-  ignores(basePath, folderOrFile) {
-    if (Array.isArray(this.ignore)) {
-      const pathsToIgnore = ignore().add(this.ignore);
-      const relativePath = folderOrFile
-        .replace(basePath, "")
-        .replace(/^\//, "");
-      return relativePath !== "" && pathsToIgnore.ignores(relativePath);
-    } else {
-      return Boolean(this.ignore);
-    }
   }
 
   /**
@@ -125,7 +129,7 @@ class ScafflaterOptions {
    */
   getConfigFromString(str) {
     const configRegex = new RegExp(
-      `.*${this.optionMarker}\\s*(?<json>{.*}).*`,
+      `.*${this.optionMarker}\\s*(?<json>{.*:({.*}|".*"|[^}])*?}).*`,
       "gi"
     );
     const configs = str.matchAll(configRegex);

@@ -2,6 +2,9 @@ const Processor = require("./processor");
 const Handlebars = require("handlebars");
 const fsUtil = require("../../fs-util");
 const path = require("path");
+const Case = require("./hbs-builtin-helpers/case");
+const lineComment = require("./hbs-builtin-helpers/lineComment");
+const echo = require("./hbs-builtin-helpers/echo");
 
 /**
  * Compile and apply the handlebar js on input
@@ -11,11 +14,13 @@ const path = require("path");
 class HandlebarsProcessor extends Processor {
   constructor() {
     super();
-    HandlebarsProcessor.loadHelpersFolder("./hbs-builtin-helpers");
+    Handlebars.registerHelper("case", Case);
+    Handlebars.registerHelper("lineComment", lineComment);
+    Handlebars.registerHelper("echo", echo);
   }
 
-  process(context, input) {
-    const parentResult = super.process(context, input);
+  async process(context, input) {
+    const parentResult = await super.process(context, input);
     return {
       context,
       result: Handlebars.compile(parentResult.result, { noEscape: true })(

@@ -6,6 +6,7 @@ const path = require("path");
 const glob = require("glob");
 const stripJsonComments = require("strip-json-comments");
 const Source = require("./source");
+const ScafflaterOptions = require("../options");
 
 /**
  * @typedef ConfigLoadResult
@@ -54,11 +55,13 @@ class Config {
    * @param {?TemplateConfig} template The template config
    * @param {?PartialConfig} partial The partial config
    * @param {?RanTemplate[]} templates The ran templates
+   * @param {ScafflaterOptions|object} options The folder scafflater options
    */
-  constructor(template = null, partial = null, templates = []) {
+  constructor(template = null, partial = null, templates = [], options = {}) {
     this.template = template;
     this.partial = partial;
     this.templates = templates;
+    this.options = options;
   }
 
   /**
@@ -83,6 +86,13 @@ class Config {
    * @type {RanTemplate[]}
    */
   templates;
+
+  /**
+   * Options for the folder where the scafflater file is present
+   *
+   * @type {ScafflaterOptions}
+   */
+  options;
 
   /**
    * Saves the the config file to a folder or .scafflater file
@@ -178,7 +188,7 @@ class Config {
     return Promise.resolve({
       folderPath: path.dirname(filePath),
       filePath,
-      config: new Config(template, partial, templates),
+      config: new Config(template, partial, templates, json.options ?? {}),
     });
   }
 

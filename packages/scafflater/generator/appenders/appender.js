@@ -16,8 +16,8 @@ class Appender {
    * @param {string} destStr The string where srcStr must be appended
    * @returns {Promise<object>} The process result
    */
-  append(context, srcStr, destStr) {
-    const annotated = Annotator.annotate(context, srcStr);
+  async append(context, srcStr, destStr) {
+    const annotated = await Annotator.annotate(context, srcStr);
     let result = destStr;
 
     if (srcStr && srcStr.trim().length > 0) {

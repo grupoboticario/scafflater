@@ -1,5 +1,6 @@
 const Handlebars = require("handlebars");
 const ScafflaterOptions = require("../options");
+const ignore = require("ignore");
 
 /**
  * Checks on template or partial parameters which must be masked, and mask it
@@ -33,7 +34,21 @@ const buildLineComment = (options, comment) => {
   });
 };
 
+/**
+ *
+ * @param {string} basePath The base path to be analysed
+ * @param {string} folderOrFile The folder or file path
+ * @param {string[]} patterns Patterns to ignore
+ * @returns {boolean} True if path must be ignored
+ */
+const ignores = (basePath, folderOrFile, patterns) => {
+  const pathsToIgnore = ignore().add(patterns);
+  const relativePath = folderOrFile.replace(basePath, "").replace(/^\//, "");
+  return relativePath !== "" && pathsToIgnore.ignores(relativePath);
+};
+
 module.exports = {
   maskParameters,
   buildLineComment,
+  ignores,
 };

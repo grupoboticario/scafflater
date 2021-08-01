@@ -1,8 +1,9 @@
 const { maskParameters } = require("../../util");
 const HandlebarsProcessor = require("../processors/handlebars-processor");
+const path = require("path");
 
 class Annotator {
-  static annotate(context, content) {
+  static async annotate(context, content) {
     const _ctx = { ...context };
     if (context.template) {
       _ctx.parameters = maskParameters(
@@ -22,10 +23,16 @@ class Annotator {
         const annotationTemplate = context.options.annotationTemplate;
         const annotationContext = { ..._ctx, content };
         const processor = new HandlebarsProcessor();
-        return processor.process(annotationContext, annotationTemplate).result;
+        await HandlebarsProcessor.loadHelpersFolder(
+          path.resolve(context.templatePath, context.helpersPath)
+        );
+        return Promise.resolve(
+          (await processor.process(annotationContext, annotationTemplate))
+            .result
+        );
       }
     }
-    return content;
+    return Promise.resolve(content);
   }
 }
 

@@ -6,6 +6,7 @@ const { maskParameters } = require("./util");
 const Config = require("./scafflater-config/config");
 const RanTemplate = require("./scafflater-config/ran-template");
 const RanPartial = require("./scafflater-config/ran-partial");
+const fs = require("fs-extra");
 
 /**
  * Scafflater class
@@ -93,6 +94,20 @@ class Scafflater {
       targetPath,
       ctx
     );
+
+    const initPath = path.resolve(
+      localTemplate.folderPath,
+      localTemplate.options.initFolderName
+    );
+    if (await fs.pathExists(initPath)) {
+      await this.run(
+        initPath,
+        parameters,
+        localTemplate.folderPath,
+        targetPath,
+        ctx
+      );
+    }
 
     targetConfig.templates.push(
       new RanTemplate(

@@ -6,6 +6,7 @@ const HandlebarsProcessor = require("./processors/handlebars-processor");
 const prettier = require("prettier");
 const ScafflaterOptions = require("../options");
 const { isBinaryFile } = require("isbinaryfile");
+const { ignores } = require("../util");
 
 /**
  * @typedef {object} Context
@@ -27,13 +28,21 @@ class Generator {
   constructor(context) {
     this.context = context;
     this.context.targetPath = path.resolve(context.targetPath);
-    this.ignoredFiles = [context.options.scfFileName];
+    this.ignoredPatterns = [
+      `**/${this.context.options.scfFileName}`,
+      `/${this.context.options.initFolderName}`,
+      `/${this.context.options.partialsFolderName}`,
+      `/${this.context.options.hooksFolderName}`,
+      `/${this.context.options.helpersFolderName}`,
+      "**/.git/**/*",
+      "**/node_modules/**/*",
+    ];
     this.ignoredFolders = [
       path.resolve(context.templatePath, context.options.partialsFolderName),
       path.resolve(context.templatePath, context.options.hooksFolderName),
       path.resolve(context.templatePath, context.options.helpersFolderName),
-      ".git",
-      "node_modules",
+      path.resolve(context.templatePath, ".git"),
+      path.resolve(context.templatePath, "node_modules"),
     ];
     this.handlebarsProcessor = new HandlebarsProcessor();
     this.hooks = {};
@@ -50,7 +59,9 @@ class Generator {
     }
 
     // Loading handlebars js custom helper
-    await HandlebarsProcessor.loadHelpersFolder(this.context.helpersPath);
+    await HandlebarsProcessor.loadHelpersFolder(
+      path.resolve(this.context.templatePath, this.context.helpersPath)
+    );
 
     const tree = fsUtil.getDirTreeSync(this.context.originPath);
 
@@ -59,10 +70,7 @@ class Generator {
       promises.push(this._generate(this.context, tree));
     }
 
-    if (
-      tree.type === "directory" &&
-      this.ignoredFolders.indexOf(tree.name) < 0
-    ) {
+    if (tree.type === "directory") {
       for (const child of tree.children) {
         promises.push(this._generate(this.context, child));
       }
@@ -72,11 +80,7 @@ class Generator {
   }
 
   async _generate(ctx, tree) {
-    if (
-      (tree.type === "directory" &&
-        this.ignoredFolders.indexOf(tree.path) >= 0) ||
-      (tree.type === "file" && this.ignoredFiles.indexOf(tree.name) >= 0)
-    ) {
+    if (ignores(ctx.originPath, tree.path, this.ignoredPatterns)) {
       return Promise.resolve();
     }
 
@@ -90,7 +94,7 @@ class Generator {
     if (options.targetName != null) {
       targetName = options.targetName;
     }
-    targetName = Processor.runProcessorsPipeline(
+    targetName = await Processor.runProcessorsPipeline(
       [this.handlebarsProcessor],
       ctx,
       targetName
@@ -133,7 +137,7 @@ class Generator {
         const processors = _ctx.options.processors.map(
           (p) => new (require(p))()
         );
-        const srcContent = Processor.runProcessorsPipeline(
+        const srcContent = await Processor.runProcessorsPipeline(
           processors,
           _ctx,
           fileContent
