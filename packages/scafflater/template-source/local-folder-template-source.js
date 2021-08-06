@@ -25,6 +25,7 @@ class LocalFolderTemplateSource extends TemplateSource {
    */
   constructor(options = {}) {
     super(options);
+    this.options.ignore = [".git", "node_modules"];
   }
 
   /**
@@ -44,14 +45,21 @@ class LocalFolderTemplateSource extends TemplateSource {
       },
     });
 
-    const outConfigPath = path.resolve(out, ".scafflater");
+    const outConfigFolder = path.resolve(out, ".scafflater");
+    const outConfigPath = path.resolve(out, ".scafflater", "scafflater.jsonc");
     if (!(await fsUtil.pathExists(outConfigPath))) {
-      throw new ScafflaterFileNotFoundError(outConfigPath);
+      throw new ScafflaterFileNotFoundError(
+        `${sourceKey}/.scafflater/scafflater.jsonc`
+      );
     }
 
-    const availableTemplates = await LocalTemplate.loadFromPath(outConfigPath);
+    const availableTemplates = await LocalTemplate.loadFromPath(
+      outConfigFolder
+    );
     if (!availableTemplates || availableTemplates.length <= 0) {
-      throw new TemplateDefinitionNotFound(outConfigPath);
+      throw new TemplateDefinitionNotFound(
+        `${sourceKey}/.scafflater/scafflater.jsonc`
+      );
     }
 
     return Promise.resolve(availableTemplates[0]);

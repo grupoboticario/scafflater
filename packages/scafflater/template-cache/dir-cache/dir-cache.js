@@ -1,6 +1,7 @@
 const TemplateCache = require("../template-cache");
 const path = require("path");
 const fsUtil = require("../../fs-util");
+const fs = require("fs-extra");
 const sort = require("version-sort");
 const { LocalTemplate } = require("../../scafflater-config/local-template");
 
@@ -62,7 +63,8 @@ class DirCache extends TemplateCache {
       templateConfig.name,
       templateConfig.version
     );
-    await fsUtil.copyEnsuringDest(templatePath, cachePath);
+    await fs.ensureDir(cachePath);
+    await fs.copy(templatePath, cachePath);
     return Promise.resolve((await LocalTemplate.loadFromPath(cachePath))[0]);
   }
 

@@ -5,6 +5,7 @@ const ScafflaterOptions = require("scafflater/options");
 const { Scafflater } = require("scafflater");
 const Config = require("scafflater/scafflater-config/config");
 const cliui = require("cliui");
+const path = require("path");
 
 class ListPartialCommand extends Command {
   async run() {
@@ -16,8 +17,11 @@ class ListPartialCommand extends Command {
       });
       const scafflater = new Scafflater(options);
 
-      const outputConfig = (await Config.fromLocalPath(listFlags.output))
-        ?.config;
+      const outputConfig = (
+        await Config.fromLocalPath(
+          path.resolve(listFlags.output, ".scafflater")
+        )
+      )?.config;
 
       if (!outputConfig || outputConfig.templates.length <= 0) {
         logger.info(`No initialized template found!`);
@@ -39,9 +43,18 @@ class ListPartialCommand extends Command {
         );
 
         ui.div({
-          text: chalk.bold(`\n${template.name.toUpperCase()}`),
+          text: chalk.bold(`TEMPLATE`),
+          padding: [1, 0, 0, 0],
+        });
+        ui.div({
+          text: `${template.name}`,
+          padding: [0, 0, 0, 2],
         });
 
+        ui.div({
+          text: chalk.bold(`PARTIALS`),
+          padding: [1, 0, 0, 0],
+        });
         if (localTemplate.partials.length <= 0) {
           ui.div(`\t${chalk.italic("No partials available")}`);
         } else {
@@ -50,7 +63,7 @@ class ListPartialCommand extends Command {
               (accumulator, currentTemplate) =>
                 accumulator +
                 `  ${currentTemplate.name}  \t${
-                  currentTemplate.description ?? ""
+                  chalk.gray(currentTemplate.description) ?? ""
                 }\n`,
               ""
             )

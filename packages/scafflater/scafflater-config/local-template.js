@@ -1,5 +1,6 @@
 const ScafflaterOptions = require("../options");
 const Config = require("./config");
+const path = require("path");
 
 /**
  * @class LocalTemplate
@@ -110,7 +111,7 @@ class LocalTemplate {
     for (const templateConfig of templateConfigs) {
       result.push(
         new LocalTemplate(
-          templateConfig.folderPath,
+          path.resolve(templateConfig.folderPath, ".."),
           templateConfig.config.template.name,
           templateConfig.config.template.description,
           templateConfig.config.template.version,

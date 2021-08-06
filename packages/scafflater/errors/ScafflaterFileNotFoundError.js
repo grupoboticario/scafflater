@@ -1,6 +1,6 @@
 class ScafflaterFileNotFoundError extends Error {
   constructor(filePath) {
-    super(`.scafflater file not found: ${filePath}`);
+    super(`Scafflater file not found: ${filePath}`);
     this.filePath = filePath;
     this.name = "ScafflaterFileNotFoundError";
   }

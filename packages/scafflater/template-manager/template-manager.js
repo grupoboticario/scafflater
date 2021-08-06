@@ -44,11 +44,16 @@ class TemplateManager {
   /**
    * Gets the template from source and stores in the cache
    *
+   * @param options
    * @param {string} sourceKey - Teh source key
    * @returns {Promise<LocalTemplate>} An object containing template config
    */
   async getTemplateFromSource(sourceKey) {
-    const tempTemplateFolder = await this.templateSource.getTemplate(sourceKey);
+    const templateSource = TemplateSource.resolveTemplateSourceFromSourceKey(
+      this.options,
+      sourceKey
+    );
+    const tempTemplateFolder = await templateSource.getTemplate(sourceKey);
     return this.templateCache.storeTemplate(tempTemplateFolder.folderPath);
   }
 
@@ -67,7 +72,7 @@ class TemplateManager {
     );
 
     if (!template && source) {
-      template = this.getTemplateFromSource(source.key);
+      template = this.getTemplateFromSource(this.options, source.key);
     }
 
     return template;

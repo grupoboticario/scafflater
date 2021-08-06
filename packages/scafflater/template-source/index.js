@@ -35,7 +35,7 @@ class TemplateSource {
   static resolveTemplateSourceFromSourceKey(options, sourceKey) {
     for (const source in options.sources) {
       if (require(options.sources[source]).isValidSourceKey(sourceKey))
-        return source;
+        return new (require(options.sources[source]))(options);
     }
   }
 

@@ -226,7 +226,7 @@ describe("ConfigLoader", () => {
 
       // ACT & ASSERT
       expect(glob).toHaveBeenCalledWith(
-        `/**/.scafflater`,
+        `/**/scafflater.jsonc`,
         { root: "/some/valid/path" },
         expect.anything()
       );
@@ -249,7 +249,7 @@ describe("ConfigLoader", () => {
 
       // ACT & ASSERT
       expect(glob).toHaveBeenCalledWith(
-        `/**/.scafflater`,
+        `/**/scafflater.jsonc`,
         { root: "/some/valid/path" },
         expect.anything()
       );

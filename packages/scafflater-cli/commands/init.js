@@ -6,11 +6,19 @@ const logger = require("scafflater/logger");
 const ScafflaterOptions = require("scafflater/options");
 const Config = require("scafflater/scafflater-config/config");
 const chalk = require("chalk");
+const path = require("path");
+const ScafflaterFileNotFoundError = require("scafflater/errors/ScafflaterFileNotFoundError");
 
 class InitCommand extends Command {
   async run() {
     try {
       const { args: iniArgs, flags: initFlags } = this.parse(InitCommand);
+
+      if (!iniArgs.source) {
+        logger.error("The parameter 'source' is required.");
+        logger.error("Use '--help' to details.");
+        return;
+      }
 
       const config = new ScafflaterOptions({
         cacheStorage: initFlags.cache,
@@ -28,10 +36,18 @@ class InitCommand extends Command {
         );
       });
 
-      let outputConfig = (await Config.fromLocalPath(initFlags.output))?.config;
-      if (!outputConfig) {
-        outputConfig = new Config();
+      const outputConfigPath = path.resolve(initFlags.output, ".scafflater");
+      let outputConfig;
+      try {
+        outputConfig = (await Config.fromLocalPath(outputConfigPath))?.config;
+      } catch (error) {
+        if (error instanceof ScafflaterFileNotFoundError) {
+          outputConfig = new Config();
+        } else {
+          throw error;
+        }
       }
+
       if (outputConfig.templates.find((t) => t.name === localTemplate.name)) {
         logger.info(`The template is already initialized!`);
         logger.info(

@@ -49,7 +49,7 @@ class ScafflaterOptions {
   /**
    * Append Strategy
    *
-   * @description Valid values are 'append' and 'replate'
+   * @description Valid values are 'append' and 'replace'
    * @type {string}
    */
   appendStrategy = "append";
@@ -57,11 +57,12 @@ class ScafflaterOptions {
   processors = ["./processors/handlebars-processor"];
   appenders = ["./appenders/region-appender", "./appenders/appender"];
 
-  scfFileName = ".scafflater";
-  initFolderName = "scf-init";
-  partialsFolderName = "scf-partials";
-  hooksFolderName = "scf-hooks";
-  helpersFolderName = "scf-helpers";
+  scfFolderName = ".scafflater";
+  scfFileName = "scafflater.jsonc";
+  initFolderName = "init";
+  partialsFolderName = "partials";
+  hooksFolderName = "hooks";
+  helpersFolderName = "helpers";
 
   cacheStorage = "tempDir";
   cacheStorages = {

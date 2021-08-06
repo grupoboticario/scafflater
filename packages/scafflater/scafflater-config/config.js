@@ -7,6 +7,7 @@ const glob = require("glob");
 const stripJsonComments = require("strip-json-comments");
 const Source = require("./source");
 const ScafflaterOptions = require("../options");
+const ScafflaterFileNotFoundError = require("../errors/ScafflaterFileNotFoundError");
 
 /**
  * @typedef ConfigLoadResult
@@ -24,11 +25,15 @@ const ScafflaterOptions = require("../options");
 const listScafflaterFiles = async (folderPath) => {
   return new Promise((resolve, reject) => {
     try {
-      glob(`/**/.scafflater`, { root: folderPath }, (err, files) => {
-        if (err) reject(err);
-        if (!files || files.length <= 0) resolve([]);
-        resolve(files);
-      });
+      glob(
+        `/**/scafflater.jsonc`,
+        { root: folderPath, dot: true },
+        (err, files) => {
+          if (err) reject(err);
+          if (!files || files.length <= 0) resolve([]);
+          resolve(files);
+        }
+      );
     } catch (error) {
       reject(error);
     }
@@ -102,16 +107,17 @@ class Config {
   async save(localPath) {
     let filePath = localPath;
     if ((await fs.lstat(localPath)).isDirectory()) {
-      filePath = path.resolve(localPath, ".scafflater");
+      filePath = path.resolve(localPath, "scafflater.jsonc");
     } else if (
       (await fs.pathExists(localPath)) &&
-      path.basename(localPath) !== ".scafflater"
+      path.basename(localPath) !== "scafflater.jsonc"
     ) {
       throw new Error(
-        `Error saving file ${localPath}: It is an existing file but is not a '.scafflater'. Use this to save only scafflater config`
+        `Error saving file ${localPath}: It is an existing file but is not a 'scafflater.jsonc'. Use this to save only scafflater config`
       );
     }
 
+    await fs.ensureDir(path.dirname(filePath));
     await fs.writeFile(
       filePath,
       JSON.stringify(
@@ -130,18 +136,24 @@ class Config {
   /**
    * Load an single file from a path
    *
-   * @param {string} localPath Folder or .scafflater file path of partial
+   * @param {string} localPath Folder or scafflater.jsonc file path of partial
    * @param {boolean} createIfNotExists If true, will create the file if if
    * @returns {Promise<ConfigLoadResult>} The loaded config result. Null if not found.
    */
   static async fromLocalPath(localPath, createIfNotExists = false) {
     if (!(await fs.pathExists(localPath))) {
-      throw new Error(`'${localPath}': the path does not exist.`);
+      if (createIfNotExists) {
+        return new Config(null, null, []);
+      }
+
+      throw new ScafflaterFileNotFoundError(
+        `'${localPath}': the path does not exist.`
+      );
     }
 
     let filePath = localPath;
     if ((await fs.lstat(localPath)).isDirectory()) {
-      filePath = path.resolve(localPath, ".scafflater");
+      filePath = path.resolve(localPath, "scafflater.jsonc");
     }
 
     if (!(await fs.pathExists(filePath))) {
