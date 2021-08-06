@@ -44,7 +44,6 @@ class TemplateManager {
   /**
    * Gets the template from source and stores in the cache
    *
-   * @param options
    * @param {string} sourceKey - Teh source key
    * @returns {Promise<LocalTemplate>} An object containing template config
    */

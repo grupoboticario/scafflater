@@ -23,13 +23,28 @@ describe("Template Manager tests", () => {
 
   test("getTemplateFromSource", async () => {
     // ARRANGE
+    TemplateSource.resolveTemplateSourceFromSourceKey.mockReturnValue(
+      templateSource
+    );
     const templateManager = new TemplateManager(templateCache, templateSource);
     templateManager.options = new ScafflaterOptions();
     templateCache.storeTemplate.mockResolvedValue(
-      new LocalTemplate("/cached/some/path", "template", "Template", "0.0.1")
+      new LocalTemplate(
+        "/cached/some/path",
+        "/cached/some/path/scafflater.jsonc",
+        "template",
+        "Template",
+        "0.0.1"
+      )
     );
     templateSource.getTemplate.mockResolvedValue(
-      new LocalTemplate("/some/path", "template", "Template", "0.0.1")
+      new LocalTemplate(
+        "/some/path",
+        "/some/path/scafflater.jsonc",
+        "template",
+        "Template",
+        "0.0.1"
+      )
     );
 
     // ACT
@@ -39,7 +54,13 @@ describe("Template Manager tests", () => {
     expect(templateSource.getTemplate).toHaveBeenCalledTimes(1);
     expect(templateCache.storeTemplate).toHaveBeenCalledTimes(1);
     expect(out).toStrictEqual(
-      new LocalTemplate("/cached/some/path", "template", "Template", "0.0.1")
+      new LocalTemplate(
+        "/cached/some/path",
+        "/cached/some/path/scafflater.jsonc",
+        "template",
+        "Template",
+        "0.0.1"
+      )
     );
   });
 
@@ -59,6 +80,7 @@ describe("Template Manager tests", () => {
     templateCache.getTemplate.mockResolvedValue(
       new LocalTemplate(
         "some/path/to/template",
+        "some/path/to/template/scafflater.jsonc",
         "template",
         "A template",
         "0.0.1",
@@ -94,6 +116,7 @@ describe("Template Manager tests", () => {
     templateCache.getTemplate.mockReturnValue(
       new LocalTemplate(
         "some/path/to/template",
+        "some/path/to/template/scafflater.jsonc",
         "template",
         "A template",
         "0.0.1",
@@ -117,6 +140,7 @@ describe("Template Manager tests", () => {
     templateCache.getTemplate.mockReturnValue(
       new LocalTemplate(
         "some/path/to/template",
+        "some/path/to/template/scafflater.jsonc",
         "template",
         "A template",
         "0.0.1",

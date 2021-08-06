@@ -143,7 +143,11 @@ class Config {
   static async fromLocalPath(localPath, createIfNotExists = false) {
     if (!(await fs.pathExists(localPath))) {
       if (createIfNotExists) {
-        return new Config(null, null, []);
+        return Promise.resolve({
+          folderPath: path.dirname(localPath),
+          localPath,
+          config: new Config(null, null, []),
+        });
       }
 
       throw new ScafflaterFileNotFoundError(

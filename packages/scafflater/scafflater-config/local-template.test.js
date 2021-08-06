@@ -136,11 +136,12 @@ describe("Local Template", () => {
       expect(result).toBeNull();
     });
 
-    test("loadFromPath: more than one template config found, should throw", async () => {
+    test("loadFromPath: more than one template config found, should load multiple templates", async () => {
       // ARRANGE
       Config.scanLocalPath.mockResolvedValue([
         {
           folderPath: "/some-path/template-1",
+          filePath: "/some-path/template-1/scafflater.jsonc",
           config: {
             template: {
               name: "template-1",
@@ -150,6 +151,8 @@ describe("Local Template", () => {
         },
         {
           folderPath: "/some-path/template-1/partials/partial-1-1",
+          filePath:
+            "/some-path/template-1/partials/partial-1-1/scafflater.jsonc",
           config: {
             partial: {
               name: "partial-1-1",
@@ -159,6 +162,7 @@ describe("Local Template", () => {
         },
         {
           folderPath: "/some-path/template-1/partials/partial-1-2",
+          filePath: "/some-path/template-1/partials/scafflater.jsonc",
           config: {
             partial: {
               name: "partial-1-2",
@@ -168,6 +172,7 @@ describe("Local Template", () => {
         },
         {
           folderPath: "/some-path/template-2",
+          filePath: "/some-path/template-2/scafflater.jsonc",
           config: {
             template: {
               name: "template-2",
@@ -177,6 +182,8 @@ describe("Local Template", () => {
         },
         {
           folderPath: "/some-path/template-2/partials/partial-2-1",
+          filePath:
+            "/some-path/template-2/partials/partial-2-1/scafflater.jsonc",
           config: {
             partial: {
               name: "partial-2-1",
@@ -204,6 +211,7 @@ describe("Local Template", () => {
       Config.scanLocalPath.mockResolvedValue([
         {
           folderPath: "/some-path/template-1",
+          filePath: "/some-path/template-1/scafflater.jsonc",
           config: {
             template: {
               name: "template-1",
@@ -213,7 +221,7 @@ describe("Local Template", () => {
         },
         {
           folderPath: "/some-other/partial-1-1",
-          filePath: "/some-other/partial-1-1/.scafflater",
+          filePath: "/some-other/partial-1-1/scafflater.jsonc",
           config: {
             partial: {
               name: "partial-1-1",
@@ -227,7 +235,7 @@ describe("Local Template", () => {
       await expect(
         LocalTemplate.loadFromPath("/some/valid/path")
       ).rejects.toThrowError(
-        "/some-other/partial-1-1/.scafflater: partial does not belong to any template."
+        "/some-other/partial-1-1/scafflater.jsonc: partial does not belong to any template."
       );
     });
   });

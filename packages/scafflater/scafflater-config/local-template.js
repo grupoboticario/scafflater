@@ -10,6 +10,7 @@ class LocalTemplate {
    * Creates a template stored locally
    *
    * @param {string} folderPath - Template path
+   * @param {string} configPath - Template config file path
    * @param {string} name - Template name
    * @param {string} description - Template description
    * @param {string} version - Template version
@@ -19,6 +20,7 @@ class LocalTemplate {
    */
   constructor( // NOSONAR
     folderPath,
+    configPath,
     name,
     description,
     version,
@@ -32,8 +34,16 @@ class LocalTemplate {
     this.partials = partials;
     this.parameters = parameters;
     this.folderPath = folderPath;
+    this.configPath = configPath;
     this.options = new ScafflaterOptions(options);
   }
+
+  /**
+   * Template config file path
+   *
+   * @type {string}
+   */
+  configPath;
 
   /**
    * Template path
@@ -112,6 +122,7 @@ class LocalTemplate {
       result.push(
         new LocalTemplate(
           path.resolve(templateConfig.folderPath, ".."),
+          templateConfig.filePath,
           templateConfig.config.template.name,
           templateConfig.config.template.description,
           templateConfig.config.template.version,
@@ -127,7 +138,7 @@ class LocalTemplate {
     );
     for (const partialConfig of partialConfigs) {
       const template = result.find((t) =>
-        partialConfig.folderPath.startsWith(t.folderPath)
+        partialConfig.folderPath.startsWith(path.dirname(t.configPath))
       );
       if (!template) {
         throw new Error(

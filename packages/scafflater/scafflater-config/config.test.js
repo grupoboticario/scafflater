@@ -38,7 +38,7 @@ describe("ConfigLoader", () => {
 
       // ASSERT
       expect(fs.writeFile).toHaveBeenCalledWith(
-        "/to/some/path/.scafflater",
+        "/to/some/path/scafflater.jsonc",
         expected
       );
     });
@@ -86,7 +86,7 @@ describe("ConfigLoader", () => {
       await expect(
         config.save("/to/some/path/other-file.json")
       ).rejects.toThrow(
-        "Error saving file /to/some/path/other-file.json: It is an existing file but is not a '.scafflater'. Use this to save only scafflater config"
+        "Error saving file /to/some/path/other-file.json: It is an existing file but is not a 'scafflater.jsonc'. Use this to save only scafflater config"
       );
     });
   });
@@ -227,7 +227,7 @@ describe("ConfigLoader", () => {
       // ACT & ASSERT
       expect(glob).toHaveBeenCalledWith(
         `/**/scafflater.jsonc`,
-        { root: "/some/valid/path" },
+        { root: "/some/valid/path", dot: true },
         expect.anything()
       );
     });
@@ -250,7 +250,7 @@ describe("ConfigLoader", () => {
       // ACT & ASSERT
       expect(glob).toHaveBeenCalledWith(
         `/**/scafflater.jsonc`,
-        { root: "/some/valid/path" },
+        { root: "/some/valid/path", dot: true },
         expect.anything()
       );
     });

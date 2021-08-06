@@ -54,6 +54,7 @@ describe("ListCommand", () => {
     templateManager.getTemplate.mockResolvedValue(
       new LocalTemplate(
         "/some/template/path",
+        "/some/template/path/.scafflater/scafflater.jsonc",
         "some-template",
         "The template",
         "0.0.1",
@@ -74,7 +75,7 @@ describe("ListCommand", () => {
 
     // ASSERT
     expect(logger.print).toHaveBeenCalledWith(
-      expect.stringMatching(/ *the-partial *This is an partial/)
+      expect.stringMatching(/.*the-partial.*This is an partial.*/gm)
     );
   });
 

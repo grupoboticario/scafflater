@@ -206,6 +206,7 @@ describe("ListCommand", () => {
     templateCache.getTemplate.mockResolvedValueOnce(
       new LocalTemplate(
         "/some/template/path",
+        "/some/template/path/.scafflater/scafflater.jsonc",
         "some-template",
         "The template",
         "0.0.1",
@@ -221,6 +222,7 @@ describe("ListCommand", () => {
     templateCache.getTemplate.mockResolvedValueOnce(
       new LocalTemplate(
         "/some/other/template/path",
+        "/some/other/template/path/.scafflater/scafflater.jsonc",
         "other-template",
         "The other template",
         "0.0.1",
@@ -284,6 +286,7 @@ describe("ListCommand", () => {
     templateCache.getTemplate.mockResolvedValueOnce(
       new LocalTemplate(
         "/some/template/path",
+        "/some/template/path/.scafflater/scafflater.jsonc",
         "some-template",
         "The template",
         "0.0.1",
@@ -299,6 +302,7 @@ describe("ListCommand", () => {
     templateCache.getTemplate.mockResolvedValueOnce(
       new LocalTemplate(
         "/some/other/template/path",
+        "/some/other/template/path/.scafflater/scafflater.jsonc",
         "other-template",
         "The other template",
         "0.0.1",

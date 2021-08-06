@@ -1,10 +1,12 @@
 /* eslint-disable no-undef */
 const DirCache = require("./dir-cache");
 const fsUtil = require("../../fs-util");
+const fs = require("fs-extra");
 const path = require("path");
 const { LocalTemplate } = require("../../scafflater-config/local-template");
 
 jest.mock("../../fs-util");
+jest.mock("fs-extra");
 
 describe("Dir template Cache", () => {
   afterEach(() => {
@@ -17,6 +19,7 @@ describe("Dir template Cache", () => {
     const dirCache = new DirCache("/some/path");
     const t = new LocalTemplate(
       "/some/path/template",
+      "/some/path/template/scafflater.jsonc",
       "template",
       "Template",
       "0.0.1"
@@ -32,7 +35,13 @@ describe("Dir template Cache", () => {
 
     // ASSERT
     expect(templateOk).toStrictEqual(
-      new LocalTemplate("/some/path/template", "template", "Template", "0.0.1")
+      new LocalTemplate(
+        "/some/path/template",
+        "/some/path/template/scafflater.jsonc",
+        "template",
+        "Template",
+        "0.0.1"
+      )
     );
     expect(templateNotFound).toBeNull();
   });
@@ -45,18 +54,21 @@ describe("Dir template Cache", () => {
       .mockResolvedValue([
         new LocalTemplate(
           "/some/path/template",
+          "/some/path/template/scafflater.jsonc",
           "template",
           "Template",
           "0.0.1"
         ),
         new LocalTemplate(
           "/some/path/template",
+          "/some/path/template/scafflater.jsonc",
           "template",
           "Template",
           "0.0.2"
         ),
         new LocalTemplate(
           "/some/path/other-template",
+          "/some/path/template/scafflater.jsonc",
           "other-template",
           "Template",
           "0.0.3"
@@ -72,7 +84,13 @@ describe("Dir template Cache", () => {
 
     // ASSERT
     expect(templateOk).toStrictEqual(
-      new LocalTemplate("/some/path/template", "template", "Template", "0.0.2")
+      new LocalTemplate(
+        "/some/path/template",
+        "/some/path/template/scafflater.jsonc",
+        "template",
+        "Template",
+        "0.0.2"
+      )
     );
     expect(templateNotFound).toBeNull();
   });
@@ -84,12 +102,13 @@ describe("Dir template Cache", () => {
       version: "some-version",
     });
     const p = "path/to/some/template";
-    const dirCache = new DirCache("path/to/some/template");
+    const dirCache = new DirCache("path/to/some/cached-template");
     jest
       .spyOn(LocalTemplate, "loadFromPath")
       .mockResolvedValue([
         new LocalTemplate(
           "path/to/some/template/some-name/some-version",
+          "path/to/some/template/some-name/some-version/scafflater.jsonc",
           "some-name",
           "Template",
           "some-version"
@@ -100,9 +119,9 @@ describe("Dir template Cache", () => {
     await dirCache.storeTemplate(p);
 
     // ASSERT
-    expect(fsUtil.copyEnsuringDest.mock.calls[0][0]).toBe(p);
-    expect(fsUtil.copyEnsuringDest.mock.calls[0][1]).toBe(
-      "path/to/some/template/some-name/some-version"
+    expect(fs.copy.mock.calls[0][0]).toBe(p);
+    expect(fs.copy.mock.calls[0][1]).toBe(
+      "path/to/some/cached-template/some-name/some-version"
     );
   });
 
@@ -114,18 +133,21 @@ describe("Dir template Cache", () => {
       .mockResolvedValue([
         new LocalTemplate(
           "/some/path/template",
+          "/some/path/template/scafflater.jsonc",
           "template",
           "Template",
           "0.0.1"
         ),
         new LocalTemplate(
           "/some/path/template",
+          "/some/path/template/scafflater.jsonc",
           "template",
           "Template",
           "0.0.2"
         ),
         new LocalTemplate(
           "/some/path/other-template",
+          "/some/path/template/scafflater.jsonc",
           "other-template",
           "Template",
           "0.0.3"

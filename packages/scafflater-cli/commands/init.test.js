@@ -27,7 +27,13 @@ describe("InitCommand", () => {
     // ARRANGE
     jest
       .spyOn(templateManager, "getTemplateFromSource")
-      .mockResolvedValue(new LocalTemplate("/some/path", "some-template"));
+      .mockResolvedValue(
+        new LocalTemplate(
+          "/some/path",
+          "/some/path/.scafflater/scafflater.jsonc",
+          "some-template"
+        )
+      );
     jest.spyOn(Config, "fromLocalPath").mockResolvedValue({
       config: {
         templates: [
@@ -51,8 +57,16 @@ describe("InitCommand", () => {
   test("Template is not initialized, should initialize it", async () => {
     jest
       .spyOn(templateManager, "getTemplateFromSource")
-      .mockResolvedValue(new LocalTemplate("/some/path", "some-new-template"));
-    jest.spyOn(Config, "fromLocalPath").mockResolvedValue(null);
+      .mockResolvedValue(
+        new LocalTemplate(
+          "/some/path",
+          "/some/path/.scafflater/scafflater.jsonc",
+          "some-new-template"
+        )
+      );
+    jest.spyOn(Config, "fromLocalPath").mockResolvedValue({
+      config: new Config(),
+    });
     const initCommand = new InitCommand(["https://github.com/some/repo"], {});
 
     // ACT

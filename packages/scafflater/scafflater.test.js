@@ -42,6 +42,7 @@ describe("Scafflater", () => {
       jest.spyOn(templateManager, "getTemplateFromSource").mockResolvedValue(
         new LocalTemplate(
           "/template/path",
+          "/template/path/scafflater.jsonc",
           "template",
           "Template",
           "0.0.1",
@@ -55,12 +56,16 @@ describe("Scafflater", () => {
           ]
         )
       );
-      Config.fromLocalPath.mockResolvedValue(null);
       const mockedConfig = {
         templates: [],
         save: jest.fn(),
       };
       Config.mockReturnValue(mockedConfig);
+      Config.fromLocalPath.mockResolvedValue({
+        folderPath: "/template/path/",
+        localPath: "/template/path/scafflater.jsonc",
+        config: new Config(null, null, []),
+      });
 
       // ACT
       const scafflater = new Scafflater({ annotate: false }, templateManager);
@@ -72,7 +77,9 @@ describe("Scafflater", () => {
 
       // ASSERT
       expect(mockedConfig.templates.length).toBe(1);
-      expect(mockedConfig.save).toBeCalledWith("/some/target");
+      expect(mockedConfig.save).toBeCalledWith(
+        "/some/target/.scafflater/scafflater.jsonc"
+      );
     });
 
     test("Not First template init", async () => {
@@ -127,7 +134,9 @@ describe("Scafflater", () => {
 
       // ASSERT
       expect(mockedConfig.config.templates.length).toBe(2);
-      expect(mockedConfig.config.save).toBeCalledWith("/some/target");
+      expect(mockedConfig.config.save).toBeCalledWith(
+        "/some/target/.scafflater/scafflater.jsonc"
+      );
     });
   });
 
@@ -148,6 +157,7 @@ describe("Scafflater", () => {
     };
     const mockedLocalTemplate = new LocalTemplate(
       "/some/path",
+      "/some/path/scafflater.json",
       "template",
       "Local Template",
       "0.0.1",
@@ -237,7 +247,9 @@ describe("Scafflater", () => {
 
       // ASSERT
       expect(mockedConfig.config.templates[0].partials.length).toBe(2);
-      expect(mockedConfig.config.save).toBeCalledWith("/some/target");
+      expect(mockedConfig.config.save).toBeCalledWith(
+        "/some/target/.scafflater/scafflater.jsonc"
+      );
     });
   });
 });
