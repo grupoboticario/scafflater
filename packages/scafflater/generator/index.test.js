@@ -1,5 +1,5 @@
 const fsUtil = require("../fs-util");
-const ScafflaterOptions = require("../options");
+const { ScafflaterOptions } = require("../options");
 const Generator = require("./");
 
 jest.mock("../fs-util");

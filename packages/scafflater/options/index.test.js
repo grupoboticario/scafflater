@@ -1,4 +1,4 @@
-const ScafflaterOptions = require(".");
+const { ScafflaterOptions } = require(".");
 const FileSystemUtils = require("../fs-util");
 
 jest.mock("../fs-util");

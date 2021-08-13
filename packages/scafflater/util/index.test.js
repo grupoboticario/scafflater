@@ -1,6 +1,6 @@
 /* eslint-disable node/no-unpublished-require */
 const { maskParameters, buildLineComment, ignores } = require("./");
-const OptionsProvider = require("../options");
+const { ScafflaterOptions } = require("../options");
 const mock = require("mock-fs");
 
 describe("util", () => {
@@ -45,7 +45,7 @@ describe("util", () => {
 
   test("Build Line Comment", () => {
     // ARRANGE
-    const config = new OptionsProvider();
+    const config = new ScafflaterOptions();
     const comment = "this is a comment";
     const otherCofig = {
       ...config,

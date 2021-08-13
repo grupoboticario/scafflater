@@ -1,4 +1,4 @@
-const ScafflaterOptions = require("../options");
+const { ScafflaterOptions } = require("../options");
 const { TemplateCache } = require("../template-cache");
 const TemplateSource = require("../template-source");
 const TemplateManager = require("./template-manager");

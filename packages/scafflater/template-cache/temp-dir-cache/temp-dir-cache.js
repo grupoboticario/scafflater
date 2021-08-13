@@ -1,4 +1,4 @@
-const OptionsProvider = require("../../options");
+const { ScafflaterOptions } = require("../../options");
 const FileSystemUtils = require("../../fs-util");
 const DirCache = require("../dir-cache/dir-cache");
 
@@ -9,7 +9,7 @@ const DirCache = require("../dir-cache/dir-cache");
  */
 class TempDirCache extends DirCache {
   constructor(config = {}) {
-    config = { ...new OptionsProvider(), ...config };
+    config = { ...new ScafflaterOptions(), ...config };
     super(FileSystemUtils.getTempFolderSync(), config);
   }
 }

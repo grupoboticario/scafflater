@@ -1,5 +1,5 @@
 const Handlebars = require("handlebars");
-const ScafflaterOptions = require("../options");
+const { ScafflaterOptions } = require("../options");
 const ignore = require("ignore");
 
 /**

@@ -1,6 +1,6 @@
 const os = require("os");
 const path = require("path");
-const OptionsProvider = require("../../options");
+const { ScafflaterOptions } = require("../../options");
 const DirCache = require("../dir-cache");
 
 /**
@@ -10,7 +10,7 @@ const DirCache = require("../dir-cache");
  */
 class HomeDirCache extends DirCache {
   constructor(config = {}) {
-    config = { ...new OptionsProvider(), ...config };
+    config = { ...new ScafflaterOptions(), ...config };
     super(path.join(os.homedir(), ".scafflater", "templates"), config);
   }
 }

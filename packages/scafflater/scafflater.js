@@ -1,7 +1,7 @@
 const { TemplateManager } = require("./template-manager");
 const Generator = require("./generator");
 const path = require("path");
-const ScafflaterOptions = require("./options");
+const { ScafflaterOptions } = require("./options");
 const { maskParameters } = require("./util");
 const Config = require("./scafflater-config/config");
 const RanTemplate = require("./scafflater-config/ran-template");

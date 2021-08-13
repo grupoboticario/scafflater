@@ -1,10 +1,10 @@
 /* eslint-disable no-undef */
-const OptionsProvider = require("../../options");
+const { ScafflaterOptions } = require("../../options");
 const { RegionProvider, Region, RegionTag, RegionTagType } = require(".");
 
 test("List regions in a well formatted content", () => {
   // ARRANGE
-  const regionProvider = new RegionProvider(new OptionsProvider());
+  const regionProvider = new RegionProvider(new ScafflaterOptions());
   const str = `This is a sample contet
   # @scf-region sample-region
 
@@ -43,7 +43,7 @@ test("List regions in a well formatted content", () => {
 
 test("Parse content with not started region, should throw an exception", () => {
   // ARRANGE
-  const regionProvider = new RegionProvider(new OptionsProvider());
+  const regionProvider = new RegionProvider(new ScafflaterOptions());
   const str = `This is a sample contet
 
   # @end-scf-region 
@@ -59,7 +59,7 @@ test("Parse content with not started region, should throw an exception", () => {
 
 test("Parse content with not finished region, should throw an exception", () => {
   // ARRANGE
-  const regionProvider = new RegionProvider(new OptionsProvider());
+  const regionProvider = new RegionProvider(new ScafflaterOptions());
   const str = `This is a sample contet
   # @scf-region sample-region
 
@@ -77,7 +77,7 @@ test("Parse content with not finished region, should throw an exception", () => 
 
 test("Appends an simple region", async () => {
   // ARRANGE
-  const regionProvider = new RegionProvider(new OptionsProvider());
+  const regionProvider = new RegionProvider(new ScafflaterOptions());
   const region = new Region(
     null,
     new RegionTag("some-region", 0, 0, RegionTagType.Start),
@@ -98,7 +98,7 @@ some content
 
 test("Build a nested region", async () => {
   // ARRANGE
-  const regionProvider = new RegionProvider(new OptionsProvider());
+  const regionProvider = new RegionProvider(new ScafflaterOptions());
   const parentRegion = new Region(
     null,
     new RegionTag("parent-region", 0, 0, RegionTagType.Start),

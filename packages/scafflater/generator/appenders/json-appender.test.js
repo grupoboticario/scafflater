@@ -1,4 +1,4 @@
-const ScafflaterOptions = require("../../options");
+const { ScafflaterOptions } = require("../../options");
 const JsonAppender = require("./json-appender");
 
 const destJson = `{

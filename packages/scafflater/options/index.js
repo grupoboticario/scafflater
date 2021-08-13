@@ -176,4 +176,4 @@ class ScafflaterOptions {
   }
 }
 
-module.exports = ScafflaterOptions;
+module.exports = { ScafflaterOptions };

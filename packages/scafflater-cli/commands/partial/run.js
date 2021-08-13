@@ -5,7 +5,7 @@ const logger = require("scafflater/logger");
 const chalk = require("chalk");
 const path = require("path");
 const inquirer = require("inquirer");
-const ScafflaterOptions = require("scafflater/options");
+const { ScafflaterOptions } = require("scafflater/options");
 const Config = require("scafflater/scafflater-config/config");
 const {
   LocalTemplate,

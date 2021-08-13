@@ -1,7 +1,7 @@
 const { Command, flags } = require("@oclif/command");
 const logger = require("scafflater/logger");
 const chalk = require("chalk");
-const ScafflaterOptions = require("scafflater/options");
+const { ScafflaterOptions } = require("scafflater/options");
 const { Scafflater } = require("scafflater");
 const Config = require("scafflater/scafflater-config/config");
 const cliui = require("cliui");

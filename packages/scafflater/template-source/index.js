@@ -1,4 +1,4 @@
-const ScafflaterOptions = require("../options");
+const { ScafflaterOptions } = require("../options");
 const { LocalTemplate } = require("../scafflater-config/local-template");
 const Source = require("../scafflater-config/source");
 

@@ -1,7 +1,7 @@
 const LocalFolderTemplateSource = require("./local-folder-template-source");
 const GitUtil = require("../git-util");
 const fsUtil = require("../fs-util");
-const ScafflaterOptions = require("../options");
+const { ScafflaterOptions } = require("../options");
 const { LocalTemplate } = require("../scafflater-config/local-template");
 const Source = require("../scafflater-config/source");
 const ScafflaterFileNotFoundError = require("../errors/ScafflaterFileNotFoundError");

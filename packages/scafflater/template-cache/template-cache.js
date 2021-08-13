@@ -1,4 +1,4 @@
-const ScafflaterOptions = require("../options");
+const { ScafflaterOptions } = require("../options");
 const { LocalTemplate } = require("../scafflater-config/local-template");
 
 // TODO: include source as part of template key

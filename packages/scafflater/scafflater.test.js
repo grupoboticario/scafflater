@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 const { Scafflater } = require("./scafflater");
 const { TemplateManager } = require("./template-manager");
-const ScafflaterOptions = require("./options");
+const { ScafflaterOptions } = require("./options");
 const {
   LocalTemplate,
   LocalPartial,

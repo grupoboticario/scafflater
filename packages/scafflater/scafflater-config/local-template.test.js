@@ -1,6 +1,6 @@
 const { LocalPartial, LocalTemplate } = require("./local-template");
 const Config = require("./config");
-const ScafflaterOptions = require("../options");
+const { ScafflaterOptions } = require("../options");
 
 jest.mock("fs-extra");
 jest.mock("./config");
