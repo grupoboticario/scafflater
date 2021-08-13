@@ -15,8 +15,8 @@ class Scafflater {
   /**
    * Scafflater constructor.
    *
-   * @param {ScafflaterOptions} options - Scafflater configuration. If null, will get the default configuration.
-   * @param {TemplateManager} templateManager The template manager
+   * @param {?(ScafflaterOptions|object)} options - Scafflater configuration. If null, will get the default configuration.
+   * @param {?TemplateManager} templateManager The template manager
    */
   constructor(options = {}, templateManager = null) {
     this.options = new ScafflaterOptions(options);
