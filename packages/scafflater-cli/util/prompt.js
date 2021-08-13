@@ -21,6 +21,7 @@ class Prompt {
           return {
             ...q,
             validate: (input) => {
+              // NOSONAR
               return regexValidate(q, input);
             },
           };
