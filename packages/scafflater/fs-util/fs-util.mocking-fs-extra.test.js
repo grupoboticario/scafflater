@@ -16,7 +16,7 @@ describe("Testing mocking fs-extra", () => {
   test("save File appending", async () => {
     // ARRANGE
     const filePath = path.join(__dirname, ".test-resources", "sample-file.txt");
-    fs.exists.mockReturnValue(true);
+    fs.pathExists.mockResolvedValue(true);
 
     // ACT
     await fsUtil.saveFile(filePath, "new data", true);
@@ -53,7 +53,7 @@ describe("Testing mocking fs-extra", () => {
   test("readFileContent: file does not exists", async () => {
     // ARRANGE
     const filePath = path.join(__dirname, ".test-resources", "sample-file.txt");
-    fs.exists.mockResolvedValue(false);
+    fs.pathExists.mockResolvedValue(false);
     fs.readFile.mockResolvedValue("file content");
 
     // ACT
@@ -66,7 +66,7 @@ describe("Testing mocking fs-extra", () => {
   test("readFileContent: throw error", async () => {
     // ARRANGE
     const filePath = path.join(__dirname, ".test-resources", "sample-file.txt");
-    fs.exists.mockImplementation(() => {
+    fs.pathExists.mockImplementation(() => {
       throw new Error();
     });
     fs.readFile.mockResolvedValue("file content");
