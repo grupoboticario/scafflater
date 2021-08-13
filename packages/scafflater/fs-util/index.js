@@ -133,7 +133,7 @@ fs.copyEnsuringDest = async (src, dest) => {
  * @returns {Promise<string>} The File content
  */
 fs.readFileContent = async (filePath) => {
-  if (!(await fs.exists(filePath))) {
+  if (!(await fs.pathExists(filePath))) {
     return Promise.resolve(null);
   }
   return Promise.resolve((await fs.readFile(filePath)).toString());
@@ -146,7 +146,7 @@ fs.readFileContent = async (filePath) => {
  * @returns {Promise<object>} The Json object
  */
 fs.readJSON = async (filePath) => {
-  if (!(await fs.exists(filePath))) {
+  if (!(await fs.pathExists(filePath))) {
     return Promise.resolve(null);
   }
   const content = (await fs.readFile(filePath)).toString();
@@ -176,7 +176,7 @@ fs.writeJSON = async (filePath, obj, indent = true) => {
  */
 fs.saveFile = async (filePath, data, append = true) => {
   const option = { flag: "w" };
-  if ((await fs.exists(filePath)) && append) {
+  if ((await fs.pathExists(filePath)) && append) {
     data = EOL + EOL + data;
     option.flag = "a";
   }
