@@ -69,7 +69,7 @@ class RegionProvider {
   getRegions(str) {
     const completedRegions = [];
     const regionRegex = new RegExp(
-      `(?<start>.*${this.options.startRegionMarker}) *(?<startName>.*)?.*$|(?<end>.*${this.options.endRegionMarker}.*$)`,
+      `(?<start>.*${this.options.startRegionMarker}) *(?<startName>[^\\s]*)?.*$|(?<end>.*${this.options.endRegionMarker}.*$)`,
       "gim"
     );
     const regionMarkers = str.matchAll(regionRegex);

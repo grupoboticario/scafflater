@@ -65,16 +65,16 @@ class TemplateManager {
    * @returns {Promise<LocalTemplate>} The cached template path. Returns null if the template is not in cache.
    */
   async getTemplate(templateName, templateVersion = null, source = null) {
-    let template = await this.templateCache.getTemplate(
+    const template = await this.templateCache.getTemplate(
       templateName,
       templateVersion
     );
 
     if (!template && source) {
-      template = this.getTemplateFromSource(this.options, source.key);
+      return this.getTemplateFromSource(source.key);
     }
 
-    return template;
+    return Promise.resolve(template);
   }
 
   /**

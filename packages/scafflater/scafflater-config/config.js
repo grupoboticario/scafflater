@@ -100,23 +100,11 @@ class Config {
   options;
 
   /**
-   * Saves the the config file to a folder or .scafflater file
+   * Saves the the config to a scafflater.jsonc file
    *
-   * @param {string} localPath The path where file must be saved
+   * @param {string} filePath The file path where file must be saved
    */
-  async save(localPath) {
-    let filePath = localPath;
-    if ((await fs.lstat(localPath)).isDirectory()) {
-      filePath = path.resolve(localPath, "scafflater.jsonc");
-    } else if (
-      (await fs.pathExists(localPath)) &&
-      path.basename(localPath) !== "scafflater.jsonc"
-    ) {
-      throw new Error(
-        `Error saving file ${localPath}: It is an existing file but is not a 'scafflater.jsonc'. Use this to save only scafflater config`
-      );
-    }
-
+  async save(filePath) {
     await fs.ensureDir(path.dirname(filePath));
     await fs.writeFile(
       filePath,

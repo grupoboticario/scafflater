@@ -23,10 +23,15 @@ class InitCommand extends Command {
       const config = new ScafflaterOptions({
         cacheStorage: initFlags.cache,
       });
-      config.source = TemplateSource.resolveTemplateSourceFromSourceKey(
+      const source = TemplateSource.resolveTemplateSourceFromSourceKey(
         config,
         iniArgs.source
       );
+      if (!source) {
+        logger.error(`Cannot get template from '${iniArgs.source}'`);
+        return;
+      }
+      config.source = source.source;
       const scafflater = new Scafflater(config);
 
       let localTemplate;

@@ -123,16 +123,16 @@ class Generator {
     }
 
     if (tree.type === "file") {
-      const filePath = path.join(ctx.originPath, tree.name);
+      const originFilePath = path.join(ctx.originPath, tree.name);
 
-      const targetPath = path.join(ctx.targetPath, targetName);
-      let targetContent = "";
-      if (await fsUtil.pathExists(targetPath)) {
-        targetContent = await fsUtil.readFileContent(targetPath);
+      const targetFilePath = path.join(ctx.targetPath, targetName);
+      let targetContent;
+      if (await fsUtil.pathExists(targetFilePath)) {
+        targetContent = await fsUtil.readFileContent(targetFilePath);
       }
 
-      if (!(await isBinaryFile(filePath))) {
-        const fileContent = await fsUtil.readFileContent(filePath);
+      if (!(await isBinaryFile(originFilePath))) {
+        const originFileContent = await fsUtil.readFileContent(originFilePath);
 
         const processors = _ctx.options.processors.map(
           (p) => new (require(p))()
@@ -140,29 +140,31 @@ class Generator {
         const srcContent = await Processor.runProcessorsPipeline(
           processors,
           _ctx,
-          fileContent
+          originFileContent
         );
 
         const appenders = _ctx.options.appenders.map((a) => new (require(a))());
-        let result = await Appender.runAppendersPipeline(
-          appenders,
-          _ctx,
-          srcContent,
-          targetContent
-        );
+        let result = targetContent
+          ? await Appender.runAppendersPipeline(
+              appenders,
+              _ctx,
+              srcContent,
+              targetContent
+            )
+          : srcContent;
 
         result = _ctx.options.stripConfig(result);
 
         try {
-          result = prettier.format(result, { filepath: targetPath });
+          result = prettier.format(result, { filepath: targetFilePath });
         } catch (error) {
           // Just to quiet prettier errors
         }
 
-        promises.push(fsUtil.saveFile(targetPath, result, false));
+        promises.push(fsUtil.saveFile(targetFilePath, result, false));
       } else {
-        await fsUtil.ensureDir(path.dirname(targetPath));
-        promises.push(fsUtil.copyFile(filePath, targetPath));
+        await fsUtil.ensureDir(path.dirname(targetFilePath));
+        promises.push(fsUtil.copyFile(originFilePath, targetFilePath));
       }
     }
 

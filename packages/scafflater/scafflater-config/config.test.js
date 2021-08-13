@@ -14,35 +14,6 @@ describe("ConfigLoader", () => {
   });
 
   describe("save", () => {
-    test("Received a directory as local path. Save .scafflater file in this directory", async () => {
-      // ARRANGE
-      const config = new Config(new TemplateConfig("some-template", "0.0.1"));
-      fs.lstat.mockResolvedValueOnce({
-        isDirectory: () => {
-          return true;
-        },
-      });
-      const expected = JSON.stringify(
-        {
-          template: {
-            name: "some-template",
-            version: "0.0.1",
-          },
-        },
-        null,
-        2
-      );
-
-      // ACT
-      await config.save("/to/some/path");
-
-      // ASSERT
-      expect(fs.writeFile).toHaveBeenCalledWith(
-        "/to/some/path/scafflater.jsonc",
-        expected
-      );
-    });
-
     test("Received a file as local path. Save .scafflater file", async () => {
       // ARRANGE
       const config = new Config(new TemplateConfig("some-template", "0.0.1"));
@@ -69,24 +40,6 @@ describe("ConfigLoader", () => {
       expect(fs.writeFile).toHaveBeenCalledWith(
         "/to/some/path/.scafflater",
         expected
-      );
-    });
-
-    test("Received a file as local path, but the file exists and is not a .scafflater file. Should throw", async () => {
-      // ARRANGE
-      const config = new Config(new TemplateConfig("some-template", "0.0.1"));
-      fs.lstat.mockResolvedValueOnce({
-        isDirectory: () => {
-          return false;
-        },
-      });
-      fs.pathExists.mockResolvedValueOnce(true);
-
-      // ACT && ASSERT
-      await expect(
-        config.save("/to/some/path/other-file.json")
-      ).rejects.toThrow(
-        "Error saving file /to/some/path/other-file.json: It is an existing file but is not a 'scafflater.jsonc'. Use this to save only scafflater config"
       );
     });
   });
