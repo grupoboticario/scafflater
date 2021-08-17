@@ -1,5 +1,4 @@
 const Handlebars = require("handlebars");
-const { ScafflaterOptions } = require("../options");
 const ignore = require("ignore");
 
 /**
@@ -24,7 +23,7 @@ const maskParameters = (parameters, templateParameters) => {
 /**
  * Builds a line comment based on config.lineCommentTemplate.
  *
- * @param {ScafflaterOptions} options - The configuration
+ * @param {import("../options").ScafflaterOptions} options - The configuration
  * @param {string} comment - The comment content
  * @returns {string} The comment
  */
