@@ -53,7 +53,7 @@ class InitCommand extends Command {
         }
       }
 
-      if (outputConfig.templates.find((t) => t.name === localTemplate.name)) {
+      if (outputConfig.isInitialized(localTemplate.name)) {
         logger.info(`The template is already initialized!`);
         logger.info(
           `Run ${chalk.bgBlack.yellowBright(

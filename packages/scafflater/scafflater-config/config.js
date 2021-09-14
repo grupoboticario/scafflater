@@ -122,6 +122,16 @@ class Config {
   }
 
   /**
+   * Checks if the template is initialized
+   *
+   * @param {string} templateName Template name to check
+   * @returns {boolean} True if is initialized
+   */
+  isInitialized(templateName) {
+    return this.templates.findIndex((t) => t.name === templateName) >= 0;
+  }
+
+  /**
    * Load an single file from a path
    *
    * @param {string} localPath Folder or scafflater.jsonc file path of partial

@@ -13,6 +13,46 @@ describe("ConfigLoader", () => {
     jest.resetAllMocks();
   });
 
+  const mockedConfig = `{
+    "template": {
+      "name": "some-type"
+    },
+    "templates": [
+      {
+        "name": "ran-template",
+        "version": "0.0.1",
+        "parameters": {
+          "name": "lllll",
+          "description": "pppppp"
+        },
+        "partials": [
+          {
+            "name": "some-partial"
+          }
+        ]
+      }
+    ]
+  }`;
+
+  test("isInitialized: test check if is initialized logic", async () => {
+    // ARRANGE
+    fs.pathExists.mockResolvedValueOnce(true);
+    fs.lstat.mockResolvedValueOnce({
+      isDirectory: () => {
+        return false;
+      },
+    });
+    fs.pathExists.mockResolvedValueOnce(true);
+    fs.readFile.mockResolvedValueOnce(mockedConfig);
+
+    // ACT
+    const obj = await Config.fromLocalPath("/some/valid/path/.scafflater");
+
+    // ASSERT
+    expect(obj.config.isInitialized("ran-template")).toBeTruthy();
+    expect(obj.config.isInitialized("not-ran-template")).toBeFalsy();
+  });
+
   describe("save", () => {
     test("Received a file as local path. Save .scafflater file", async () => {
       // ARRANGE

@@ -59,6 +59,9 @@ describe("Scafflater", () => {
       const mockedConfig = {
         templates: [],
         save: jest.fn(),
+        isInitialized: () => {
+          return false;
+        },
       };
       Config.mockReturnValue(mockedConfig);
       Config.fromLocalPath.mockResolvedValue({
@@ -120,6 +123,9 @@ describe("Scafflater", () => {
             },
           ],
           save: jest.fn(),
+          isInitialized: () => {
+            return false;
+          },
         },
       };
       Config.fromLocalPath.mockResolvedValue(mockedConfig);
@@ -138,6 +144,58 @@ describe("Scafflater", () => {
         "/some/target/.scafflater/scafflater.jsonc"
       );
     });
+  });
+
+  test("Template is initialized. Should Throw", async () => {
+    // ARRANGE
+    const parameters = {
+      domain: "vs-one",
+      systemDescription: "aaaaaaaa",
+      systemName: "aaaaaaa",
+      systemTeam: "vs-one-team",
+      password: "password",
+    };
+    templateManager.getTemplateFromSource.mockResolvedValue(
+      new LocalTemplate(
+        "/template/path",
+        "template",
+        "Template",
+        "0.0.1",
+        [],
+        [],
+        [
+          {
+            name: "password",
+            mask: true,
+          },
+        ]
+      )
+    );
+    const mockedConfig = {
+      config: {
+        templates: [
+          {
+            name: "existing-template",
+            version: "existing-template-version",
+            source: {
+              name: "some-source",
+              key: "existing-template-source-key",
+            },
+          },
+        ],
+        save: jest.fn(),
+        isInitialized: () => {
+          return true;
+        },
+      },
+    };
+    Config.fromLocalPath.mockResolvedValue(mockedConfig);
+
+    // ACT & ASSERT
+    const scafflater = new Scafflater({ annotate: false }, templateManager);
+    await expect(
+      scafflater.init("some/template/source/key", parameters, "/some/target")
+    ).rejects.toThrowError(/The template is already initialized/);
   });
 
   describe("Run Partial", () => {

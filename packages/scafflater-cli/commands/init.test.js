@@ -41,6 +41,7 @@ describe("InitCommand", () => {
             name: "some-template",
           },
         ],
+        isInitialized: () => true,
       },
     });
     const initCommand = new InitCommand(["https://github.com/some/repo"], {});

@@ -6,6 +6,7 @@ const { maskParameters } = require("./util");
 const Config = require("./scafflater-config/config");
 const RanTemplate = require("./scafflater-config/ran-template");
 const RanPartial = require("./scafflater-config/ran-partial");
+const { TemplateInitialized } = require("./errors");
 const fs = require("fs-extra");
 
 /**
@@ -92,6 +93,10 @@ class Scafflater {
 
     let targetConfig = (await Config.fromLocalPath(targetConfigPath, true))
       ?.config;
+
+    if (targetConfig.isInitialized(localTemplate.name)) {
+      throw new TemplateInitialized(localTemplate.name);
+    }
 
     const ctx = {
       template: localTemplate,
