@@ -49,8 +49,13 @@ class ScafflaterOptions {
   /**
    * Append Strategy
    *
-   * @description Valid values are 'append' and 'replace'
-   * @type {string}
+   * @description Action to include generated code on target:
+   *  - append: The content will be appended to the destination (Default)
+   *  - replace: The content will replace the target content
+   *  - ignore: If the destination exists and is not empty, will ignore the generated code.
+   *
+   * Available for: File Content
+   * @type {('append'|'replace'|'ignore')}
    */
   appendStrategy = "append";
 

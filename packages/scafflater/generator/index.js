@@ -128,6 +128,9 @@ class Generator {
       const targetFilePath = path.join(ctx.targetPath, targetName);
       let targetContent;
       if (await fsUtil.pathExists(targetFilePath)) {
+        if (ctx.options.appendStrategy === "ignore") {
+          return Promise.resolve();
+        }
         targetContent = await fsUtil.readFileContent(targetFilePath);
       }
 
