@@ -6,13 +6,13 @@ on:
   workflow_dispatch:
     inputs:
       logLevel:
-        description: 'Log level'     
+        description: "Log level"
         required: true
-        default: 'warning'
+        default: "warning"
 
 jobs:
   release-to-npmjs:
-    name: 'Releasing NPM Package'
+    name: "Releasing NPM Package"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -45,13 +45,13 @@ jobs:
         run: |
           npm --version
 
-      - name: Install dependencies
-        run: |
-          npm ci
-
       - name: Generate Types
         run: |
           npm run types
+
+      - name: Shrinkwrap
+        run: |
+          npm shrinkwrap
 
       - name: NPM Authentication
         run: echo //registry.npmjs.org/:_authToken=${{secrets.NPM_AUTH_TOKEN}} > .npmrc
@@ -65,4 +65,3 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_PAT }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-      

@@ -192,7 +192,10 @@ fs.saveFile = async (filePath, data, append = true) => {
  * @returns {Promise<object>} The tree
  */
 fs.getDirTreeSync = (folderPath, includeFiles = true) => {
-  const options = {};
+  const options = {
+    attributes: ["type"],
+    normalizePath: true,
+  };
   if (!includeFiles) {
     // Regex thar does not match with nothing
     options.extensions = /ˆ.*/;

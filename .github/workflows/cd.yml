@@ -7,13 +7,13 @@ on:
   workflow_dispatch:
     inputs:
       logLevel:
-        description: 'Log level'     
+        description: "Log level"
         required: true
-        default: 'warning'
+        default: "warning"
 
 jobs:
   bump-versions:
-    name: 'Bump packages version'
+    name: "Bump packages version"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -48,10 +48,13 @@ jobs:
         run: |
           npm ci
 
+      - name: Test
+        run: |
+          npm run Test
+
       - name: Bumping package versions
         run: |
           npm run version
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
