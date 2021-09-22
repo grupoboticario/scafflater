@@ -8,6 +8,10 @@ const {
   TemplateDefinitionNotFound,
 } = require("../errors");
 const child_process = require("child_process");
+const {
+  GithubClientNotInstalledError,
+  GithubClientUserNotLoggedError,
+} = require("./errors");
 
 jest.mock("../fs-util");
 jest.mock("child_process");
@@ -59,7 +63,7 @@ describe("getTemplate", () => {
       "/bin/sh: asdasd: command not found\n"
     );
 
-    await expect(promise).rejects;
+    await expect(promise).rejects.toThrow(GithubClientNotInstalledError);
   });
 
   test("User is not logged, should throw.", async () => {
@@ -77,7 +81,7 @@ describe("getTemplate", () => {
       "You are not logged into any GitHub hosts. Run gh auth login to authenticate.\n"
     );
 
-    await expect(promise).rejects;
+    await expect(promise).rejects.toThrow(GithubClientUserNotLoggedError);
   });
 
   test("Check Auth", async () => {
