@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
-const GitTemplateSource = require("./git-template-source");
+const IsomorphicGitTemplateSource = require("./isomorphic-git-template-source");
 const GitUtil = require("../git-util");
 const fsUtil = require("../fs-util");
-const TemplateSource = require("./");
+const TemplateSource = require(".");
 const { LocalTemplate } = require("../scafflater-config/local-template");
 const {
   ScafflaterFileNotFoundError,
@@ -20,11 +20,11 @@ describe("getTemplate", () => {
   test(".scafflater file not found", async () => {
     // ARRANGE
     fsUtil.pathExists.mockResolvedValue(false);
-    const gitTemplateSource = new GitTemplateSource();
+    const isomorphicGitTemplateSource = new IsomorphicGitTemplateSource();
 
     // ACT && ASSERT
     await expect(
-      gitTemplateSource.getTemplate(
+      isomorphicGitTemplateSource.getTemplate(
         "http://some/github/path",
         "/some/virtual/folder"
       )
@@ -34,11 +34,11 @@ describe("getTemplate", () => {
     // ARRANGE
     fsUtil.pathExists.mockResolvedValue(true);
     jest.spyOn(LocalTemplate, "loadFromPath").mockResolvedValue(null);
-    const gitTemplateSource = new GitTemplateSource();
+    const isomorphicGitTemplateSource = new IsomorphicGitTemplateSource();
 
     // ACT && ASSERT
     await expect(
-      gitTemplateSource.getTemplate(
+      isomorphicGitTemplateSource.getTemplate(
         "http://some/github/path",
         "/some/virtual/folder"
       )
@@ -47,15 +47,17 @@ describe("getTemplate", () => {
 
   test("Valid source key", () => {
     expect(
-      GitTemplateSource.isValidSourceKey(
+      IsomorphicGitTemplateSource.isValidSourceKey(
         "https://github.com/some-org/some-repo"
       )
     ).toBeTruthy();
     expect(
-      GitTemplateSource.isValidSourceKey("http://github.com/some-org/some-repo")
+      IsomorphicGitTemplateSource.isValidSourceKey(
+        "http://github.com/some-org/some-repo"
+      )
     ).toBeTruthy();
     expect(
-      GitTemplateSource.isValidSourceKey(
+      IsomorphicGitTemplateSource.isValidSourceKey(
         "https://dev.azure.com/some-org/some-repo"
       )
     ).toBeFalsy();
@@ -82,7 +84,7 @@ describe("getTemplate", () => {
     // ARRANGE
     const repo = "some/repo";
     const virtualFolder = "/some/virtual/folder";
-    const gitTemplateSource = new GitTemplateSource();
+    const isomorphicGitTemplateSource = new IsomorphicGitTemplateSource();
     fsUtil.pathExists.mockResolvedValue(true);
     jest
       .spyOn(LocalTemplate, "loadFromPath")
@@ -99,7 +101,10 @@ describe("getTemplate", () => {
       ]);
 
     // ACT
-    const out = await gitTemplateSource.getTemplate(repo, virtualFolder);
+    const out = await isomorphicGitTemplateSource.getTemplate(
+      repo,
+      virtualFolder
+    );
 
     // ASSERT
     const expected = new LocalTemplate(
@@ -119,7 +124,7 @@ describe("getTemplate", () => {
   test("Should clone to a temp folder", async () => {
     // ARRANGE
     const repo = "some/repo";
-    const gitTemplateSource = new GitTemplateSource();
+    const isomorphicGitTemplateSource = new IsomorphicGitTemplateSource();
     jest.spyOn(fsUtil, "getTempFolder").mockResolvedValue("some/temp/folder");
     jest
       .spyOn(LocalTemplate, "loadFromPath")
@@ -136,7 +141,7 @@ describe("getTemplate", () => {
       ]);
 
     // ACT
-    const out = await gitTemplateSource.getTemplate(repo);
+    const out = await isomorphicGitTemplateSource.getTemplate(repo);
 
     // ASSERT
     expect(out).toBeInstanceOf(LocalTemplate);

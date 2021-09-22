@@ -7,7 +7,7 @@ const Source = require("../scafflater-config/source");
 const ScafflaterFileNotFoundError = require("../errors/ScafflaterFileNotFoundError");
 const { TemplateDefinitionNotFound } = require("../errors");
 
-class GitTemplateSource extends LocalFolderTemplateSource {
+class IsomorphicGitTemplateSource extends LocalFolderTemplateSource {
   /**
    * Checks if the sourceKey is valid for this TemplateSource
    *
@@ -70,4 +70,4 @@ class GitTemplateSource extends LocalFolderTemplateSource {
   }
 }
 
-module.exports = GitTemplateSource;
+module.exports = IsomorphicGitTemplateSource;

@@ -77,7 +77,7 @@ class ScafflaterOptions {
 
   source = "github";
   sources = {
-    github: "./git-template-source",
+    github: "./isomorphic-git-template-source",
     localFolder: "./local-folder-template-source",
   };
 
