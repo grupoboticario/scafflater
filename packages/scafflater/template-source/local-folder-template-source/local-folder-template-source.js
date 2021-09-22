@@ -4,8 +4,8 @@ const path = require("path");
 const { LocalTemplate } = require("../../scafflater-config/local-template");
 const { ScafflaterOptions } = require("../../options");
 const Source = require("../../scafflater-config/source");
-const ScafflaterFileNotFoundError = require("../../errors/ScafflaterFileNotFoundError");
-const TemplateDefinitionNotFound = require("../../errors/TemplateDefinitionNotFound");
+const ScafflaterFileNotFoundError = require("../../errors/scafflater-file-not-found-error");
+const TemplateDefinitionNotFound = require("../../errors/template-definition-not-found-error");
 
 class LocalFolderTemplateSource extends TemplateSource {
   /**

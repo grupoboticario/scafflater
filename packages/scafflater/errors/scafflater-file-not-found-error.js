@@ -1,4 +1,6 @@
-class ScafflaterFileNotFoundError extends Error {
+const ScafflaterError = require("./scafflater-error");
+
+class ScafflaterFileNotFoundError extends ScafflaterError {
   constructor(filePath) {
     super(`Scafflater file not found: ${filePath}`);
     this.filePath = filePath;

@@ -1,13 +1,20 @@
 const { Command, flags } = require("@oclif/command");
 const { Scafflater } = require("scafflater");
-const { TemplateSource } = require("scafflater/template-source");
+const {
+  TemplateSource,
+  GithubClientUserNotLoggedError,
+  GithubClientNotInstalledError,
+  GitNotInstalledError,
+  GitUserNotLoggedError,
+} = require("scafflater/template-source");
 const { promptMissingParameters, spinner } = require("../util");
 const logger = require("scafflater/logger");
 const { ScafflaterOptions } = require("scafflater/options");
 const Config = require("scafflater/scafflater-config/config");
 const chalk = require("chalk");
 const path = require("path");
-const ScafflaterFileNotFoundError = require("scafflater/errors/ScafflaterFileNotFoundError");
+const ScafflaterFileNotFoundError = require("scafflater/errors/scafflater-file-not-found-error");
+const { ScafflaterError } = require("scafflater/errors");
 
 class InitCommand extends Command {
   async run() {
@@ -22,15 +29,12 @@ class InitCommand extends Command {
 
       const config = new ScafflaterOptions({
         cacheStorage: initFlags.cache,
+        source: initFlags.templateSource,
       });
       const source = TemplateSource.resolveTemplateSourceFromSourceKey(
         config,
         iniArgs.source
       );
-      if (!source) {
-        logger.error(`Cannot get template from '${iniArgs.source}'`);
-        return;
-      }
       config.source = source.source;
       const scafflater = new Scafflater(config);
 
@@ -77,6 +81,10 @@ class InitCommand extends Command {
         "Template initialized. Fell free to run partials. 🥳"
       );
     } catch (error) {
+      if (error instanceof ScafflaterError) {
+        logger.info(error.message);
+        return;
+      }
       logger.error(error);
     }
   }
@@ -89,6 +97,7 @@ InitCommand.description = `Initializes the template in a output folder
 InitCommand.args = [{ name: "source", require: true }];
 
 const caches = ["homeDir", "tempDir"];
+const templatesSource = ["git", "githubClient", "isomorphicGit", "localFolder"];
 InitCommand.flags = {
   output: flags.string({
     char: "o",
@@ -100,6 +109,12 @@ InitCommand.flags = {
     description: "The cache strategy",
     default: "homeDir",
     options: caches,
+  }),
+  templateSource: flags.string({
+    char: "s",
+    description: "Template source indicating how the template is fetched",
+    default: "git",
+    options: templatesSource,
   }),
   parameters: flags.string({
     char: "p",

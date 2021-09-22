@@ -7,7 +7,7 @@ const glob = require("glob");
 const stripJsonComments = require("strip-json-comments");
 const Source = require("./source");
 const ScafflaterOptions = require("../options");
-const ScafflaterFileNotFoundError = require("../errors/ScafflaterFileNotFoundError");
+const ScafflaterFileNotFoundError = require("../errors/scafflater-file-not-found-error");
 
 /**
  * @typedef ConfigLoadResult

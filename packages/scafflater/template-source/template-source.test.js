@@ -2,6 +2,28 @@
 const TemplateSource = require("./template-source");
 const IsomorphicGitTemplateSource = require("./isomorphic-git-template-source");
 
+test("Resolve template source", () => {
+  // ARRANGE
+  const config = {
+    source: "isomorphicGit",
+    sources: {
+      git: "./git-template-source",
+      githubClient: "./github-client-template-source",
+      isomorphicGit: "./isomorphic-git-template-source",
+      localFolder: "./local-folder-template-source",
+    },
+  };
+
+  // ACT
+  const out = TemplateSource.resolveTemplateSourceFromSourceKey(
+    config,
+    "https://github.com/chicoribas/scafflater-template"
+  );
+
+  // ASSERT
+  expect(out).toBeInstanceOf(IsomorphicGitTemplateSource);
+});
+
 test("Throws an exception when the source does not exists", () => {
   // ARRANGE
   const config = { source: "bla" };

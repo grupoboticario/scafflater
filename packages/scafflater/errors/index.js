@@ -1,5 +1,6 @@
 module.exports = {
-  ScafflaterFileNotFoundError: require("./ScafflaterFileNotFoundError"),
-  TemplateDefinitionNotFound: require("./TemplateDefinitionNotFound"),
-  TemplateInitialized: require("./TemplateInitialized"),
+  ScafflaterError: require("./scafflater-error"),
+  ScafflaterFileNotFoundError: require("./scafflater-file-not-found-error"),
+  TemplateDefinitionNotFound: require("./template-definition-not-found-error"),
+  TemplateInitialized: require("./template-initialized-error"),
 };

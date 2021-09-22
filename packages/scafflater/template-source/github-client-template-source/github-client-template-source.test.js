@@ -104,16 +104,13 @@ describe("getTemplate", () => {
     // ARRANGE
     fsUtil.pathExists.mockResolvedValue(false);
     const githuClientTemplateSource = new GithubClientTemplateSource();
-    let callBack;
     child_process.exec.mockImplementation((__, cb) => {
-      callBack = cb;
+      cb(null);
     });
     const promise = githuClientTemplateSource.getTemplate(
       "https://github.com/github/path",
       "/some/virtual/folder"
     );
-
-    callBack(null);
 
     // ACT && ASSERT
     await expect(promise).rejects.toBeInstanceOf(ScafflaterFileNotFoundError);
@@ -123,18 +120,15 @@ describe("getTemplate", () => {
     // ARRANGE
     fsUtil.pathExists.mockResolvedValue(true);
     jest.spyOn(LocalTemplate, "loadFromPath").mockResolvedValue(null);
-    const githuClientTemplateSource = new GithubClientTemplateSource();
+    const githubClientTemplateSource = new GithubClientTemplateSource();
 
-    let callBack;
     child_process.exec.mockImplementation((__, cb) => {
-      callBack = cb;
+      cb(null);
     });
-    const promise = githuClientTemplateSource.getTemplate(
+    const promise = githubClientTemplateSource.getTemplate(
       "https://github.com/github/path",
       "/some/virtual/folder"
     );
-
-    callBack(null);
 
     // ACT && ASSERT
     await expect(promise).rejects.toThrow(TemplateDefinitionNotFound);
@@ -179,7 +173,7 @@ describe("getTemplate", () => {
     // ARRANGE
     const repo = "some/repo";
     const virtualFolder = "/some/virtual/folder";
-    const githuClientTemplateSource = new GithubClientTemplateSource();
+    const githubClientTemplateSource = new GithubClientTemplateSource();
     fsUtil.pathExists.mockResolvedValue(true);
     fsUtil.getTempFolderSync.mockReturnValue("temp/folder");
     jest
@@ -196,14 +190,12 @@ describe("getTemplate", () => {
         ),
       ]);
 
-    let callBack;
     child_process.exec.mockImplementation((__, cb) => {
-      callBack = cb;
+      cb(null);
     });
 
     // ACT
-    const promise = githuClientTemplateSource.getTemplate(repo, virtualFolder);
-    callBack(null);
+    const promise = githubClientTemplateSource.getTemplate(repo, virtualFolder);
     const out = await promise;
 
     // ASSERT
@@ -227,7 +219,7 @@ describe("getTemplate", () => {
   test("Should clone to a temp folder", async () => {
     // ARRANGE
     const repo = "some/repo";
-    const githuClientTemplateSource = new GithubClientTemplateSource();
+    const githubClientTemplateSource = new GithubClientTemplateSource();
     jest.spyOn(fsUtil, "getTempFolder").mockReturnValue("some/temp/folder");
     jest
       .spyOn(LocalTemplate, "loadFromPath")
@@ -243,14 +235,12 @@ describe("getTemplate", () => {
         ),
       ]);
 
-    let callBack;
     child_process.exec.mockImplementation((__, cb) => {
-      callBack = cb;
+      cb(null);
     });
 
     // ACT
-    const promise = githuClientTemplateSource.getTemplate(repo);
-    callBack(null);
+    const promise = githubClientTemplateSource.getTemplate(repo);
     const out = await promise;
 
     // ASSERT

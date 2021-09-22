@@ -1,6 +1,10 @@
 const InitCommand = require("./init");
 const logger = require("scafflater/logger");
-const { Scafflater, TemplateManager } = require("scafflater");
+const {
+  Scafflater,
+  TemplateManager,
+  ScafflaterFileNotFoundError,
+} = require("scafflater");
 const Config = require("scafflater/scafflater-config/config");
 const {
   LocalTemplate,
@@ -83,5 +87,52 @@ describe("InitCommand", () => {
       "notice",
       "Template initialized. Fell free to run partials. 🥳"
     );
+  });
+
+  test("Template source not set, should log error", async () => {
+    jest
+      .spyOn(templateManager, "getTemplateFromSource")
+      .mockResolvedValue(
+        new LocalTemplate(
+          "/some/path",
+          "/some/path/.scafflater/scafflater.jsonc",
+          "some-new-template"
+        )
+      );
+    jest.spyOn(Config, "fromLocalPath").mockResolvedValue({
+      config: new Config(),
+    });
+    const initCommand = new InitCommand([], {});
+
+    // ACT
+    await initCommand.run();
+
+    // ASSERT
+    expect(logger.error).toHaveBeenCalledWith(
+      "The parameter 'source' is required."
+    );
+  });
+
+  test("ScafflaterError is thrown, should info it", async () => {
+    jest
+      .spyOn(templateManager, "getTemplateFromSource")
+      .mockResolvedValue(
+        new LocalTemplate(
+          "/some/path",
+          "/some/path/.scafflater/scafflater.jsonc",
+          "some-new-template"
+        )
+      );
+    jest.spyOn(Config, "fromLocalPath").mockResolvedValue({
+      config: new Config(),
+    });
+    const initCommand = new InitCommand(["asdasdasdasdasdasd"], {});
+
+    // ACT
+    await initCommand.run();
+
+    // ASSERT
+    expect(logger.info).toHaveBeenCalled();
+    expect(logger.error).not.toHaveBeenCalled();
   });
 });

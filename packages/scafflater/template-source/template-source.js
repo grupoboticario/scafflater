@@ -1,8 +1,7 @@
 const { ScafflaterOptions } = require("../options");
 const { LocalTemplate } = require("../scafflater-config/local-template");
 const Source = require("../scafflater-config/source");
-
-// TODO: Refact this code to match the same pattern of template manager
+const { CannotGetSourceError } = require("./errors");
 
 /**
  * TemplateSource factory.
@@ -36,10 +35,21 @@ class TemplateSource {
    * @returns {TemplateSource} An specialized instance of TemplateSource.
    */
   static resolveTemplateSourceFromSourceKey(options, sourceKey) {
+    const validSources = [];
     for (const source in options.sources) {
-      if (require(options.sources[source]).isValidSourceKey(sourceKey))
-        return new (require(options.sources[source]))(options);
+      if (require(options.sources[source]).isValidSourceKey(sourceKey)) {
+        validSources.push(source);
+      }
     }
+    const sourceIndex = validSources.indexOf(options.source);
+    if (sourceIndex >= 0) {
+      return new (require(options.sources[validSources[sourceIndex]]))(options);
+    }
+    if (validSources.length > 0) {
+      return new (require(options.sources[validSources[0]]))(options);
+    }
+
+    throw new CannotGetSourceError(sourceKey);
   }
 
   /**

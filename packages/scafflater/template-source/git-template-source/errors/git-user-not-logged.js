@@ -1,7 +1,9 @@
-class GitUserNotLoggedError extends Error {
+const { ScafflaterError } = require("../../../errors");
+
+class GitUserNotLoggedError extends ScafflaterError {
   constructor() {
     super(`You are not logged into any Git hosts.`);
-    this.name = "GithubClientUserNotLoggedError";
+    this.name = "GitUserNotLoggedError";
   }
 }
 

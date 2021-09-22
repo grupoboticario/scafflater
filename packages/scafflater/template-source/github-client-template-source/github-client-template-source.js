@@ -3,7 +3,7 @@ const fsUtil = require("../../fs-util");
 const { ScafflaterOptions } = require("../../options");
 const { LocalTemplate } = require("../../scafflater-config/local-template");
 const Source = require("../../scafflater-config/source");
-const ScafflaterFileNotFoundError = require("../../errors/ScafflaterFileNotFoundError");
+const ScafflaterFileNotFoundError = require("../../errors/scafflater-file-not-found-error");
 const { TemplateDefinitionNotFound } = require("../../errors");
 const { exec } = require("child_process");
 const {
@@ -81,6 +81,8 @@ class GithubClientTemplateSource extends LocalFolderTemplateSource {
    * @returns {Promise<LocalTemplate>} The local template
    */
   async getTemplate(sourceKey, outputDir = null) {
+    await GithubClientTemplateSource.checkGhClient();
+
     return new Promise((resolve, reject) => {
       const pathToClone = fsUtil.getTempFolderSync();
 
