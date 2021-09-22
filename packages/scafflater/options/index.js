@@ -75,9 +75,11 @@ class ScafflaterOptions {
     homeDir: "./home-dir-cache",
   };
 
-  source = "github";
+  source = "isomorphicGit";
   sources = {
-    github: "./isomorphic-git-template-source",
+    git: "./git-template-source",
+    githubClient: "./github-client-template-source",
+    isomorphicGit: "./isomorphic-git-template-source",
     localFolder: "./local-folder-template-source",
   };
 

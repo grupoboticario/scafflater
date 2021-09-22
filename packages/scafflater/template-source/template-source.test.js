@@ -14,7 +14,7 @@ test("Throws an exception when the source does not exists", () => {
 
 test("Gets the template source in config", () => {
   // ARRANGE
-  const config = { source: "github" };
+  const config = { source: "isomorphicGit" };
 
   // ACT
   const result = TemplateSource.getTemplateSource(config);

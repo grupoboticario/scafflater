@@ -17,9 +17,9 @@ describe("getTemplate", () => {
     jest.clearAllMocks();
   });
 
-  test("GH is not installed, should throw.", async () => {
+  test("Git is not installed, should throw.", async () => {
     let callBack;
-    child_process.exec.mockImplementation((__, cb) => {
+    child_process.exec.mockImplementation((__, ___, cb) => {
       callBack = cb;
     });
     const promise = GitTemplateSource.checkGitClient();
@@ -33,9 +33,9 @@ describe("getTemplate", () => {
     await expect(promise).rejects.toThrow(GitNotInstalledError);
   });
 
-  test("User is not logged, should throw.", async () => {
+  test("User is not logged in git, should throw.", async () => {
     let callBack;
-    child_process.exec.mockImplementation((__, cb) => {
+    child_process.exec.mockImplementation((__, ___, cb) => {
       callBack = cb;
     });
     const promise = GitTemplateSource.checkGitClient();
@@ -47,7 +47,7 @@ describe("getTemplate", () => {
 
   test("Check Auth", async () => {
     let callBack;
-    child_process.exec.mockImplementation((__, cb) => {
+    child_process.exec.mockImplementation((__, ___, cb) => {
       callBack = cb;
     });
     const promise = GitTemplateSource.checkGitClient();
@@ -63,7 +63,7 @@ describe("getTemplate", () => {
     fsUtil.pathExists.mockResolvedValue(false);
     const gitTemplateSource = new GitTemplateSource();
     let callBack;
-    child_process.exec.mockImplementation((__, cb) => {
+    child_process.exec.mockImplementation((__, ___, cb) => {
       callBack = cb;
     });
     const promise = gitTemplateSource.getTemplate(
@@ -84,7 +84,7 @@ describe("getTemplate", () => {
     const gitTemplateSource = new GitTemplateSource();
 
     let callBack;
-    child_process.exec.mockImplementation((__, cb) => {
+    child_process.exec.mockImplementation((__, ___, cb) => {
       callBack = cb;
     });
     const promise = gitTemplateSource.getTemplate(
@@ -153,7 +153,7 @@ describe("getTemplate", () => {
       ]);
 
     let callBack;
-    child_process.exec.mockImplementation((__, cb) => {
+    child_process.exec.mockImplementation((__, ___, cb) => {
       callBack = cb;
     });
 
@@ -176,6 +176,7 @@ describe("getTemplate", () => {
     expect(out).toStrictEqual(expected);
     expect(child_process.exec).toHaveBeenCalledWith(
       "git clone some/repo temp/folder",
+      expect.anything(),
       expect.anything()
     );
   });
@@ -200,7 +201,7 @@ describe("getTemplate", () => {
       ]);
 
     let callBack;
-    child_process.exec.mockImplementation((__, cb) => {
+    child_process.exec.mockImplementation((__, ___, cb) => {
       callBack = cb;
     });
 
@@ -224,6 +225,7 @@ describe("getTemplate", () => {
     );
     expect(child_process.exec).toHaveBeenCalledWith(
       "git clone some/repo temp/folder",
+      expect.anything(),
       expect.anything()
     );
   });
