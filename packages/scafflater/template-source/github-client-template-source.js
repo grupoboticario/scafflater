@@ -7,6 +7,10 @@ const Source = require("../scafflater-config/source");
 const ScafflaterFileNotFoundError = require("../errors/ScafflaterFileNotFoundError");
 const { TemplateDefinitionNotFound } = require("../errors");
 const { exec } = require("child_process");
+const {
+  GithubClientNotInstalledError,
+  GithubClientUserNotLoggedError,
+} = require("./errors");
 
 class GithubClientTemplateSource extends LocalFolderTemplateSource {
   /**
@@ -54,6 +58,14 @@ class GithubClientTemplateSource extends LocalFolderTemplateSource {
     return new Promise((resolve, reject) => {
       exec("gh auth status", (error) => {
         if (error) {
+          if (error.message.match(/command not found/gi)) {
+            error = new GithubClientNotInstalledError();
+          }
+          if (
+            error.message.match(/You are not logged into any GitHub hosts/gi)
+          ) {
+            error = new GithubClientUserNotLoggedError();
+          }
           reject(error);
           return;
         }
@@ -87,10 +99,14 @@ class GithubClientTemplateSource extends LocalFolderTemplateSource {
           .then((localTemplate) => resolve(localTemplate))
           .catch((e) => {
             if (e instanceof ScafflaterFileNotFoundError) {
-              e = new ScafflaterFileNotFoundError(`${sourceKey}/.scafflater`);
+              e = new ScafflaterFileNotFoundError(
+                `${sourceKey}/.scafflater/scafflater.jsonc`
+              );
             }
             if (e instanceof TemplateDefinitionNotFound) {
-              e = new TemplateDefinitionNotFound(`${sourceKey}/.scafflater`);
+              e = new TemplateDefinitionNotFound(
+                `${sourceKey}/.scafflater/scafflater.jsonc`
+              );
             }
             reject(e);
             throw e;
