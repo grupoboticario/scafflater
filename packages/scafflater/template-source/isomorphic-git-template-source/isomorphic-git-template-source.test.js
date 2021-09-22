@@ -5,7 +5,7 @@ const { LocalTemplate } = require("../../scafflater-config/local-template");
 const {
   ScafflaterFileNotFoundError,
   TemplateDefinitionNotFound,
-} = require("../errors");
+} = require("../../errors");
 const git = require("isomorphic-git");
 
 jest.mock("../../fs-util");

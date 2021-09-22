@@ -6,12 +6,9 @@ const Source = require("../../scafflater-config/source");
 const ScafflaterFileNotFoundError = require("../../errors/ScafflaterFileNotFoundError");
 const { TemplateDefinitionNotFound } = require("../../errors");
 const { exec } = require("child_process");
-const {
-  GithubClientNotInstalledError,
-  GithubClientUserNotLoggedError,
-} = require("./errors");
+const { GitNotInstalledError, GitUserNotLoggedError } = require("./errors");
 
-class GithubClientTemplateSource extends LocalFolderTemplateSource {
+class GitTemplateSource extends LocalFolderTemplateSource {
   /**
    * Checks if the sourceKey is valid for this TemplateSource
    *
@@ -32,42 +29,24 @@ class GithubClientTemplateSource extends LocalFolderTemplateSource {
   }
 
   /**
-   * Parse the github address to get repo and org names
-   *
-   * @param {string} repo Template repository address
-   *
-   * @returns {object} An object containing the org and repo names
-   */
-  static parseRepoAddress(repo) {
-    const re =
-      /^(https:\/\/github.com\/|git@github.com:)?(?<org>[^/]+)\/(?<repo>[^/?\s.]+)/g;
-    const match = re.exec(repo);
-
-    return {
-      org: match.groups.org,
-      repo: match.groups.repo,
-    };
-  }
-
-  /**
    * Checks if the GH client is installed and authenticated
    * @returns {Promise<bool>} True if the authentication is ok.
    */
-  static checkGhClient() {
+  static checkGitClient() {
     return new Promise((resolve, reject) => {
-      exec("gh auth status", (error) => {
+      exec("git config user.name", (error, stdout, stderr) => {
         if (error) {
           if (error.message.match(/command not found/gi)) {
-            error = new GithubClientNotInstalledError();
-          }
-          if (
-            error.message.match(/You are not logged into any GitHub hosts/gi)
-          ) {
-            error = new GithubClientUserNotLoggedError();
+            error = new GitNotInstalledError();
           }
           reject(error);
           return;
         }
+        if ((stdout + stderr).trim().length <= 0) {
+          reject(new GitUserNotLoggedError());
+          return;
+        }
+
         resolve(true);
       });
     });
@@ -83,9 +62,6 @@ class GithubClientTemplateSource extends LocalFolderTemplateSource {
   async getTemplate(sourceKey, outputDir = null) {
     return new Promise((resolve, reject) => {
       const pathToClone = fsUtil.getTempFolderSync();
-
-      const { org, repo } =
-        GithubClientTemplateSource.parseRepoAddress(sourceKey);
 
       const cb = (error) => {
         if (error) {
@@ -112,7 +88,7 @@ class GithubClientTemplateSource extends LocalFolderTemplateSource {
           });
       };
 
-      exec(`gh repo clone ${org}/${repo} ${pathToClone}`, cb);
+      exec(`git clone ${sourceKey} ${pathToClone}`, cb);
     });
   }
 
@@ -130,4 +106,4 @@ class GithubClientTemplateSource extends LocalFolderTemplateSource {
   }
 }
 
-module.exports = GithubClientTemplateSource;
+module.exports = GitTemplateSource;

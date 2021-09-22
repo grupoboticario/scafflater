@@ -1,5 +1,5 @@
 module.exports = {
-  ...require("./errors"),
+  ...require("./github-client-template-source/errors"),
   GithubClientTemplateSource: require("./github-client-template-source"),
   IsomorphicGitTemplateSource: require("./isomorphic-git-template-source"),
   TemplateSource: require("./template-source"),
