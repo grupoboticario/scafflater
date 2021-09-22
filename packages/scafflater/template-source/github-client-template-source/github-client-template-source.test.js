@@ -1,19 +1,18 @@
 /* eslint-disable no-undef */
 const GithubClientTemplateSource = require("./github-client-template-source");
-const fsUtil = require("../fs-util");
-const TemplateSource = require("./template-source");
-const { LocalTemplate } = require("../scafflater-config/local-template");
+const fsUtil = require("../../fs-util");
+const { LocalTemplate } = require("../../scafflater-config/local-template");
 const {
   ScafflaterFileNotFoundError,
   TemplateDefinitionNotFound,
-} = require("../errors");
+} = require("../../errors");
 const child_process = require("child_process");
 const {
   GithubClientNotInstalledError,
   GithubClientUserNotLoggedError,
-} = require("./errors");
+} = require("../errors");
 
-jest.mock("../fs-util");
+jest.mock("../../fs-util");
 jest.mock("child_process");
 
 describe("getTemplate", () => {

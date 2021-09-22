@@ -1,15 +1,15 @@
-const fsUtil = require("../fs-util");
+const fsUtil = require("../../fs-util");
 const git = require("isomorphic-git");
 const http = require("isomorphic-git/http/node");
 const fs = require("fs-extra");
 const { spawn } = require("child_process");
 const { URL } = require("url");
-const LocalFolderTemplateSource = require("./local-folder-template-source");
-const { ScafflaterOptions } = require("../options");
-const { LocalTemplate } = require("../scafflater-config/local-template");
-const Source = require("../scafflater-config/source");
-const ScafflaterFileNotFoundError = require("../errors/ScafflaterFileNotFoundError");
-const { TemplateDefinitionNotFound } = require("../errors");
+const LocalFolderTemplateSource = require("../local-folder-template-source/local-folder-template-source");
+const { ScafflaterOptions } = require("../../options");
+const { LocalTemplate } = require("../../scafflater-config/local-template");
+const Source = require("../../scafflater-config/source");
+const ScafflaterFileNotFoundError = require("../../errors/ScafflaterFileNotFoundError");
+const { TemplateDefinitionNotFound } = require("../../errors");
 
 /**
  * Clones a repo to a local path.
