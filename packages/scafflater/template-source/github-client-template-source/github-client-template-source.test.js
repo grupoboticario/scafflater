@@ -10,7 +10,7 @@ const childProcess = require("child_process");
 const {
   GithubClientNotInstalledError,
   GithubClientUserNotLoggedError,
-} = require("../errors");
+} = require("./errors");
 
 jest.mock("../../fs-util");
 jest.mock("child_process");
