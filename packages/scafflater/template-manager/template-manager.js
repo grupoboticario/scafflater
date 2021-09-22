@@ -5,7 +5,7 @@ const {
 } = require("../scafflater-config/local-template");
 const Source = require("../scafflater-config/source");
 const { TemplateCache } = require("../template-cache");
-const TemplateSource = require("../template-source");
+const { TemplateSource } = require("../template-source");
 
 /**
  * Template Manager factory

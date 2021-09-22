@@ -1,6 +1,6 @@
 const { Command, flags } = require("@oclif/command");
 const { Scafflater } = require("scafflater");
-const TemplateSource = require("scafflater/template-source");
+const { TemplateSource } = require("scafflater/template-source");
 const { promptMissingParameters, spinner } = require("../util");
 const logger = require("scafflater/logger");
 const { ScafflaterOptions } = require("scafflater/options");

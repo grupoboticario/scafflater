@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 const GithubClientTemplateSource = require("./github-client-template-source");
 const fsUtil = require("../fs-util");
-const TemplateSource = require(".");
+const TemplateSource = require("./template-source");
 const { LocalTemplate } = require("../scafflater-config/local-template");
 const {
   ScafflaterFileNotFoundError,
@@ -167,7 +167,7 @@ describe("getTemplate", () => {
     };
 
     // ACT
-    const ts = new TemplateSource(options);
+    const ts = new GithubClientTemplateSource(options);
 
     // ASSERT
     expect(ts.options.githubUsername).toBe("some-user");

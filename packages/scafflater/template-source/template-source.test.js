@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-const TemplateSource = require("./");
+const TemplateSource = require("./template-source");
 const IsomorphicGitTemplateSource = require("./isomorphic-git-template-source");
 
 test("Throws an exception when the source does not exists", () => {

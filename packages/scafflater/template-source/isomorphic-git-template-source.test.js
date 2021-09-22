@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 const IsomorphicGitTemplateSource = require("./isomorphic-git-template-source");
 const fsUtil = require("../fs-util");
-const TemplateSource = require(".");
 const { LocalTemplate } = require("../scafflater-config/local-template");
 const {
   ScafflaterFileNotFoundError,
@@ -72,7 +71,7 @@ describe("getTemplate", () => {
     };
 
     // ACT
-    const ts = new TemplateSource(options);
+    const ts = new IsomorphicGitTemplateSource(options);
 
     // ASSERT
     expect(ts.options.githubUsername).toBe("some-user");

@@ -1,4 +1,4 @@
-const TemplateSource = require("./");
+const TemplateSource = require("./template-source");
 const fsUtil = require("../fs-util");
 const path = require("path");
 const { LocalTemplate } = require("../scafflater-config/local-template");
