@@ -34,21 +34,25 @@ class GitTemplateSource extends LocalFolderTemplateSource {
    */
   static checkGitClient() {
     return new Promise((resolve, reject) => {
-      exec("git config user.name", (error, stdout, stderr) => {
-        if (error) {
-          if (error.message.match(/command not found/gi)) {
-            error = new GitNotInstalledError();
+      exec(
+        "git config user.name",
+        { timeout: 15000 },
+        (error, stdout, stderr) => {
+          if (error) {
+            if (error.message.match(/command not found/gi)) {
+              error = new GitNotInstalledError();
+            }
+            reject(error);
+            return;
           }
-          reject(error);
-          return;
-        }
-        if ((stdout + stderr).trim().length <= 0) {
-          reject(new GitUserNotLoggedError());
-          return;
-        }
+          if ((stdout + stderr).trim().length <= 0) {
+            reject(new GitUserNotLoggedError());
+            return;
+          }
 
-        resolve(true);
-      });
+          resolve(true);
+        }
+      );
     });
   }
 
@@ -88,7 +92,7 @@ class GitTemplateSource extends LocalFolderTemplateSource {
           });
       };
 
-      exec(`git clone ${sourceKey} ${pathToClone}`, cb);
+      exec(`git clone ${sourceKey} ${pathToClone}`, { timeout: 15000 }, cb);
     });
   }
 
