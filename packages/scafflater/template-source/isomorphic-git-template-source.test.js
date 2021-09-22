@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 const IsomorphicGitTemplateSource = require("./isomorphic-git-template-source");
-const GitUtil = require("../git-util");
 const fsUtil = require("../fs-util");
 const TemplateSource = require(".");
 const { LocalTemplate } = require("../scafflater-config/local-template");
@@ -8,8 +7,8 @@ const {
   ScafflaterFileNotFoundError,
   TemplateDefinitionNotFound,
 } = require("../errors");
+const git = require("isomorphic-git");
 
-jest.mock("../git-util");
 jest.mock("../fs-util");
 
 describe("getTemplate", () => {
@@ -21,6 +20,7 @@ describe("getTemplate", () => {
     // ARRANGE
     fsUtil.pathExists.mockResolvedValue(false);
     const isomorphicGitTemplateSource = new IsomorphicGitTemplateSource();
+    jest.spyOn(git, "clone").mockResolvedValue(true);
 
     // ACT && ASSERT
     await expect(
@@ -35,6 +35,7 @@ describe("getTemplate", () => {
     fsUtil.pathExists.mockResolvedValue(true);
     jest.spyOn(LocalTemplate, "loadFromPath").mockResolvedValue(null);
     const isomorphicGitTemplateSource = new IsomorphicGitTemplateSource();
+    jest.spyOn(git, "clone").mockResolvedValue(true);
 
     // ACT && ASSERT
     await expect(
@@ -99,6 +100,7 @@ describe("getTemplate", () => {
           [{ name: "some-parameter" }]
         ),
       ]);
+    jest.spyOn(git, "clone").mockResolvedValue(true);
 
     // ACT
     const out = await isomorphicGitTemplateSource.getTemplate(
@@ -118,7 +120,7 @@ describe("getTemplate", () => {
     );
     expect(out).toBeInstanceOf(LocalTemplate);
     expect(out).toStrictEqual(expected);
-    expect(GitUtil.clone.mock.calls[0][0]).toBe(repo);
+    expect(git.clone).toBeCalledWith(expect.objectContaining({ url: repo }));
   });
 
   test("Should clone to a temp folder", async () => {
@@ -139,6 +141,7 @@ describe("getTemplate", () => {
           [{ name: "some-parameter" }]
         ),
       ]);
+    jest.spyOn(git, "clone").mockResolvedValue(true);
 
     // ACT
     const out = await isomorphicGitTemplateSource.getTemplate(repo);
@@ -156,6 +159,6 @@ describe("getTemplate", () => {
         [{ name: "some-parameter" }]
       )
     );
-    expect(GitUtil.clone.mock.calls[0][0]).toBe(repo);
+    expect(git.clone).toBeCalledWith(expect.objectContaining({ url: repo }));
   });
 });

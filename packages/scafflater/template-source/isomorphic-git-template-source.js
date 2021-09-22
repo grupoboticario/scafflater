@@ -1,11 +1,80 @@
-const LocalFolderTemplateSource = require("./local-folder-template-source");
-const GitUtil = require("../git-util");
 const fsUtil = require("../fs-util");
+const git = require("isomorphic-git");
+const http = require("isomorphic-git/http/node");
+const fs = require("fs-extra");
+const { spawn } = require("child_process");
+const { URL } = require("url");
+const LocalFolderTemplateSource = require("./local-folder-template-source");
 const { ScafflaterOptions } = require("../options");
 const { LocalTemplate } = require("../scafflater-config/local-template");
 const Source = require("../scafflater-config/source");
 const ScafflaterFileNotFoundError = require("../errors/ScafflaterFileNotFoundError");
 const { TemplateDefinitionNotFound } = require("../errors");
+
+/**
+ * Clones a repo to a local path.
+ *
+ * @param {string} repo - Repository (<owner>/<repository>)
+ * @param {string} localPath - Local path where the repos will be cloned
+ * @param {string} username The github user
+ * @param {string} password The github password
+ * @returns {Promise} The command messages
+ */
+async function clone(repo, localPath, username = null, password = null) {
+  const headers = {};
+
+  if (username && password) {
+    const t = `${username}:${password}`;
+    headers.Authorization = `Basic ${Buffer.from(t).toString("base64")}`;
+  }
+
+  try {
+    return await git.clone({
+      fs,
+      http,
+      url: repo,
+      dir: localPath,
+      singleBranch: true,
+      depth: 1,
+      headers,
+      onAuth,
+    });
+  } catch (error) {
+    throw new Error(
+      `Clone failed: ${error} (Authorization Header: '${headers.Authorization}')`
+    );
+  }
+}
+
+async function onAuth(url) {
+  const { protocol, host } = new URL(url);
+  return new Promise((resolve, reject) => {
+    try {
+      const output = [];
+      const process = spawn("git", ["credential", "fill"]);
+      process.on("close", (code) => {
+        if (code) return reject(code);
+        const { username, password } = output
+          .join("\n")
+          .split("\n")
+          .reduce((acc, line) => {
+            if (line.startsWith("username") || line.startsWith("password")) {
+              const [key, val] = line.split("=");
+              acc[key] = val;
+            }
+            return acc;
+          }, {});
+        resolve({ username, password });
+      });
+      process.stdout.on("data", (data) => output.push(data.toString().trim()));
+      process.stdin.write(
+        `protocol=${protocol.slice(0, -1)}\nhost=${host}\n\n`
+      );
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
 
 class IsomorphicGitTemplateSource extends LocalFolderTemplateSource {
   /**
@@ -36,7 +105,7 @@ class IsomorphicGitTemplateSource extends LocalFolderTemplateSource {
    */
   async getTemplate(sourceKey, outputDir = null) {
     const pathToClone = await fsUtil.getTempFolder();
-    await GitUtil.clone(
+    await clone(
       sourceKey,
       pathToClone,
       this.options.githubUsername,

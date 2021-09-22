@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-const { runCommand } = require("./utils");
+const { runCommand } = require("./run-command");
 const { spawn } = require("child_process");
 
 jest.mock("child_process");
