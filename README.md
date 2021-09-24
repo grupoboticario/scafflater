@@ -53,3 +53,4 @@ Scafflater can be used as a [package](https://www.npmjs.com/package/@scafflater/
 Here are some related projects
 
 [Awesome README](https://github.com/matiassingers/awesome-readme)
+
