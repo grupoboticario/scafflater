@@ -63,21 +63,47 @@ describe("getTemplate", () => {
     ).toBeFalsy();
   });
 
-  test("Config with username and password", () => {
+  test("Config with username and password", async () => {
     // ARRANGE
     const options = {
       githubUsername: "some-user",
       githubPassword: "the-secret-password",
     };
+    jest.spyOn(git, "clone").mockResolvedValue(true);
+    jest.spyOn(fsUtil, "getTempFolder").mockResolvedValue("some/temp/folder");
+    jest
+      .spyOn(LocalTemplate, "loadFromPath")
+      .mockResolvedValue([
+        new LocalTemplate(
+          "some/virtual/folder",
+          "template-name",
+          "the template",
+          "0.0.0",
+          [],
+          {},
+          [{ name: "some-parameter" }]
+        ),
+      ]);
+    fsUtil.pathExists.mockResolvedValue(true);
 
     // ACT
     const ts = new IsomorphicGitTemplateSource(options);
+    await ts.getTemplate("https://github.com/some/repo");
 
     // ASSERT
     expect(ts.options.githubUsername).toBe("some-user");
     expect(ts.options.githubPassword).toBe("the-secret-password");
     expect(ts.options.githubBaseUrlApi).toBe("https://api.github.com");
     expect(ts.options.githubBaseUrl).toBe("https://github.com");
+    expect(git.clone).toBeCalledWith(
+      expect.objectContaining({
+        headers: {
+          Authorization: `Basic ${Buffer.from(
+            "some-user:the-secret-password"
+          ).toString("base64")}`,
+        },
+      })
+    );
   });
 
   test("Should clone to the folder in parameter", async () => {

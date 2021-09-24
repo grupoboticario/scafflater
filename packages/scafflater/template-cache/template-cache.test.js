@@ -23,3 +23,17 @@ test("Gets the template storage in config", () => {
   expect(result.__proto__ instanceof TemplateCache).toBe(true);
   expect(result instanceof LocalTemplateCache).toBe(true);
 });
+
+test("Constructor call must throw", () => {
+  expect(() => {
+    // NOSONAR
+    new TemplateCache();
+  }).toThrow();
+});
+
+test("Implementation Constructor call must throw", () => {
+  expect(() => {
+    // NOSONAR
+    new LocalTemplateCache();
+  }).not.toThrow();
+});
