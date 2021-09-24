@@ -37,43 +37,12 @@ async function clone(repo, localPath, username = null, password = null) {
       singleBranch: true,
       depth: 1,
       headers,
-      onAuth,
     });
   } catch (error) {
     throw new Error(
       `Clone failed: ${error} (Authorization Header: '${headers.Authorization}')`
     );
   }
-}
-
-async function onAuth(url) {
-  const { protocol, host } = new URL(url);
-  return new Promise((resolve, reject) => {
-    try {
-      const output = [];
-      const process = spawn("git", ["credential", "fill"]);
-      process.on("close", (code) => {
-        if (code) return reject(code);
-        const { username, password } = output
-          .join("\n")
-          .split("\n")
-          .reduce((acc, line) => {
-            if (line.startsWith("username") || line.startsWith("password")) {
-              const [key, val] = line.split("=");
-              acc[key] = val;
-            }
-            return acc;
-          }, {});
-        resolve({ username, password });
-      });
-      process.stdout.on("data", (data) => output.push(data.toString().trim()));
-      process.stdin.write(
-        `protocol=${protocol.slice(0, -1)}\nhost=${host}\n\n`
-      );
-    } catch (error) {
-      reject(error);
-    }
-  });
 }
 
 class IsomorphicGitTemplateSource extends LocalFolderTemplateSource {
