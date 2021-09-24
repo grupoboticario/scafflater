@@ -69,7 +69,7 @@ class GitTemplateSource extends LocalFolderTemplateSource {
     const exec = util.promisify(require("child_process").exec);
     await exec(`git clone ${sourceKey} ${pathToClone}`, { timeout: 15000 });
     try {
-      return super.getTemplate(pathToClone, outputDir);
+      return await super.getTemplate(pathToClone, outputDir);
     } catch (error) {
       if (error instanceof ScafflaterFileNotFoundError) {
         throw new ScafflaterFileNotFoundError(
