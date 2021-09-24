@@ -6,7 +6,7 @@ const {
   ScafflaterFileNotFoundError,
   TemplateDefinitionNotFound,
 } = require("../../errors");
-const child_process = require("child_process");
+const childProcess = require("child_process");
 const {
   GithubClientNotInstalledError,
   GithubClientUserNotLoggedError,
@@ -51,7 +51,7 @@ describe("getTemplate", () => {
 
   test("GH is not installed, should throw.", async () => {
     let callBack;
-    child_process.exec.mockImplementation((__, cb) => {
+    childProcess.exec.mockImplementation((__, cb) => {
       callBack = cb;
     });
     const promise = GithubClientTemplateSource.checkGhClient();
@@ -67,7 +67,7 @@ describe("getTemplate", () => {
 
   test("User is not logged, should throw.", async () => {
     let callBack;
-    child_process.exec.mockImplementation((__, cb) => {
+    childProcess.exec.mockImplementation((__, cb) => {
       callBack = cb;
     });
     const promise = GithubClientTemplateSource.checkGhClient();
@@ -85,7 +85,7 @@ describe("getTemplate", () => {
 
   test("Check Auth", async () => {
     let callBack;
-    child_process.exec.mockImplementation((__, cb) => {
+    childProcess.exec.mockImplementation((__, cb) => {
       callBack = cb;
     });
     const promise = GithubClientTemplateSource.checkGhClient();
@@ -96,7 +96,7 @@ describe("getTemplate", () => {
       "github.com\n  ✓ Logged in to github.com as chicoribas (/Users/ribasf/.config/gh/hosts.yml)\n  ✓ Git operations for github.com configured to use https protocol.\n  ✓ Token: *******************\n  \n"
     );
 
-    //ASSERT
+    // ASSERT
     await expect(promise).resolves.toBe(true);
   });
 
@@ -104,7 +104,7 @@ describe("getTemplate", () => {
     // ARRANGE
     fsUtil.pathExists.mockResolvedValue(false);
     const githuClientTemplateSource = new GithubClientTemplateSource();
-    child_process.exec.mockImplementation((__, cb) => {
+    childProcess.exec.mockImplementation((__, cb) => {
       cb(null);
     });
     const promise = githuClientTemplateSource.getTemplate(
@@ -122,7 +122,7 @@ describe("getTemplate", () => {
     jest.spyOn(LocalTemplate, "loadFromPath").mockResolvedValue(null);
     const githubClientTemplateSource = new GithubClientTemplateSource();
 
-    child_process.exec.mockImplementation((__, cb) => {
+    childProcess.exec.mockImplementation((__, cb) => {
       cb(null);
     });
     const promise = githubClientTemplateSource.getTemplate(
@@ -190,7 +190,7 @@ describe("getTemplate", () => {
         ),
       ]);
 
-    child_process.exec.mockImplementation((__, cb) => {
+    childProcess.exec.mockImplementation((__, cb) => {
       cb(null);
     });
 
@@ -210,7 +210,7 @@ describe("getTemplate", () => {
     );
     expect(out).toBeInstanceOf(LocalTemplate);
     expect(out).toStrictEqual(expected);
-    expect(child_process.exec).toHaveBeenCalledWith(
+    expect(childProcess.exec).toHaveBeenCalledWith(
       "gh repo clone some/repo temp/folder",
       expect.anything()
     );
@@ -235,7 +235,7 @@ describe("getTemplate", () => {
         ),
       ]);
 
-    child_process.exec.mockImplementation((__, cb) => {
+    childProcess.exec.mockImplementation((__, cb) => {
       cb(null);
     });
 
@@ -256,7 +256,7 @@ describe("getTemplate", () => {
         [{ name: "some-parameter" }]
       )
     );
-    expect(child_process.exec).toHaveBeenCalledWith(
+    expect(childProcess.exec).toHaveBeenCalledWith(
       "gh repo clone some/repo temp/folder",
       expect.anything()
     );

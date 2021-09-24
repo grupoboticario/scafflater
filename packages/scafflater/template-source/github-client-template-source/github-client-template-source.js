@@ -5,7 +5,8 @@ const { LocalTemplate } = require("../../scafflater-config/local-template");
 const Source = require("../../scafflater-config/source");
 const ScafflaterFileNotFoundError = require("../../errors/scafflater-file-not-found-error");
 const { TemplateDefinitionNotFound } = require("../../errors");
-const { exec } = require("child_process");
+const util = require("util");
+const exec = util.promisify(require("child_process").exec);
 const {
   GithubClientNotInstalledError,
   GithubClientUserNotLoggedError,
@@ -35,7 +36,6 @@ class GithubClientTemplateSource extends LocalFolderTemplateSource {
    * Parse the github address to get repo and org names
    *
    * @param {string} repo Template repository address
-   *
    * @returns {object} An object containing the org and repo names
    */
   static parseRepoAddress(repo) {
@@ -51,26 +51,22 @@ class GithubClientTemplateSource extends LocalFolderTemplateSource {
 
   /**
    * Checks if the GH client is installed and authenticated
-   * @returns {Promise<bool>} True if the authentication is ok.
+   *
+   * @returns {Promise<boolean>} True if the authentication is ok.
    */
-  static checkGhClient() {
-    return new Promise((resolve, reject) => {
-      exec("gh auth status", (error) => {
-        if (error) {
-          if (error.message.match(/command not found/gi)) {
-            error = new GithubClientNotInstalledError();
-          }
-          if (
-            error.message.match(/You are not logged into any GitHub hosts/gi)
-          ) {
-            error = new GithubClientUserNotLoggedError();
-          }
-          reject(error);
-          return;
-        }
-        resolve(true);
-      });
-    });
+  static async checkGhClient() {
+    try {
+      await exec("gh auth status");
+      return true;
+    } catch (error) {
+      if (error.message.match(/command not found/gi)) {
+        throw new GithubClientNotInstalledError();
+      }
+      if (error.message.match(/You are not logged into any GitHub hosts/gi)) {
+        throw new GithubClientUserNotLoggedError();
+      }
+      throw error;
+    }
   }
 
   /**
@@ -82,40 +78,27 @@ class GithubClientTemplateSource extends LocalFolderTemplateSource {
    */
   async getTemplate(sourceKey, outputDir = null) {
     await GithubClientTemplateSource.checkGhClient();
+    const pathToClone = fsUtil.getTempFolderSync();
+    const { org, repo } =
+      GithubClientTemplateSource.parseRepoAddress(sourceKey);
 
-    return new Promise((resolve, reject) => {
-      const pathToClone = fsUtil.getTempFolderSync();
+    await exec(`gh repo clone ${org}/${repo} ${pathToClone}`);
 
-      const { org, repo } =
-        GithubClientTemplateSource.parseRepoAddress(sourceKey);
-
-      const cb = (error) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-
-        super
-          .getTemplate(pathToClone, outputDir)
-          .then((localTemplate) => resolve(localTemplate))
-          .catch((e) => {
-            if (e instanceof ScafflaterFileNotFoundError) {
-              e = new ScafflaterFileNotFoundError(
-                `${sourceKey}/.scafflater/scafflater.jsonc`
-              );
-            }
-            if (e instanceof TemplateDefinitionNotFound) {
-              e = new TemplateDefinitionNotFound(
-                `${sourceKey}/.scafflater/scafflater.jsonc`
-              );
-            }
-            reject(e);
-            throw e;
-          });
-      };
-
-      exec(`gh repo clone ${org}/${repo} ${pathToClone}`, cb);
-    });
+    try {
+      return await super.getTemplate(pathToClone, outputDir);
+    } catch (error) {
+      if (error instanceof ScafflaterFileNotFoundError) {
+        throw new ScafflaterFileNotFoundError(
+          `${sourceKey}/.scafflater/scafflater.jsonc`
+        );
+      }
+      if (error instanceof TemplateDefinitionNotFound) {
+        throw new TemplateDefinitionNotFound(
+          `${sourceKey}/.scafflater/scafflater.jsonc`
+        );
+      }
+      throw error;
+    }
   }
 
   /**

@@ -1,10 +1,6 @@
 const InitCommand = require("./init");
 const logger = require("scafflater/logger");
-const {
-  Scafflater,
-  TemplateManager,
-  ScafflaterFileNotFoundError,
-} = require("scafflater");
+const { Scafflater, TemplateManager } = require("scafflater");
 const Config = require("scafflater/scafflater-config/config");
 const {
   LocalTemplate,

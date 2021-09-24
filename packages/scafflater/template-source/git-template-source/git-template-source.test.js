@@ -6,8 +6,9 @@ const {
   ScafflaterFileNotFoundError,
   TemplateDefinitionNotFound,
 } = require("../../errors");
-const child_process = require("child_process");
+const childProcess = require("child_process");
 const { GitNotInstalledError, GitUserNotLoggedError } = require("./errors");
+const util = require("util");
 
 jest.mock("../../fs-util");
 jest.mock("child_process");
@@ -19,7 +20,7 @@ describe("getTemplate", () => {
 
   test("Git is not installed, should throw.", async () => {
     let callBack;
-    child_process.exec.mockImplementation((__, ___, cb) => {
+    childProcess.exec.mockImplementation((__, ___, cb) => {
       callBack = cb;
     });
     const promise = GitTemplateSource.checkGitClient();
@@ -34,68 +35,56 @@ describe("getTemplate", () => {
   });
 
   test("User is not logged in git, should throw.", async () => {
-    let callBack;
-    child_process.exec.mockImplementation((__, ___, cb) => {
-      callBack = cb;
+    jest.spyOn(util, "promisify").mockReturnValue(() => {
+      return { stdout: "", stderr: "" };
     });
-    const promise = GitTemplateSource.checkGitClient();
 
-    callBack(null, "", "");
-
-    await expect(promise).rejects.toThrow(GitUserNotLoggedError);
+    await expect(GitTemplateSource.checkGitClient()).rejects.toThrow(
+      GitUserNotLoggedError
+    );
   });
 
   test("Check Auth", async () => {
-    let callBack;
-    child_process.exec.mockImplementation((__, ___, cb) => {
-      callBack = cb;
+    jest.spyOn(util, "promisify").mockReturnValue(() => {
+      return { stdout: "username", stderr: "" };
     });
-    const promise = GitTemplateSource.checkGitClient();
 
-    callBack(null, "", "username");
-
-    //ASSERT
-    await expect(promise).resolves.toBe(true);
+    await expect(GitTemplateSource.checkGitClient()).resolves.toBe(true);
   });
 
   test(".scafflater file not found", async () => {
     // ARRANGE
     fsUtil.pathExists.mockResolvedValue(false);
     const gitTemplateSource = new GitTemplateSource();
-    let callBack;
-    child_process.exec.mockImplementation((__, ___, cb) => {
-      callBack = cb;
-    });
-    const promise = gitTemplateSource.getTemplate(
-      "https://github.com/github/path",
-      "/some/virtual/folder"
-    );
 
-    callBack(null);
+    jest.spyOn(util, "promisify").mockReturnValue(() => {
+      return { stdout: "", stderr: "username" };
+    });
 
     // ACT && ASSERT
-    await expect(promise).rejects.toBeInstanceOf(ScafflaterFileNotFoundError);
+    await expect(
+      gitTemplateSource.getTemplate(
+        "https://github.com/github/path",
+        "/some/virtual/folder"
+      )
+    ).rejects.toBeInstanceOf(ScafflaterFileNotFoundError);
   });
 
   test("Template definition not found on .scafflater", async () => {
     // ARRANGE
     fsUtil.pathExists.mockResolvedValue(true);
     jest.spyOn(LocalTemplate, "loadFromPath").mockResolvedValue(null);
-    const gitTemplateSource = new GitTemplateSource();
-
-    let callBack;
-    child_process.exec.mockImplementation((__, ___, cb) => {
-      callBack = cb;
+    jest.spyOn(util, "promisify").mockReturnValue(() => {
+      return { stdout: "", stderr: "username" };
     });
-    const promise = gitTemplateSource.getTemplate(
-      "https://github.com/github/path",
-      "/some/virtual/folder"
-    );
-
-    callBack(null);
 
     // ACT && ASSERT
-    await expect(promise).rejects.toThrow(TemplateDefinitionNotFound);
+    await expect(
+      new GitTemplateSource().getTemplate(
+        "https://github.com/github/path",
+        "/some/virtual/folder"
+      )
+    ).rejects.toThrow(TemplateDefinitionNotFound);
   });
 
   test("Valid source key", () => {
@@ -151,16 +140,14 @@ describe("getTemplate", () => {
           [{ name: "some-parameter" }]
         ),
       ]);
-
-    let callBack;
-    child_process.exec.mockImplementation((__, ___, cb) => {
-      callBack = cb;
+    let cmd = "";
+    jest.spyOn(util, "promisify").mockReturnValue((command) => {
+      cmd = command;
+      return { stdout: "", stderr: "username" };
     });
 
     // ACT
-    const promise = gitTemplateSource.getTemplate(repo, virtualFolder);
-    callBack(null);
-    const out = await promise;
+    const out = await gitTemplateSource.getTemplate(repo, virtualFolder);
 
     // ASSERT
     const expected = new LocalTemplate(
@@ -174,11 +161,7 @@ describe("getTemplate", () => {
     );
     expect(out).toBeInstanceOf(LocalTemplate);
     expect(out).toStrictEqual(expected);
-    expect(child_process.exec).toHaveBeenCalledWith(
-      "git clone some/repo temp/folder",
-      expect.anything(),
-      expect.anything()
-    );
+    expect(cmd).toBe("git clone some/repo temp/folder");
   });
 
   test("Should clone to a temp folder", async () => {
@@ -199,16 +182,14 @@ describe("getTemplate", () => {
           [{ name: "some-parameter" }]
         ),
       ]);
-
-    let callBack;
-    child_process.exec.mockImplementation((__, ___, cb) => {
-      callBack = cb;
+    let cmd = "";
+    jest.spyOn(util, "promisify").mockReturnValue((command) => {
+      cmd = command;
+      return { stdout: "", stderr: "username" };
     });
 
     // ACT
-    const promise = gitTemplateSource.getTemplate(repo);
-    callBack(null);
-    const out = await promise;
+    const out = await gitTemplateSource.getTemplate(repo);
 
     // ASSERT
     expect(out).toBeInstanceOf(LocalTemplate);
@@ -223,10 +204,6 @@ describe("getTemplate", () => {
         [{ name: "some-parameter" }]
       )
     );
-    expect(child_process.exec).toHaveBeenCalledWith(
-      "git clone some/repo temp/folder",
-      expect.anything(),
-      expect.anything()
-    );
+    expect(cmd).toBe("git clone some/repo temp/folder");
   });
 });

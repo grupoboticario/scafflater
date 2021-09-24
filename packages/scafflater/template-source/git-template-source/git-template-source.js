@@ -5,7 +5,7 @@ const { LocalTemplate } = require("../../scafflater-config/local-template");
 const Source = require("../../scafflater-config/source");
 const ScafflaterFileNotFoundError = require("../../errors/scafflater-file-not-found-error");
 const { TemplateDefinitionNotFound } = require("../../errors");
-const { exec } = require("child_process");
+const util = require("util");
 const { GitNotInstalledError, GitUserNotLoggedError } = require("./errors");
 
 class GitTemplateSource extends LocalFolderTemplateSource {
@@ -30,30 +30,28 @@ class GitTemplateSource extends LocalFolderTemplateSource {
 
   /**
    * Checks if the GH client is installed and authenticated
-   * @returns {Promise<bool>} True if the authentication is ok.
+   *
+   * @returns {Promise<boolean>} True if the authentication is ok.
    */
-  static checkGitClient() {
-    return new Promise((resolve, reject) => {
-      exec(
-        "git config user.name",
-        { timeout: 15000 },
-        (error, stdout, stderr) => {
-          if (error) {
-            if (error.message.match(/command not found/gi)) {
-              error = new GitNotInstalledError();
-            }
-            reject(error);
-            return;
-          }
-          if ((stdout + stderr).trim().length <= 0) {
-            reject(new GitUserNotLoggedError());
-            return;
-          }
-
-          resolve(true);
+  static async checkGitClient() {
+    try {
+      const exec = util.promisify(require("child_process").exec);
+      const { stdout, stderr } = await exec("git config user.name", {
+        timeout: 15000,
+      });
+      if ((stdout + stderr).trim().length <= 0) {
+        throw new GitUserNotLoggedError();
+      }
+    } catch (error) {
+      if (error) {
+        if (error.message.match(/command not found/gi)) {
+          throw new GitNotInstalledError();
         }
-      );
-    });
+      }
+      throw error;
+    }
+
+    return true;
   }
 
   /**
@@ -64,38 +62,27 @@ class GitTemplateSource extends LocalFolderTemplateSource {
    * @returns {Promise<LocalTemplate>} The local template
    */
   async getTemplate(sourceKey, outputDir = null) {
-    GitTemplateSource.checkGitClient();
+    await GitTemplateSource.checkGitClient();
 
-    return new Promise((resolve, reject) => {
-      const pathToClone = fsUtil.getTempFolderSync();
+    const pathToClone = fsUtil.getTempFolderSync();
 
-      const cb = (error) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-
-        super
-          .getTemplate(pathToClone, outputDir)
-          .then((localTemplate) => resolve(localTemplate))
-          .catch((e) => {
-            if (e instanceof ScafflaterFileNotFoundError) {
-              e = new ScafflaterFileNotFoundError(
-                `${sourceKey}/.scafflater/scafflater.jsonc`
-              );
-            }
-            if (e instanceof TemplateDefinitionNotFound) {
-              e = new TemplateDefinitionNotFound(
-                `${sourceKey}/.scafflater/scafflater.jsonc`
-              );
-            }
-            reject(e);
-            throw e;
-          });
-      };
-
-      exec(`git clone ${sourceKey} ${pathToClone}`, { timeout: 15000 }, cb);
-    });
+    const exec = util.promisify(require("child_process").exec);
+    await exec(`git clone ${sourceKey} ${pathToClone}`, { timeout: 15000 });
+    try {
+      return super.getTemplate(pathToClone, outputDir);
+    } catch (error) {
+      if (error instanceof ScafflaterFileNotFoundError) {
+        throw new ScafflaterFileNotFoundError(
+          `${sourceKey}/.scafflater/scafflater.jsonc`
+        );
+      }
+      if (error instanceof TemplateDefinitionNotFound) {
+        throw new TemplateDefinitionNotFound(
+          `${sourceKey}/.scafflater/scafflater.jsonc`
+        );
+      }
+      throw error;
+    }
   }
 
   /**
