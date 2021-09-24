@@ -72,11 +72,23 @@ class TemplateSource {
    * Gets the template and copies it in a local folder.
    *
    * @param {string} sourceKey - The source key of template. Will vary, depending on template source
+   * @param {string} version - The template version
    * @param {?string} outputDir - Folder where template must be copied. If null, a temp folder will be used.
    * @returns {Promise<LocalTemplate>} The local template
    */
-  async getTemplate(sourceKey, outputDir = null) {
-    return TemplateSource.getTemplateSource().getTemplate(sourceKey, outputDir);
+  async getTemplate(sourceKey, version = "latest", outputDir = null) {
+    throw new Error("Method 'getTemplate()' must be implemented.");
+  }
+
+  /**
+   * Checks if version is available.
+   *
+   * @param {string} sourceKey - The source key of template. Will vary, depending on template source
+   * @param {string} version - The template version
+   * @returns {Promise<boolean>}
+   */
+  async isVersionAvailable(sourceKey, version) {
+    throw new Error("Method 'isVersionAvaiable()' must be implemented.");
   }
 
   /**

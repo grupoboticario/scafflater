@@ -7,6 +7,11 @@ const ScafflaterFileNotFoundError = require("../../errors/scafflater-file-not-fo
 const { TemplateDefinitionNotFound } = require("../../errors");
 const util = require("util");
 const { GitNotInstalledError, GitUserNotLoggedError } = require("./errors");
+const { EOL } = require("os");
+const InvalidArgumentError = require("../../errors/invalid-argument-error");
+const semver = require("semver");
+const ScafflaterError = require("../../errors/scafflater-error");
+const { NoVersionAvailableError } = require("../errors");
 
 class GitTemplateSource extends LocalFolderTemplateSource {
   /**
@@ -59,17 +64,20 @@ class GitTemplateSource extends LocalFolderTemplateSource {
   /**
    * Gets the template and copies it in a local folder.
    *
-   * @param {string} sourceKey - The source key (<OWNER>/<REPOSITORY>) of template.
+   * @param {string} sourceKey - The source key of template. Will vary, depending on template source
+   * @param {string} version - The template version
    * @param {?string} outputDir - Folder where template must be copied. If null, a temp folder will be used.
    * @returns {Promise<LocalTemplate>} The local template
    */
-  async getTemplate(sourceKey, outputDir = null) {
+  async getTemplate(sourceKey, version = "latest", outputDir = null) {
     await GitTemplateSource.checkGitClient();
 
     const pathToClone = fsUtil.getTempFolderSync();
 
     const exec = util.promisify(require("child_process").exec);
+
     await exec(`git clone ${sourceKey} ${pathToClone}`, { timeout: 15000 });
+
     try {
       return await super.getTemplate(pathToClone, outputDir);
     } catch (error) {
@@ -85,6 +93,65 @@ class GitTemplateSource extends LocalFolderTemplateSource {
       }
       throw error;
     }
+  }
+
+  /**
+   * Gets the last version.
+   *
+   * @param {string} sourceKey - The source key of template. Will vary, depending on template source
+   * @param {string} version - The template version
+   * @returns {Promise<string>} Returns the string with the last version
+   * @throws {NoVersionAvailableError} Theres no version available for this sourceKey
+   */
+  async getLastVersion(sourceKey) {
+    const exec = util.promisify(require("child_process").exec);
+
+    const { stdout } = await exec(
+      `git ls-remote --tags --sort="v:refname" ${sourceKey}`
+    );
+
+    const lines = stdout.split(EOL);
+
+    for (let line = lines.length - 1; line >= 0; line--) {
+      const lineVersion = /v?\d+\.\d+\.\d+$/.exec(lines[line]);
+      if (lineVersion) {
+        return lineVersion[0];
+      }
+    }
+
+    throw new NoVersionAvailableError(sourceKey);
+  }
+
+  /**
+   * Checks if version is available.
+   *
+   * @param {string} sourceKey - The source key of template. Will vary, depending on template source
+   * @param {string} version - The template version
+   * @returns {Promise<boolean>}
+   * @throws {InvalidArgumentError} The version must be in semver pattern
+   */
+  async isVersionAvailable(sourceKey, version) {
+    if (!semver.valid(version)) {
+      throw new InvalidArgumentError("version", version);
+    }
+
+    const exec = util.promisify(require("child_process").exec);
+
+    const { stdout } = await exec(
+      `git ls-remote --tags --sort="v:refname" ${sourceKey}`
+    );
+
+    for (const line of stdout.split(EOL)) {
+      const lineVersion = /(?<=[v/])(?<version>\d+\.\d+\.\d+)$/.exec(line);
+      if (
+        lineVersion &&
+        semver.compare(lineVersion.groups.version, version) === 0
+      ) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**

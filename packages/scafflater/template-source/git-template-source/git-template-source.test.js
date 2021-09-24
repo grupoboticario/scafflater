@@ -6,12 +6,12 @@ const {
   ScafflaterFileNotFoundError,
   TemplateDefinitionNotFound,
 } = require("../../errors");
-const childProcess = require("child_process");
 const { GitNotInstalledError, GitUserNotLoggedError } = require("./errors");
 const util = require("util");
+const InvalidArgumentError = require("../../errors/invalid-argument-error");
+const { NoVersionAvailableError } = require("../errors");
 
 jest.mock("../../fs-util");
-jest.mock("child_process");
 
 describe("getTemplate", () => {
   afterEach(() => {
@@ -19,19 +19,15 @@ describe("getTemplate", () => {
   });
 
   test("Git is not installed, should throw.", async () => {
-    let callBack;
-    childProcess.exec.mockImplementation((__, ___, cb) => {
-      callBack = cb;
+    jest.spyOn(util, "promisify").mockReturnValue(() => {
+      throw new Error(
+        "Command failed: asdasd\n/bin/sh: asdasd: command not found\n"
+      );
     });
-    const promise = GitTemplateSource.checkGitClient();
 
-    callBack(
-      new Error("Command failed: asdasd\n/bin/sh: asdasd: command not found\n"),
-      "",
-      "/bin/sh: asdasd: command not found\n"
+    await expect(GitTemplateSource.checkGitClient()).rejects.toThrow(
+      GitNotInstalledError
     );
-
-    await expect(promise).rejects.toThrow(GitNotInstalledError);
   });
 
   test("User is not logged in git, should throw.", async () => {
@@ -54,7 +50,8 @@ describe("getTemplate", () => {
 
   test(".scafflater file not found", async () => {
     // ARRANGE
-    fsUtil.pathExists.mockResolvedValue(false);
+    jest.spyOn(fsUtil, "pathExists").mockResolvedValue(false);
+    jest.spyOn(fsUtil, "getTempFolder").mockReturnValue("some/temp/folder");
     const gitTemplateSource = new GitTemplateSource();
 
     jest.spyOn(util, "promisify").mockReturnValue(() => {
@@ -210,5 +207,100 @@ describe("getTemplate", () => {
       )
     );
     expect(cmd).toBe("git clone some/repo temp/folder");
+  });
+
+  test("Check Version is available", async () => {
+    jest.spyOn(util, "promisify").mockReturnValue(() => {
+      return {
+        stdout: `382c92671490ad1435eb5939c1ec8990c784682b    refs/tags/v0.0.63^{}
+      be21ce85b930b2f615641803d1690de744bdcae8    refs/tags/v0.0.64`,
+        stderr: "",
+      };
+    });
+
+    await expect(
+      new GitTemplateSource().isVersionAvailable(
+        "https://github.com/some/repo",
+        "new-version"
+      )
+    ).rejects.toThrow(InvalidArgumentError);
+
+    await expect(
+      new GitTemplateSource().isVersionAvailable(
+        "https://github.com/some/repo",
+        "v0.0.65"
+      )
+    ).resolves.toBe(false);
+
+    await expect(
+      new GitTemplateSource().isVersionAvailable(
+        "https://github.com/some/repo",
+        "v0.0.63"
+      )
+    ).resolves.toBe(false);
+
+    await expect(
+      new GitTemplateSource().isVersionAvailable(
+        "https://github.com/some/repo",
+        "v0.0.64"
+      )
+    ).resolves.toBe(true);
+
+    await expect(
+      new GitTemplateSource().isVersionAvailable(
+        "https://github.com/some/repo",
+        "0.0.64"
+      )
+    ).resolves.toBe(true);
+  });
+
+  test("Get last Version", async () => {
+    jest.spyOn(util, "promisify").mockReturnValueOnce(() => {
+      return {
+        stdout: `382c92671490ad1435eb5939c1ec8990c784682b    refs/tags/v0.0.63^{}
+      be21ce85b930b2f615641803d1690de744bdcae8    refs/tags/v0.0.64`,
+        stderr: "",
+      };
+    });
+    jest.spyOn(util, "promisify").mockReturnValueOnce(() => {
+      return {
+        stdout: `382c92671490ad1435eb5939c1ec8990c784682b    refs/tags/0.0.63^{}
+      be21ce85b930b2f615641803d1690de744bdcae8    refs/tags/0.0.64`,
+        stderr: "",
+      };
+    });
+    jest.spyOn(util, "promisify").mockReturnValueOnce(() => {
+      return {
+        stdout: `382c92671490ad1435eb5939c1ec8990c784682b    refs/tags/v0.0.63^{}`,
+        stderr: "",
+      };
+    });
+
+    jest.spyOn(util, "promisify").mockReturnValueOnce(() => {
+      return {
+        stdout: "",
+        stderr: "",
+      };
+    });
+
+    expect(
+      await new GitTemplateSource().getLastVersion(
+        "https://github.com/some/repo"
+      )
+    ).toBe("v0.0.64");
+
+    expect(
+      await new GitTemplateSource().getLastVersion(
+        "https://github.com/some/repo"
+      )
+    ).toBe("0.0.64");
+
+    await expect(
+      new GitTemplateSource().getLastVersion("https://github.com/some/repo")
+    ).rejects.toThrow(NoVersionAvailableError);
+
+    await expect(
+      new GitTemplateSource().getLastVersion("https://github.com/some/repo")
+    ).rejects.toThrow(NoVersionAvailableError);
   });
 });
