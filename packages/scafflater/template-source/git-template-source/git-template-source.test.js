@@ -9,7 +9,7 @@ const {
 const { GitNotInstalledError, GitUserNotLoggedError } = require("./errors");
 const util = require("util");
 const InvalidArgumentError = require("../../errors/invalid-argument-error");
-const { NoVersionAvailableError } = require("../errors");
+const { NoVersionAvailableError, VersionDoesNotExist } = require("../errors");
 
 jest.mock("../../fs-util");
 
@@ -62,6 +62,7 @@ describe("getTemplate", () => {
     await expect(
       gitTemplateSource.getTemplate(
         "https://github.com/github/path",
+        "latest",
         "/some/virtual/folder"
       )
     ).rejects.toBeInstanceOf(ScafflaterFileNotFoundError);
@@ -79,6 +80,7 @@ describe("getTemplate", () => {
     await expect(
       new GitTemplateSource().getTemplate(
         "https://github.com/github/path",
+        "latest",
         "/some/virtual/folder"
       )
     ).rejects.toThrow(TemplateDefinitionNotFound);
@@ -149,7 +151,11 @@ describe("getTemplate", () => {
     });
 
     // ACT
-    const out = await gitTemplateSource.getTemplate(repo, virtualFolder);
+    const out = await gitTemplateSource.getTemplate(
+      repo,
+      "latest",
+      virtualFolder
+    );
 
     // ASSERT
     const expected = new LocalTemplate(
@@ -164,6 +170,172 @@ describe("getTemplate", () => {
     expect(out).toBeInstanceOf(LocalTemplate);
     expect(out).toStrictEqual(expected);
     expect(cmd).toBe("git clone some/repo temp/folder");
+  });
+
+  test("A last version is requested, and there is an tag version. Should clone the version.", async () => {
+    // ARRANGE
+    const repo = "some/repo";
+    const virtualFolder = "/some/virtual/folder";
+    const gitTemplateSource = new GitTemplateSource();
+    fsUtil.pathExists.mockResolvedValue(true);
+    fsUtil.getTempFolderSync.mockReturnValue("temp/folder");
+    jest
+      .spyOn(LocalTemplate, "loadFromPath")
+      .mockResolvedValue([
+        new LocalTemplate(
+          "/some/virtual/folder",
+          "template-name",
+          "the template",
+          "0.0.0",
+          [],
+          {},
+          [{ name: "some-parameter" }]
+        ),
+      ]);
+    let cmd = "";
+    jest.spyOn(util, "promisify").mockReturnValue((command) => {
+      if (command.startsWith('git ls-remote --tags --sort="v:refname"')) {
+        return {
+          stdout: `382c92671490ad1435eb5939c1ec8990c784682b    refs/tags/v0.0.62
+        382c92671490ad1435eb5939c1ec8990c784682b    refs/tags/v0.0.63^{}
+        be21ce85b930b2f615641803d1690de744bdcae8    refs/tags/v0.0.64`,
+          stderr: "",
+        };
+      }
+
+      if (command.startsWith("git config user.name")) {
+        return { stdout: "", stderr: "username" };
+      }
+
+      if (command.startsWith("git clone")) {
+        cmd = command;
+      }
+    });
+
+    // ACT
+    const out = await gitTemplateSource.getTemplate(
+      repo,
+      "latest",
+      virtualFolder
+    );
+
+    // ASSERT
+    const expected = new LocalTemplate(
+      "/some/virtual/folder",
+      "template-name",
+      "the template",
+      "0.0.0",
+      [],
+      {},
+      [{ name: "some-parameter" }]
+    );
+    expect(out).toBeInstanceOf(LocalTemplate);
+    expect(out).toStrictEqual(expected);
+    expect(cmd).toBe("git clone -b v0.0.64 some/repo temp/folder");
+  });
+
+  test("Request an existing tag version. Should clone the version.", async () => {
+    // ARRANGE
+    const repo = "some/repo";
+    const virtualFolder = "/some/virtual/folder";
+    const gitTemplateSource = new GitTemplateSource();
+    fsUtil.pathExists.mockResolvedValue(true);
+    fsUtil.getTempFolderSync.mockReturnValue("temp/folder");
+    jest
+      .spyOn(LocalTemplate, "loadFromPath")
+      .mockResolvedValue([
+        new LocalTemplate(
+          "/some/virtual/folder",
+          "template-name",
+          "the template",
+          "0.0.0",
+          [],
+          {},
+          [{ name: "some-parameter" }]
+        ),
+      ]);
+    let cmd = "";
+    jest.spyOn(util, "promisify").mockReturnValue((command) => {
+      if (command.startsWith('git ls-remote --tags --sort="v:refname"')) {
+        return {
+          stdout: `382c92671490ad1435eb5939c1ec8990c784682b    refs/tags/v0.0.62
+        382c92671490ad1435eb5939c1ec8990c784682b    refs/tags/v0.0.63^{}
+        be21ce85b930b2f615641803d1690de744bdcae8    refs/tags/v0.0.64`,
+          stderr: "",
+        };
+      }
+
+      if (command.startsWith("git config user.name")) {
+        return { stdout: "", stderr: "username" };
+      }
+
+      if (command.startsWith("git clone")) {
+        cmd = command;
+      }
+    });
+
+    // ACT
+    const out = await gitTemplateSource.getTemplate(
+      repo,
+      "v0.0.62",
+      virtualFolder
+    );
+
+    // ASSERT
+    const expected = new LocalTemplate(
+      "/some/virtual/folder",
+      "template-name",
+      "the template",
+      "0.0.0",
+      [],
+      {},
+      [{ name: "some-parameter" }]
+    );
+    expect(out).toBeInstanceOf(LocalTemplate);
+    expect(out).toStrictEqual(expected);
+    expect(cmd).toBe("git clone -b v0.0.62 some/repo temp/folder");
+  });
+
+  test("Request an non existing tag version. Should throw.", async () => {
+    // ARRANGE
+    const repo = "some/repo";
+    const virtualFolder = "/some/virtual/folder";
+    const gitTemplateSource = new GitTemplateSource();
+    fsUtil.pathExists.mockResolvedValue(true);
+    fsUtil.getTempFolderSync.mockReturnValue("temp/folder");
+    jest
+      .spyOn(LocalTemplate, "loadFromPath")
+      .mockResolvedValue([
+        new LocalTemplate(
+          "/some/virtual/folder",
+          "template-name",
+          "the template",
+          "0.0.0",
+          [],
+          {},
+          [{ name: "some-parameter" }]
+        ),
+      ]);
+    let cmd = "";
+    jest.spyOn(util, "promisify").mockReturnValue((command) => {
+      if (command.startsWith('git ls-remote --tags --sort="v:refname"')) {
+        return {
+          stdout: `382c92671490ad1435eb5939c1ec8990c784682b    refs/tags/v0.0.62
+        382c92671490ad1435eb5939c1ec8990c784682b    refs/tags/v0.0.63^{}
+        be21ce85b930b2f615641803d1690de744bdcae8    refs/tags/v0.0.64`,
+          stderr: "",
+        };
+      }
+
+      if (command.startsWith("git config user.name")) {
+        return { stdout: "", stderr: "username" };
+      }
+    });
+
+    // ACT && ASSERT
+    await expect(
+      gitTemplateSource.getTemplate(repo, "v0.0.61", virtualFolder)
+    ).rejects.toThrow(VersionDoesNotExist);
   });
 
   test("Should clone to a temp folder", async () => {

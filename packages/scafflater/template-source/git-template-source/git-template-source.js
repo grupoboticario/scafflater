@@ -10,8 +10,7 @@ const { GitNotInstalledError, GitUserNotLoggedError } = require("./errors");
 const { EOL } = require("os");
 const InvalidArgumentError = require("../../errors/invalid-argument-error");
 const semver = require("semver");
-const ScafflaterError = require("../../errors/scafflater-error");
-const { NoVersionAvailableError } = require("../errors");
+const { NoVersionAvailableError, VersionDoesNotExist } = require("../errors");
 
 class GitTemplateSource extends LocalFolderTemplateSource {
   /**
@@ -65,18 +64,26 @@ class GitTemplateSource extends LocalFolderTemplateSource {
    * Gets the template and copies it in a local folder.
    *
    * @param {string} sourceKey - The source key of template. Will vary, depending on template source
-   * @param {string} version - The template version
+   * @param {string} version - The template version.
    * @param {?string} outputDir - Folder where template must be copied. If null, a temp folder will be used.
    * @returns {Promise<LocalTemplate>} The local template
    */
-  async getTemplate(sourceKey, version = "latest", outputDir = null) {
+  async getTemplate(sourceKey, version = "head", outputDir = null) {
     await GitTemplateSource.checkGitClient();
 
     const pathToClone = fsUtil.getTempFolderSync();
 
     const exec = util.promisify(require("child_process").exec);
 
-    await exec(`git clone ${sourceKey} ${pathToClone}`, { timeout: 15000 });
+    const resolvedVersion = await this.resolveVersion(sourceKey, version);
+    const tagArgument =
+      resolvedVersion === "head" ? "" : ` -b ${resolvedVersion}`;
+
+    console.log(version);
+
+    await exec(`git clone${tagArgument} ${sourceKey} ${pathToClone}`, {
+      timeout: 15000,
+    });
 
     try {
       return await super.getTemplate(pathToClone, outputDir);
@@ -93,6 +100,37 @@ class GitTemplateSource extends LocalFolderTemplateSource {
       }
       throw error;
     }
+  }
+
+  /**
+   * Resolves the template version to be fetched.
+   *
+   * @param {string} sourceKey - The source key of template. Will vary, depending on template source
+   * @param {string} version - The template version
+   *
+   * @returns {Promise<string>} The string to be fetched
+   */
+  async resolveVersion(sourceKey, version) {
+    if (!version || version === "latest") {
+      try {
+        return await this.getLastVersion(sourceKey);
+      } catch (error) {
+        if (error instanceof NoVersionAvailableError) {
+          return "head";
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    if (
+      version !== "head" &&
+      !(await this.isVersionAvailable(sourceKey, version))
+    ) {
+      throw new VersionDoesNotExist(sourceKey, version);
+    }
+
+    return version;
   }
 
   /**
