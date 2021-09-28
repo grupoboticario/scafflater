@@ -77,13 +77,20 @@ class Scafflater {
    * Initializes the basic structure for scafflater template.
    *
    * @param {string} sourceKey - Source Template key
+   * @param {string} templateVersion - Template version
    * @param {object} parameters - Parameters used to generate the template
    * @param {string} targetPath - Path where the results must be placed
    * @returns {Promise<void>}
    */
-  async init(sourceKey, parameters, targetPath = "./") {
+  async init(
+    sourceKey,
+    parameters,
+    templateVersion = "last",
+    targetPath = "./"
+  ) {
     const localTemplate = await this.templateManager.getTemplateFromSource(
-      sourceKey
+      sourceKey,
+      templateVersion
     );
 
     const maskedParameters = maskParameters(

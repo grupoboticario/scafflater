@@ -44,15 +44,19 @@ class TemplateManager {
   /**
    * Gets the template from source and stores in the cache
    *
-   * @param {string} sourceKey - Teh source key
+   * @param {string} sourceKey - Source key
+   * @param {string} version - Template version
    * @returns {Promise<LocalTemplate>} An object containing template config
    */
-  async getTemplateFromSource(sourceKey) {
+  async getTemplateFromSource(sourceKey, version = "last") {
     const templateSource = TemplateSource.resolveTemplateSourceFromSourceKey(
       this.options,
       sourceKey
     );
-    const tempTemplateFolder = await templateSource.getTemplate(sourceKey);
+    const tempTemplateFolder = await templateSource.getTemplate(
+      sourceKey,
+      version
+    );
     return this.templateCache.storeTemplate(tempTemplateFolder.folderPath);
   }
 
@@ -64,14 +68,14 @@ class TemplateManager {
    * @param {Source} source The template source. If the template is not cached, use this to try getting the template from source.
    * @returns {Promise<LocalTemplate>} The cached template path. Returns null if the template is not in cache.
    */
-  async getTemplate(templateName, templateVersion = null, source = null) {
+  async getTemplate(templateName, templateVersion = "last", source = null) {
     const template = await this.templateCache.getTemplate(
       templateName,
       templateVersion
     );
 
     if (!template && source) {
-      return this.getTemplateFromSource(source.key);
+      return this.getTemplateFromSource(source.key, templateVersion);
     }
 
     return Promise.resolve(template);
@@ -85,7 +89,7 @@ class TemplateManager {
    * @param {string} templateVersion - Template Version. If null, the latest stored version is returned.
    * @returns {Promise<object>} Object containing the config and the path to partial.
    */
-  async getPartial(partialName, templateName, templateVersion = null) {
+  async getPartial(partialName, templateName, templateVersion = "last") {
     const partials = await this.listPartials(templateName, templateVersion);
 
     if (!partials) {
@@ -108,7 +112,7 @@ class TemplateManager {
    * @param {string} templateVersion - Template Version. If null, the latest stored version is returned.
    * @returns {Promise<LocalPartial[]>} Array of objects containing the config and the path to partial.
    */
-  async listPartials(templateName, templateVersion = null) {
+  async listPartials(templateName, templateVersion = "last") {
     const template = await this.templateCache.getTemplate(
       templateName,
       templateVersion

@@ -79,8 +79,6 @@ class GitTemplateSource extends LocalFolderTemplateSource {
     const tagArgument =
       resolvedVersion === "head" ? "" : ` -b ${resolvedVersion}`;
 
-    console.log(version);
-
     await exec(`git clone${tagArgument} ${sourceKey} ${pathToClone}`, {
       timeout: 15000,
     });
@@ -111,7 +109,7 @@ class GitTemplateSource extends LocalFolderTemplateSource {
    * @returns {Promise<string>} The string to be fetched
    */
   async resolveVersion(sourceKey, version) {
-    if (!version || version === "latest") {
+    if (!version || version === "last") {
       try {
         return await this.getLastVersion(sourceKey);
       } catch (error) {

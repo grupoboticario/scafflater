@@ -37,7 +37,8 @@ class InitCommand extends Command {
       let localTemplate;
       await spinner(`Getting template from ${iniArgs.source}`, async () => {
         localTemplate = await scafflater.templateManager.getTemplateFromSource(
-          iniArgs.source
+          iniArgs.source,
+          initFlags.version
         );
       });
 
@@ -69,7 +70,12 @@ class InitCommand extends Command {
       );
 
       await spinner("Running template initialization", async () => {
-        await scafflater.init(iniArgs.source, parameters, initFlags.output);
+        await scafflater.init(
+          iniArgs.source,
+          parameters,
+          initFlags.version,
+          initFlags.output
+        );
       });
 
       logger.log(
@@ -117,6 +123,11 @@ InitCommand.flags = {
     description: "The parameters to init template",
     default: [],
     multiple: true,
+  }),
+  version: flags.string({
+    char: "v",
+    description: "The template version",
+    default: "last",
   }),
 };
 
