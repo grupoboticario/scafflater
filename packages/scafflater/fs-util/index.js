@@ -38,15 +38,11 @@ fs.findFileUp = async (startPath, fileName) => {
 };
 
 fs.loadScriptsAsObjects = async (folderPath, npmInstall = false) => {
-  const jsList = await fs.listJsScripts(folderPath, npmInstall);
-  const result = {};
-
-  for (const key in jsList) {
-    const js = jsList[key];
-    result[js.jsName] = js.object;
+  if (npmInstall) {
+    await npmInstallExec(folderPath);
   }
 
-  return Promise.resolve(result);
+  return require(folderPath);
 };
 
 /**

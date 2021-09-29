@@ -167,7 +167,7 @@ describe("fs-utils", () => {
     const resultEmptyFolder = await fsUtils.listJsScripts(filePathEmptyFolder);
 
     // ASSERT
-    expect(result.length).toBe(2);
+    expect(result.length).toBe(3);
     expect(resultDoesNotExists.length).toBe(0);
     expect(resultEmptyFolder.length).toBe(0);
     expect(npmInstall).toHaveBeenCalled();

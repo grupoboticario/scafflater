@@ -1,12 +1,30 @@
 const path = require("path");
 const fsUtil = require("../fs-util");
-const Processor = require("./processors/processor");
-const Appender = require("./appenders/appender");
+const Processors = require("./processors");
+const Appenders = require("./appenders");
 const HandlebarsProcessor = require("./processors/handlebars-processor");
 const prettier = require("prettier");
 const ScafflaterOptions = require("../options");
 const { isBinaryFile } = require("isbinaryfile");
 const { ignores } = require("../util");
+
+class PromisesHelper {
+  constructor() {
+    this.promises = [];
+  }
+
+  async exec(ctx, promise) {
+    if (ctx.mode === "debug") {
+      await promise;
+    } else {
+      this.promises.push(promise);
+    }
+  }
+
+  async await() {
+    Promise.all(this.promises);
+  }
+}
 
 /**
  * @typedef {object} Context
@@ -27,6 +45,9 @@ class Generator {
    */
   constructor(context) {
     this.context = context;
+
+    this.context.mode = "debug";
+
     this.context.targetPath = path.resolve(context.targetPath);
     this.ignoredPatterns = [
       `**/${this.context.options.scfFileName}`,
@@ -34,6 +55,7 @@ class Generator {
       `/${this.context.options.partialsFolderName}`,
       `/${this.context.options.hooksFolderName}`,
       `/${this.context.options.helpersFolderName}`,
+      `/${this.context.options.extensionFolderName}`,
       "**/.git/**/*",
       "**/node_modules/**/*",
     ];
@@ -41,6 +63,7 @@ class Generator {
       path.resolve(context.templatePath, context.options.partialsFolderName),
       path.resolve(context.templatePath, context.options.hooksFolderName),
       path.resolve(context.templatePath, context.options.helpersFolderName),
+      path.resolve(context.templatePath, context.options.extensionFolderName),
       path.resolve(context.templatePath, ".git"),
       path.resolve(context.templatePath, "node_modules"),
     ];
@@ -49,8 +72,13 @@ class Generator {
   }
 
   async generate() {
+    this.promisesHelper = new PromisesHelper();
     this.hooks = await fsUtil.loadScriptsAsObjects(
       this.context.hooksPath,
+      true
+    );
+    this.extensions = await fsUtil.loadScriptsAsObjects(
+      this.context.extensions,
       true
     );
 
@@ -65,21 +93,34 @@ class Generator {
 
     const tree = fsUtil.getDirTreeSync(this.context.originPath);
 
-    const promises = [];
     if (tree.type === "file") {
-      promises.push(this._generate(this.context, tree));
+      await this.promisesHelper.exec(
+        this.context,
+        this._generate(this.context, tree)
+      );
     }
 
     if (tree.type === "directory") {
       for (const child of tree.children) {
-        promises.push(this._generate(this.context, child));
+        await this.promisesHelper.exec(
+          this.context,
+          this._generate(this.context, child)
+        );
       }
     }
 
-    await Promise.all(promises);
+    await this.promisesHelper.await();
   }
 
+  /**
+   *
+   * @param {any} ctx Context
+   * @param {any} tree Tree Details
+   * @param {PromisesHelper} promisesHelper Promises Helper
+   * @returns {Promise}
+   */
   async _generate(ctx, tree) {
+    const promisesHelper = new PromisesHelper();
     if (ignores(ctx.originPath, tree.path, this.ignoredPatterns)) {
       return Promise.resolve();
     }
@@ -94,7 +135,7 @@ class Generator {
     if (options.targetName != null) {
       targetName = options.targetName;
     }
-    targetName = await Processor.runProcessorsPipeline(
+    targetName = await Processors.Processor.runProcessorsPipeline(
       [this.handlebarsProcessor],
       ctx,
       targetName
@@ -112,13 +153,12 @@ class Generator {
       },
     };
 
-    const promises = [];
     if (tree.type === "directory") {
       for (const child of tree.children) {
         // Removing target name from context.
         // The intens inside this folder must not be affected by this config.
         _ctx.options.targetName = null;
-        promises.push(this._generate(_ctx, child));
+        await promisesHelper.exec(ctx, this._generate(_ctx, child));
       }
     }
 
@@ -137,18 +177,38 @@ class Generator {
       if (!(await isBinaryFile(originFilePath))) {
         const originFileContent = await fsUtil.readFileContent(originFilePath);
 
-        const processors = _ctx.options.processors.map(
-          (p) => new (require(p))()
-        );
-        const srcContent = await Processor.runProcessorsPipeline(
+        const processors = _ctx.options.processors.map((p) => {
+          if (
+            this.extensions[p] &&
+            this.extensions[p] instanceof Processors.Processor
+          ) {
+            return this.extensions[p];
+          }
+          if (Processors.Processor[p]) {
+            return Processors.Processor[p];
+          }
+          return new (require(p))();
+        });
+        const srcContent = await Processors.Processor.runProcessorsPipeline(
           processors,
           _ctx,
           originFileContent
         );
 
-        const appenders = _ctx.options.appenders.map((a) => new (require(a))());
+        const appenders = _ctx.options.appenders.map((a) => {
+          if (
+            this.extensions[a] &&
+            this.extensions[a] instanceof Appenders.Appender
+          ) {
+            return this.extensions[a];
+          }
+          if (Appenders.Appender[a]) {
+            return Appenders.Appender[a];
+          }
+          return new (require(a))();
+        });
         let result = targetContent
-          ? await Appender.runAppendersPipeline(
+          ? await Appenders.Appender.runAppendersPipeline(
               appenders,
               _ctx,
               srcContent,
@@ -164,14 +224,20 @@ class Generator {
           // Just to quiet prettier errors
         }
 
-        promises.push(fsUtil.saveFile(targetFilePath, result, false));
+        await promisesHelper.exec(
+          _ctx,
+          fsUtil.saveFile(targetFilePath, result, false)
+        );
       } else {
         await fsUtil.ensureDir(path.dirname(targetFilePath));
-        promises.push(fsUtil.copyFile(originFilePath, targetFilePath));
+        await promisesHelper.exec(
+          _ctx,
+          fsUtil.copyFile(originFilePath, targetFilePath)
+        );
       }
     }
 
-    return Promise.all(promises);
+    return promisesHelper.await();
   }
 
   /**

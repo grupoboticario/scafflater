@@ -5,4 +5,6 @@ module.exports = {
   ...require("./scafflater-config"),
   ...require("./options"),
   ...require("./template-cache"),
+  ...require("./generator/appenders"),
+  ...require("./generator/processors"),
 };

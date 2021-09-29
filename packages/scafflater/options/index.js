@@ -59,6 +59,17 @@ class ScafflaterOptions {
    */
   appendStrategy = "append";
 
+  /**
+   * Mode to run scafflater. Util for debug files generations.
+   *
+   * @description Action to include generated code on target:
+   *  - prod: Normal Execution (Default)
+   *  - debug: Will disable async execution. Useful to debug generator.
+   *
+   * @type {('prod'|'debug')}
+   */
+  mode = "prod";
+
   processors = ["./processors/handlebars-processor"];
   appenders = ["./appenders/region-appender", "./appenders/appender"];
 
@@ -68,6 +79,11 @@ class ScafflaterOptions {
   partialsFolderName = "partials";
   hooksFolderName = "hooks";
   helpersFolderName = "helpers";
+
+  /**
+   * Folder containing extensions for code generation. This folder can contain Appenders and Processors
+   */
+  extensionFolderName = "extension";
 
   cacheStorage = "tempDir";
   cacheStorages = {
