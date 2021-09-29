@@ -65,7 +65,6 @@ class ScafflaterOptions {
    * @description Action to include generated code on target:
    *  - prod: Normal Execution (Default)
    *  - debug: Will disable async execution. Useful to debug generator.
-   *
    * @type {('prod'|'debug')}
    */
   mode = "prod";

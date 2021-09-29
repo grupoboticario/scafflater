@@ -8,6 +8,9 @@ const ScafflaterOptions = require("../options");
 const { isBinaryFile } = require("isbinaryfile");
 const { ignores } = require("../util");
 
+/**
+ * Helper to execute Promises
+ */
 class PromisesHelper {
   constructor() {
     this.promises = [];
@@ -22,7 +25,7 @@ class PromisesHelper {
   }
 
   async await() {
-    Promise.all(this.promises);
+    return Promise.all(this.promises);
   }
 }
 
@@ -35,7 +38,6 @@ class PromisesHelper {
  * @property {string} helpersPath The folder with handlebars helpers implementations
  * @property {ScafflaterOptions} options The scafflater options.
  */
-
 class Generator {
   /**
    * Brief description of the function here.
@@ -116,8 +118,7 @@ class Generator {
    *
    * @param {any} ctx Context
    * @param {any} tree Tree Details
-   * @param {PromisesHelper} promisesHelper Promises Helper
-   * @returns {Promise}
+   * @returns {Promise} Promise
    */
   async _generate(ctx, tree) {
     const promisesHelper = new PromisesHelper();
