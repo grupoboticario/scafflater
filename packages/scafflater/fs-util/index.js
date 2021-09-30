@@ -38,6 +38,10 @@ fs.findFileUp = async (startPath, fileName) => {
 };
 
 fs.loadScriptsAsObjects = async (folderPath, npmInstall = false) => {
+  if (!(await fs.pathExists(folderPath))) {
+    return {};
+  }
+
   if (npmInstall) {
     await npmInstallExec(folderPath);
   }

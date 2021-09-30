@@ -48,6 +48,11 @@ class Scafflater {
       options.scfFolderName,
       options.hooksFolderName
     );
+    const extensionPath = path.resolve(
+      templatePath,
+      options.scfFolderName,
+      options.extensionFolderName
+    );
 
     const _ctx = {
       ...ctx,
@@ -57,6 +62,7 @@ class Scafflater {
         targetPath,
         helpersPath,
         hooksPath,
+        extensionPath,
         options,
         templatePath,
       },

@@ -80,7 +80,7 @@ class Generator {
       true
     );
     this.extensions = await fsUtil.loadScriptsAsObjects(
-      this.context.extensions,
+      this.context.extensionPath,
       true
     );
 
