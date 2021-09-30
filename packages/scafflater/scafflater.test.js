@@ -6,10 +6,10 @@ const {
   LocalTemplate,
   LocalPartial,
 } = require("./scafflater-config/local-template");
-const Config = require("./scafflater-config/config");
+const { Config } = require("./scafflater-config/config");
 const RanTemplate = require("./scafflater-config/ran-template");
 const RanPartial = require("./scafflater-config/ran-partial");
-const Source = require("./scafflater-config/source");
+const { Source } = require("./scafflater-config/source");
 const { TemplateSource } = require("./template-source");
 const { TemplateCache } = require("./template-cache");
 

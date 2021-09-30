@@ -1,14 +1,16 @@
 const { Command, flags } = require("@oclif/command");
-const { Scafflater } = require("scafflater");
-const { TemplateSource } = require("scafflater/template-source");
+const {
+  Scafflater,
+  TemplateSource,
+  logger,
+  Config,
+  ScafflaterOptions,
+  ScafflaterFileNotFoundError,
+  ScafflaterError,
+} = require("scafflater");
 const { promptMissingParameters, spinner } = require("../util");
-const logger = require("scafflater/logger");
-const { ScafflaterOptions } = require("scafflater/options");
-const Config = require("scafflater/scafflater-config/config");
 const chalk = require("chalk");
 const path = require("path");
-const ScafflaterFileNotFoundError = require("scafflater/errors/scafflater-file-not-found-error");
-const { ScafflaterError } = require("scafflater/errors");
 
 class InitCommand extends Command {
   async run() {

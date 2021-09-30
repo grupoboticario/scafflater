@@ -1,134 +1,107 @@
 const InitCommand = require("./init");
-const logger = require("scafflater/logger");
-const { Scafflater, TemplateManager } = require("scafflater");
-const Config = require("scafflater/scafflater-config/config");
-const {
-  LocalTemplate,
-} = require("scafflater/scafflater-config/local-template");
+const scafflater = require("scafflater");
 
 jest.mock("scafflater");
-jest.mock("scafflater/logger");
+
+const templateManager = new scafflater.TemplateManager();
+const mockedScafflater = {
+  templateManager,
+  init: jest.fn(),
+};
+
+const mockedConfig = {
+  isInitialized: jest.fn(),
+};
 
 describe("InitCommand", () => {
   beforeEach(() => {
+    jest.resetAllMocks();
     jest.clearAllMocks();
-  });
 
-  const templateManager = new TemplateManager();
-  const mockedScafflater = {
-    templateManager: templateManager,
-    init: jest.fn(),
-  };
-  Scafflater.mockImplementation(() => {
-    return mockedScafflater;
-  });
-
-  test("Template is already initialized, should abort", async () => {
-    // ARRANGE
     jest
-      .spyOn(templateManager, "getTemplateFromSource")
-      .mockResolvedValue(
-        new LocalTemplate(
-          "/some/path",
-          "/some/path/.scafflater/scafflater.jsonc",
-          "some-template"
-        )
-      );
-    jest.spyOn(Config, "fromLocalPath").mockResolvedValue({
-      config: {
-        templates: [
-          {
-            name: "some-template",
-          },
-        ],
-        isInitialized: () => true,
-      },
+      .spyOn(scafflater.TemplateSource, "resolveTemplateSourceFromSourceKey")
+      .mockReturnValue(new scafflater.LocalFolderTemplateSource({}));
+
+    jest.spyOn(scafflater, "Scafflater").mockImplementation(() => {
+      return mockedScafflater;
     });
-    const initCommand = new InitCommand(["https://github.com/some/repo"], {});
 
-    // ACT
-    await initCommand.run();
+    jest.spyOn(scafflater.Config, "fromLocalPath").mockResolvedValue({
+      config: mockedConfig,
+    });
 
-    // ASSERT
-    expect(logger.info).toHaveBeenCalledWith(
-      "The template is already initialized!"
-    );
-  });
-
-  test("Template is not initialized, should initialize it", async () => {
     jest
       .spyOn(templateManager, "getTemplateFromSource")
       .mockResolvedValue(
-        new LocalTemplate(
+        new (jest.requireActual("scafflater").LocalTemplate)(
           "/some/path",
           "/some/path/.scafflater/scafflater.jsonc",
           "some-new-template"
         )
       );
-    jest.spyOn(Config, "fromLocalPath").mockResolvedValue({
-      config: new Config(),
+  });
+
+  test("Template is already initialized, should abort", async () => {
+    // ARRANGE
+    mockedConfig.isInitialized.mockImplementation(() => {
+      return true;
     });
+
     const initCommand = new InitCommand(["https://github.com/some/repo"], {});
 
     // ACT
     await initCommand.run();
 
     // ASSERT
-    expect(new Scafflater().init).toHaveBeenCalledWith(
+    expect(scafflater.logger.info).toHaveBeenCalledWith(
+      "The template is already initialized!"
+    );
+  });
+
+  test("Template is not initialized, should initialize it", async () => {
+    const initCommand = new InitCommand(["https://github.com/some/repo"], {});
+
+    // ACT
+    await initCommand.run();
+
+    // ASSERT
+    expect(mockedScafflater.init).toHaveBeenCalledWith(
       "https://github.com/some/repo",
       {},
       "./"
     );
-    expect(logger.log).toHaveBeenCalledWith(
+    expect(scafflater.logger.log).toHaveBeenCalledWith(
       "notice",
       "Template initialized. Fell free to run partials. 🥳"
     );
   });
 
   test("Template source not set, should log error", async () => {
-    jest
-      .spyOn(templateManager, "getTemplateFromSource")
-      .mockResolvedValue(
-        new LocalTemplate(
-          "/some/path",
-          "/some/path/.scafflater/scafflater.jsonc",
-          "some-new-template"
-        )
-      );
-    jest.spyOn(Config, "fromLocalPath").mockResolvedValue({
-      config: new Config(),
-    });
     const initCommand = new InitCommand([], {});
 
     // ACT
     await initCommand.run();
 
     // ASSERT
-    expect(logger.error).toHaveBeenCalledWith(
+    expect(scafflater.logger.error).toHaveBeenCalledWith(
       "The parameter 'source' is required."
     );
   });
 
   test("ScafflaterError is thrown, should info it", async () => {
     jest
-      .spyOn(templateManager, "getTemplateFromSource")
-      .mockResolvedValue(
-        new LocalTemplate(
-          "/some/path",
-          "/some/path/.scafflater/scafflater.jsonc",
-          "some-new-template"
-        )
-      );
-    jest.spyOn(Config, "fromLocalPath").mockResolvedValue({
-      config: new Config(),
-    });
+      .spyOn(scafflater.TemplateSource, "resolveTemplateSourceFromSourceKey")
+      .mockImplementation(() => {
+        throw new scafflater.ScafflaterError();
+      });
+
     const initCommand = new InitCommand(["asdasdasdasdasdasd"], {});
 
     // ACT
     await initCommand.run();
 
     // ASSERT
-    expect(logger.info).toHaveBeenCalled();
-    expect(logger.error).not.toHaveBeenCalled();
+    expect(scafflater.logger.info).toHaveBeenCalled();
+    expect(scafflater.logger.error).not.toHaveBeenCalled();
   });
 });

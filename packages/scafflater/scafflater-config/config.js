@@ -5,8 +5,8 @@ const fs = require("fs-extra");
 const path = require("path");
 const glob = require("glob");
 const stripJsonComments = require("strip-json-comments");
-const Source = require("./source");
-const ScafflaterOptions = require("../options");
+const { Source } = require("./source");
+const { ScafflaterOptions } = require("../options");
 const ScafflaterFileNotFoundError = require("../errors/scafflater-file-not-found-error");
 
 /**
@@ -238,4 +238,4 @@ class Config {
   }
 }
 
-module.exports = Config;
+module.exports = { Config };

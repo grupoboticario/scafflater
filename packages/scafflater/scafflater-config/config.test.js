@@ -1,5 +1,5 @@
 const fs = require("fs-extra");
-const Config = require("./config");
+const { Config } = require("./config");
 const glob = require("glob");
 const { TemplateConfig } = require("./template-config");
 const { PartialConfig } = require("./partial-config");

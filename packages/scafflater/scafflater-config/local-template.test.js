@@ -1,5 +1,5 @@
 const { LocalPartial, LocalTemplate } = require("./local-template");
-const Config = require("./config");
+const { Config } = require("./config");
 const { ScafflaterOptions } = require("../options");
 
 jest.mock("fs-extra");
@@ -14,7 +14,7 @@ describe("Local Template", () => {
 
     test("loadFromPath: the .scafflater file does not describe a partial, should throw", async () => {
       // ARRANGE
-      Config.fromLocalPath.mockResolvedValue({
+      jest.spyOn(Config, "fromLocalPath").mockResolvedValue({
         filePath: "/some/valid/path/.scafflater",
         folderPath: "/some/valid/path",
         fileContent: {

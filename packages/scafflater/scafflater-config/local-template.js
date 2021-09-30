@@ -1,5 +1,5 @@
 const { ScafflaterOptions } = require("../options");
-const Config = require("./config");
+const { Config } = require("./config");
 const path = require("path");
 
 /**

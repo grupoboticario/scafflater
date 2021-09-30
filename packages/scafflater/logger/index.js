@@ -48,4 +48,4 @@ logger.print = (str) => {
   console.log(str);
 };
 
-module.exports = logger;
+module.exports = { logger };

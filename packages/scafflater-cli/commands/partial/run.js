@@ -1,16 +1,16 @@
 const { Command, flags } = require("@oclif/command");
-const { Scafflater } = require("scafflater");
+const {
+  Scafflater,
+  ScafflaterOptions,
+  logger,
+  Config,
+  LocalTemplate,
+  LocalPartial,
+} = require("scafflater");
 const { promptMissingParameters, spinner } = require("../../util");
-const logger = require("scafflater/logger");
 const chalk = require("chalk");
 const path = require("path");
 const inquirer = require("inquirer");
-const { ScafflaterOptions } = require("scafflater/options");
-const Config = require("scafflater/scafflater-config/config");
-const {
-  LocalTemplate,
-  LocalPartial,
-} = require("scafflater/scafflater-config/local-template");
 
 /**
  * A class to relate partial with templates.

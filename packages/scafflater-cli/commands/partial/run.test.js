@@ -1,17 +1,15 @@
 const RunPartialCommand = require("./run");
-const logger = require("scafflater/logger");
-const { Scafflater, TemplateManager, TemplateCache } = require("scafflater");
-const Config = require("scafflater/scafflater-config/config");
 const {
-  LocalTemplate,
-  LocalPartial,
-} = require("scafflater/scafflater-config/local-template");
+  Scafflater,
+  TemplateManager,
+  TemplateCache,
+  logger,
+  Config,
+} = require("scafflater");
 const inquirer = require("inquirer");
 
-jest.mock("scafflater/scafflater-config/config");
 jest.mock("inquirer");
 jest.mock("scafflater");
-jest.mock("scafflater/logger");
 
 describe("ListCommand", () => {
   beforeEach(() => {
@@ -78,18 +76,21 @@ describe("ListCommand", () => {
     });
     templateCache.getTemplate.mockResolvedValue(null);
     templateManager.getTemplateFromSource.mockResolvedValueOnce(
-      new LocalTemplate(
+      new (jest.requireActual("scafflater").LocalTemplate)(
         "/some/template/path",
         "some-template",
         "The template",
         "0.0.1",
         [
-          new LocalPartial(
+          new (jest.requireActual("scafflater").LocalPartial)(
             "/some/partial/path",
             "the-partial",
             "This is an partial"
           ),
-          new LocalPartial("/some/partial/path", "the-partial"),
+          new (jest.requireActual("scafflater").LocalPartial)(
+            "/some/partial/path",
+            "the-partial"
+          ),
         ]
       )
     );
@@ -141,13 +142,13 @@ describe("ListCommand", () => {
       },
     });
     templateCache.getTemplate.mockResolvedValueOnce(
-      new LocalTemplate(
+      new (jest.requireActual("scafflater").LocalTemplate)(
         "/some/template/path",
         "some-template",
         "The template",
         "0.0.1",
         [
-          new LocalPartial(
+          new (jest.requireActual("scafflater").LocalPartial)(
             "/some/partial/path",
             "the-partial",
             "This is an partial"
@@ -204,14 +205,14 @@ describe("ListCommand", () => {
       },
     });
     templateCache.getTemplate.mockResolvedValueOnce(
-      new LocalTemplate(
+      new (jest.requireActual("scafflater").LocalTemplate)(
         "/some/template/path",
         "/some/template/path/.scafflater/scafflater.jsonc",
         "some-template",
         "The template",
         "0.0.1",
         [
-          new LocalPartial(
+          new (jest.requireActual("scafflater").LocalPartial)(
             "/some/partial/path",
             "the-partial",
             "This is an partial"
@@ -220,14 +221,14 @@ describe("ListCommand", () => {
       )
     );
     templateCache.getTemplate.mockResolvedValueOnce(
-      new LocalTemplate(
+      new (jest.requireActual("scafflater").LocalTemplate)(
         "/some/other/template/path",
         "/some/other/template/path/.scafflater/scafflater.jsonc",
         "other-template",
         "The other template",
         "0.0.1",
         [
-          new LocalPartial(
+          new (jest.requireActual("scafflater").LocalPartial)(
             "/some/partial/path",
             "the-partial",
             "This is an partial in another template"
@@ -236,7 +237,7 @@ describe("ListCommand", () => {
       )
     );
     inquirer.prompt = jest.fn().mockResolvedValue({
-      localPartial: new LocalPartial(
+      localPartial: new (jest.requireActual("scafflater").LocalPartial)(
         "/some/partial/path",
         "the-partial",
         "This is an partial in another template"
@@ -284,14 +285,14 @@ describe("ListCommand", () => {
       },
     });
     templateCache.getTemplate.mockResolvedValueOnce(
-      new LocalTemplate(
+      new (jest.requireActual("scafflater").LocalTemplate)(
         "/some/template/path",
         "/some/template/path/.scafflater/scafflater.jsonc",
         "some-template",
         "The template",
         "0.0.1",
         [
-          new LocalPartial(
+          new (jest.requireActual("scafflater").LocalPartial)(
             "/some/partial/path",
             "the-partial",
             "This is an partial"
@@ -300,14 +301,14 @@ describe("ListCommand", () => {
       )
     );
     templateCache.getTemplate.mockResolvedValueOnce(
-      new LocalTemplate(
+      new (jest.requireActual("scafflater").LocalTemplate)(
         "/some/other/template/path",
         "/some/other/template/path/.scafflater/scafflater.jsonc",
         "other-template",
         "The other template",
         "0.0.1",
         [
-          new LocalPartial(
+          new (jest.requireActual("scafflater").LocalPartial)(
             "/some/partial/path",
             "the-partial",
             "This is an partial in another template"
@@ -316,7 +317,7 @@ describe("ListCommand", () => {
       )
     );
     inquirer.prompt = jest.fn().mockResolvedValue({
-      localPartial: new LocalPartial(
+      localPartial: new (jest.requireActual("scafflater").LocalPartial)(
         "/some/partial/path",
         "the-partial",
         "This is an partial in another template"
@@ -365,13 +366,13 @@ describe("ListCommand", () => {
       },
     });
     templateCache.getTemplate.mockResolvedValueOnce(
-      new LocalTemplate(
+      new (jest.requireActual("scafflater").LocalTemplate)(
         "/some/template/path",
         "some-template",
         "The template",
         "0.0.1",
         [
-          new LocalPartial(
+          new (jest.requireActual("scafflater").LocalPartial)(
             "/some/partial/path",
             "the-partial",
             "This is an partial"
@@ -380,13 +381,13 @@ describe("ListCommand", () => {
       )
     );
     templateCache.getTemplate.mockResolvedValueOnce(
-      new LocalTemplate(
+      new (jest.requireActual("scafflater").LocalTemplate)(
         "/some/other/template/path",
         "other-template",
         "The other template",
         "0.0.1",
         [
-          new LocalPartial(
+          new (jest.requireActual("scafflater").LocalPartial)(
             "/some/partial/path",
             "the-partial",
             "This is an partial in another template"
@@ -397,7 +398,7 @@ describe("ListCommand", () => {
     inquirer.prompt = jest.fn().mockResolvedValue({
       availablePartial: {
         templateName: "some-template",
-        ...new LocalPartial(
+        ...new (jest.requireActual("scafflater").LocalPartial)(
           "/some/partial/path",
           "the-partial",
           "This is an partial in another template"

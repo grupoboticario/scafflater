@@ -1,14 +1,7 @@
 const ListCommand = require("./list");
-const logger = require("scafflater/logger");
-const { Scafflater, TemplateManager } = require("scafflater");
-const Config = require("scafflater/scafflater-config/config");
-const {
-  LocalTemplate,
-  LocalPartial,
-} = require("scafflater/scafflater-config/local-template");
+const { Scafflater, TemplateManager, logger, Config } = require("scafflater");
 
 jest.mock("scafflater");
-jest.mock("scafflater/logger");
 
 describe("ListCommand", () => {
   beforeEach(() => {
@@ -52,19 +45,22 @@ describe("ListCommand", () => {
       },
     });
     templateManager.getTemplate.mockResolvedValue(
-      new LocalTemplate(
+      new (jest.requireActual("scafflater").LocalTemplate)(
         "/some/template/path",
         "/some/template/path/.scafflater/scafflater.jsonc",
         "some-template",
         "The template",
         "0.0.1",
         [
-          new LocalPartial(
+          new (jest.requireActual("scafflater").LocalPartial)(
             "/some/partial/path",
             "the-partial",
             "This is an partial"
           ),
-          new LocalPartial("/some/partial/path", "the-partial"),
+          new (jest.requireActual("scafflater").LocalPartial)(
+            "/some/partial/path",
+            "the-partial"
+          ),
         ]
       )
     );
@@ -95,7 +91,7 @@ describe("ListCommand", () => {
       },
     });
     templateManager.getTemplate.mockResolvedValue(
-      new LocalTemplate(
+      new (jest.requireActual("scafflater").LocalTemplate)(
         "/some/template/path",
         "some-template",
         "The template",

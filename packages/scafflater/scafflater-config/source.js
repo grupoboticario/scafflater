@@ -41,4 +41,4 @@ class Source {
   options;
 }
 
-module.exports = Source;
+module.exports = { Source };
