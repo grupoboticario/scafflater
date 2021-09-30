@@ -49,10 +49,6 @@ jobs:
         id: get_version
         uses: battila7/get-version-action@v2
 
-      - name: Install dependencies
-        run: npm install
-        working-directory: ${{env.working-diretory}}
-
       - name: Bumping package versions
         run: |
           npm version ${{ steps.get_version.outputs.version-without-v }} --no-git-tag-version && \
@@ -62,6 +58,10 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ${{env.working-diretory}}
 
       - name: Generate Types
         run: npm run types
@@ -119,18 +119,6 @@ jobs:
         id: get_version
         uses: battila7/get-version-action@v2
 
-      - name: Install dependencies
-        run: npm install
-        working-directory: ./packages/scafflater-cli
-
-      - name: Install scafflater
-        run: npm install scafflater@${{ steps.get_version.outputs.version }}
-        working-directory: ./packages/scafflater-cli
-
-      - name: Cat package.json
-        run: cat package.json
-        working-directory: ./packages/scafflater-cli
-
       - name: Bumping package versions
         run: |
           npm version ${{ steps.get_version.outputs.version-without-v }} --no-git-tag-version && \
@@ -140,6 +128,14 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./packages/scafflater-cli
+
+      - name: Install scafflater
+        run: npm install scafflater@${{ steps.get_version.outputs.version }}
+        working-directory: ./packages/scafflater-cli
 
       - name: NPM Authentication
         run: echo //registry.npmjs.org/:_authToken=${{secrets.NPM_AUTH_TOKEN}} > .npmrc
