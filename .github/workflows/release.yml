@@ -86,8 +86,6 @@ jobs:
 
     name: "Release Scafflater Cli"
     runs-on: ubuntu-latest
-    env:
-      working-diretory: ./packages/scafflater-cli
 
     steps:
       - uses: actions/checkout@v2
@@ -123,27 +121,31 @@ jobs:
 
       - name: Install dependencies
         run: npm install && npm install scafflater
-        working-directory: ${{env.working-diretory}}
+        working-directory: ./packages/scafflater-cli
+
+      - name: Cat package.json
+        run: cat package.json
+        working-directory: ./packages/scafflater-cli
 
       - name: Bumping package versions
         run: |
           npm version ${{ steps.get_version.outputs.version-without-v }} --no-git-tag-version && \
           git add . && \
           git commit -m"Bump Scafflater ${{ steps.get_version.outputs.version }}"
-        working-directory: ${{env.working-diretory}}
+        working-directory: ./packages/scafflater-cli
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: NPM Authentication
         run: echo //registry.npmjs.org/:_authToken=${{secrets.NPM_AUTH_TOKEN}} > .npmrc
-        working-directory: ${{env.working-diretory}}
+        working-directory: ./packages/scafflater-cli
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publishing packages
         run: npm publish
-        working-directory: ${{env.working-diretory}}
+        working-directory: ./packages/scafflater-cli
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
