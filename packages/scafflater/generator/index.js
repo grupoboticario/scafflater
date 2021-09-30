@@ -48,8 +48,6 @@ class Generator {
   constructor(context) {
     this.context = context;
 
-    this.context.mode = "debug";
-
     this.context.targetPath = path.resolve(context.targetPath);
     this.ignoredPatterns = [
       `**/${this.context.options.scfFileName}`,
