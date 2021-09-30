@@ -12,7 +12,8 @@
     "chalk": "^4.1.1",
     "cliui": "^7.0.4",
     "inquirer": "^8.1.1",
-    "ora": "^5.4.1"
+    "ora": "^5.4.1",
+    "scafflater": "file:../scafflater"
   },
   "files": [
     "/bin",
