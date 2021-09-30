@@ -120,7 +120,11 @@ jobs:
         uses: battila7/get-version-action@v2
 
       - name: Install dependencies
-        run: npm install && npm install scafflater
+        run: npm install
+        working-directory: ./packages/scafflater-cli
+
+      - name: Install scafflater
+        run: npm install scafflater
         working-directory: ./packages/scafflater-cli
 
       - name: Cat package.json
