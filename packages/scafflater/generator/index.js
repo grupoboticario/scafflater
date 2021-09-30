@@ -179,14 +179,11 @@ class Generator {
         const originFileContent = await fsUtil.readFileContent(originFilePath);
 
         const processors = _ctx.options.processors.map((p) => {
-          if (
-            this.extensions[p] &&
-            this.extensions[p] instanceof Processors.Processor
-          ) {
-            return this.extensions[p];
+          if (this.extensions[p]) {
+            return new this.extensions[p]();
           }
           if (Processors.Processor[p]) {
-            return Processors.Processor[p];
+            return new Processors.Processor[p]();
           }
           return new (require(p))();
         });
@@ -197,14 +194,11 @@ class Generator {
         );
 
         const appenders = _ctx.options.appenders.map((a) => {
-          if (
-            this.extensions[a] &&
-            this.extensions[a] instanceof Appenders.Appender
-          ) {
-            return this.extensions[a];
+          if (this.extensions[a]) {
+            return new this.extensions[a]();
           }
           if (Appenders.Appender[a]) {
-            return Appenders.Appender[a];
+            return new Appenders.Appender[a]();
           }
           return new (require(a))();
         });
