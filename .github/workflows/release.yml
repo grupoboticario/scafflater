@@ -135,7 +135,7 @@ jobs:
         run: |
           npm version ${{ steps.get_version.outputs.version-without-v }} --no-git-tag-version && \
           git add . && \
-          git commit -m"Bump Scafflater ${{ steps.get_version.outputs.version }}
+          git commit -m"Bump Scafflater ${{ steps.get_version.outputs.version }}"
         working-directory: ./packages/scafflater-cli
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
