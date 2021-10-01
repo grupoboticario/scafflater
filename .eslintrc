@@ -22,7 +22,13 @@
     "requireConfigFile": false
   },
   "rules": {
-    "space-before-function-parent": 0
+    "space-before-function-parent": 0,
+    "node/no-extraneous-require": [
+      "error",
+      {
+        "allowModules": ["scafflater"]
+      }
+    ]
   },
   "settings": {
     "jsdoc": {

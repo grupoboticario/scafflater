@@ -6,14 +6,13 @@
   "bin": "./bin/run",
   "bugs": "https://github.com/chicoribas/scafflater/issues",
   "dependencies": {
-    "@oclif/command": "^1.8.0",
-    "@oclif/config": "^1.17.0",
-    "@oclif/plugin-help": "^3.2.2",
-    "chalk": "^4.1.1",
-    "cliui": "^7.0.4",
-    "inquirer": "^8.1.1",
-    "ora": "^5.4.1",
-    "scafflater": "file:../scafflater"
+    "@oclif/command": "1.8.0",
+    "@oclif/config": "1.17.0",
+    "@oclif/plugin-help": "3.2.2",
+    "chalk": "4.1.1",
+    "cliui": "7.0.4",
+    "inquirer": "8.1.1",
+    "ora": "5.4.1"
   },
   "files": [
     "/bin",
