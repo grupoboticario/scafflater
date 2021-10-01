@@ -134,7 +134,7 @@ jobs:
         working-directory: ./packages/scafflater-cli
 
       - name: Install scafflater
-        run: npm install scafflater@$={{ steps.get_version.outputs.version }}
+        run: npm install scafflater@=${{ steps.get_version.outputs.version }}
         working-directory: ./packages/scafflater-cli
 
       - name: NPM Authentication
