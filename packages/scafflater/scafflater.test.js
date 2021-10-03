@@ -75,6 +75,7 @@ describe("Scafflater", () => {
       await scafflater.init(
         "some/template/source/key",
         parameters,
+        "last",
         "/some/target"
       );
 
@@ -135,6 +136,7 @@ describe("Scafflater", () => {
       await scafflater.init(
         "some/template/source/key",
         parameters,
+        "last",
         "/some/target"
       );
 

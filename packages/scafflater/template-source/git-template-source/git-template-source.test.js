@@ -62,7 +62,7 @@ describe("getTemplate", () => {
     await expect(
       gitTemplateSource.getTemplate(
         "https://github.com/github/path",
-        "latest",
+        "last",
         "/some/virtual/folder"
       )
     ).rejects.toBeInstanceOf(ScafflaterFileNotFoundError);
@@ -80,7 +80,7 @@ describe("getTemplate", () => {
     await expect(
       new GitTemplateSource().getTemplate(
         "https://github.com/github/path",
-        "latest",
+        "last",
         "/some/virtual/folder"
       )
     ).rejects.toThrow(TemplateDefinitionNotFound);
@@ -153,7 +153,7 @@ describe("getTemplate", () => {
     // ACT
     const out = await gitTemplateSource.getTemplate(
       repo,
-      "latest",
+      "last",
       virtualFolder
     );
 
@@ -215,7 +215,7 @@ describe("getTemplate", () => {
     // ACT
     const out = await gitTemplateSource.getTemplate(
       repo,
-      "latest",
+      "last",
       virtualFolder
     );
 
@@ -316,7 +316,7 @@ describe("getTemplate", () => {
           [{ name: "some-parameter" }]
         ),
       ]);
-    let cmd = "";
+    const cmd = "";
     jest.spyOn(util, "promisify").mockReturnValue((command) => {
       if (command.startsWith('git ls-remote --tags --sort="v:refname"')) {
         return {

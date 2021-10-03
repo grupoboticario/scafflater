@@ -68,6 +68,7 @@ describe("InitCommand", () => {
     expect(mockedScafflater.init).toHaveBeenCalledWith(
       "https://github.com/some/repo",
       {},
+      "last",
       "./"
     );
     expect(scafflater.logger.log).toHaveBeenCalledWith(
