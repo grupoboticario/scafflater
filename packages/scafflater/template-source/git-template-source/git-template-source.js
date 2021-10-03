@@ -16,7 +16,9 @@ class GitTemplateSource extends LocalFolderTemplateSource {
    * @returns {boolean} Returns true if the key is valid
    */
   static isValidSourceKey(sourceKey) {
-    return /https?:\/\/(www.)?github.com/.test(sourceKey);
+    return /((https?:\/\/(www.)?github.com\/)|(git@github.com:))([^/]+)\/([^/]+)/.test(
+      sourceKey
+    );
   }
 
   /**
