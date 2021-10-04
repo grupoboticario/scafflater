@@ -142,7 +142,7 @@ describe("getTemplate", () => {
     ).toBeTruthy();
     expect(
       GithubClientTemplateSource.isValidSourceKey(
-        "http://github.com/some-org/some-repo"
+        "git@github.com:some-org/some-repo.git"
       )
     ).toBeTruthy();
     expect(

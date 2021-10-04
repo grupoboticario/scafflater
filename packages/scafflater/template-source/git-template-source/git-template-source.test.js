@@ -98,6 +98,11 @@ describe("getTemplate", () => {
     ).toBeTruthy();
     expect(
       GitTemplateSource.isValidSourceKey(
+        "git@github.com:some-org/some-repo.git"
+      )
+    ).toBeTruthy();
+    expect(
+      GitTemplateSource.isValidSourceKey(
         "https://dev.azure.com/some-org/some-repo"
       )
     ).toBeFalsy();

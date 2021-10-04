@@ -12,6 +12,9 @@ const {
   GithubClientUserNotLoggedError,
 } = require("./errors");
 
+const repoRegex =
+  /(https:\/\/github.com\/|git@github.com:|^)(?<org>[a-z0-9_\-.]+)\/(?<repo>[a-z0-9_\-.]+)/;
+
 class GithubClientTemplateSource extends LocalFolderTemplateSource {
   /**
    * Checks if the sourceKey is valid for this TemplateSource
@@ -20,7 +23,7 @@ class GithubClientTemplateSource extends LocalFolderTemplateSource {
    * @returns {boolean} Returns true if the key is valid
    */
   static isValidSourceKey(sourceKey) {
-    return /https?:\/\/(www.)?github.com/.test(sourceKey);
+    return repoRegex.test(sourceKey);
   }
 
   /**
@@ -39,13 +42,11 @@ class GithubClientTemplateSource extends LocalFolderTemplateSource {
    * @returns {object} An object containing the org and repo names
    */
   static parseRepoAddress(repo) {
-    const re =
-      /^(https:\/\/github.com\/|git@github.com:)?(?<org>[^/]+)\/(?<repo>[^/?\s.]+)/g;
-    const match = re.exec(repo);
+    const match = repoRegex.exec(repo);
 
     return {
       org: match.groups.org,
-      repo: match.groups.repo,
+      repo: match.groups.repo.replace(/\.git$/, ""),
     };
   }
 
