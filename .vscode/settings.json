@@ -28,5 +28,5 @@
     "source.fixAll.eslint": true
   },
   "eslint.validate": ["javascript"],
-  "jest.jestCommandLine": "jest"
+  "jest.jestCommandLine": "npm test --"
 }

@@ -26,6 +26,25 @@
         "update-readme",
         "-o=/Users/ribasf//Documents/GitHub/personal/scafflater-serverless-aws-templatet"
       ]
+    },
+    {
+      "type": "node",
+      "name": "vscode-jest-tests",
+      "request": "launch",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
+      "program": "${workspaceFolder}/jest",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "--detectOpenHandles",
+        "--collectCoverage",
+        "--runInBand",
+        "--verbose",
+        "--forceExit",
+        "--runInBand",
+        "--watchAll=false"
+      ]
     }
   ]
 }
