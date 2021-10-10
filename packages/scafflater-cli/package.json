@@ -39,6 +39,11 @@
     "plugins": [
       "@oclif/plugin-help"
     ],
+    "hooks": {
+      "init": [
+        "./hooks/print-header"
+      ]
+    },
     "topics": {
       "partial": {
         "description": "Partial template operations"
