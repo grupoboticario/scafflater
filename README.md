@@ -62,4 +62,5 @@ Scafflater can be used as a [package](https://www.npmjs.com/package/scafflater) 
 Here are some related projects
 
 [Awesome README](https://github.com/matiassingers/awesome-readme)
+
 [Ascii Art](https://patorjk.com/software/taag/#p=display&h=0&v=0&f=Big&t=Scafflater)
