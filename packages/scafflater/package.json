@@ -35,7 +35,7 @@
     "fs-extra": "10.0.0",
     "glob": "7.1.7",
     "handlebars": "4.7.7",
-    "ignore": "4.0.6",
+    "ignore": "5.1.9",
     "isbinaryfile": "4.0.8",
     "isomorphic-git": "1.8.3",
     "js-yaml": "4.1.0",
