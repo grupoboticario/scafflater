@@ -28,7 +28,7 @@ jobs:
           git config --global user.email '${{ github.actor }}@users.noreply.github.com'
 
       - name: Setup node 15.x
-        uses: actions/setup-node@v2.4.1
+        uses: actions/setup-node@v2.5.0
         with:
           node-version: 15.x
 
@@ -98,7 +98,7 @@ jobs:
           git config --global user.email '${{ github.actor }}@users.noreply.github.com'
 
       - name: Setup node 15.x
-        uses: actions/setup-node@v2.4.1
+        uses: actions/setup-node@v2.5.0
         with:
           node-version: 15.x
 
