@@ -71,6 +71,20 @@ class ScafflaterOptions {
 
   processors = ["./processors/handlebars-processor"];
   appenders = ["./appenders/region-appender", "./appenders/appender"];
+  /**
+   * Array Append Strategy. Available for yaml and json appenders.
+   *
+   * @description Action to include generated code on target:
+   *  - combine: The array will be combine item per item (Default)
+   *  - concat: The arrays will be concatenated
+   *  - replace: The source array will replace the target array
+   *  - ignore: If the destination exists and is not empty, will ignore the source array.
+   *  - key<keyName>: the parameter 'keyName' will be used as item key to merge arrays. The object of source will replace the object with the same key value on target.
+   *
+   * Available for: File Content
+   * @type {('combine'|'concat'|'replace'|'ignore'|'key<keyName>')}
+   */
+  arrayAppendStrategy = "combine";
 
   scfFolderName = ".scafflater";
   scfFileName = "scafflater.jsonc";

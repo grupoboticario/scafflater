@@ -1,5 +1,6 @@
 const YamlAppender = require("./yaml-appender");
 const yaml = require("js-yaml");
+const { ScafflaterOptions } = require("../../options");
 
 const destYaml = `apiVersion: backstage.io/v1alpha1
 kind: Location
@@ -21,7 +22,11 @@ metadata:
   const yamlAppender = new YamlAppender();
 
   // ACT
-  const result = await yamlAppender.append({}, srcYaml, destYaml);
+  const result = await yamlAppender.append(
+    { options: new ScafflaterOptions() },
+    srcYaml,
+    destYaml
+  );
 
   // ASSERT
   expect(result.result).toBe(`apiVersion: backstage.io/v1alpha1
@@ -47,7 +52,11 @@ spec:
   const yamlAppender = new YamlAppender();
 
   // ACT
-  const result = await yamlAppender.append({}, srcYaml, destYaml);
+  const result = await yamlAppender.append(
+    { options: new ScafflaterOptions() },
+    srcYaml,
+    destYaml
+  );
 
   // ASSERT
   expect(result.result).toBe(`apiVersion: backstage.io/v1alpha1
@@ -111,7 +120,11 @@ spec:
   const yamlAppender = new YamlAppender();
 
   // ACT
-  const result = await yamlAppender.append({}, srcYaml, destinYaml);
+  const result = await yamlAppender.append(
+    { options: new ScafflaterOptions() },
+    srcYaml,
+    destinYaml
+  );
 
   // ASSERT
   expect(yaml.load(result.result)).toStrictEqual(

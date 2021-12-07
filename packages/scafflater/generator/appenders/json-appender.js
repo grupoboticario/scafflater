@@ -1,5 +1,6 @@
 const Appender = require("./appender");
 const merge = require("deepmerge");
+const arrayMerge = require("./utils/array-merger");
 
 class JsonAppender extends Appender {
   /**
@@ -16,7 +17,10 @@ class JsonAppender extends Appender {
         let src = JSON.parse(context.options.stripConfig(srcStr));
         const dst = destStr ? JSON.parse(destStr) : {};
 
-        src = merge(dst, src);
+        src = merge(dst, src, {
+          arrayMerge,
+          strategy: context.options.arrayAppendStrategy,
+        });
 
         resolve({
           context,

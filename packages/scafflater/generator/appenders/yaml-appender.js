@@ -1,23 +1,35 @@
 const Appender = require("./appender");
 const yaml = require("js-yaml");
 const merge = require("deepmerge");
-
-const combineMerge = (target, source, options) => {
-  const destination = target.slice();
-
-  source.forEach((item, index) => {
-    if (typeof destination[index] === "undefined") {
-      destination[index] = options.cloneUnlessOtherwiseSpecified(item, options);
-    } else if (options.isMergeableObject(item)) {
-      destination[index] = merge(target[index], item, options);
-    } else if (target.indexOf(item) === -1) {
-      destination.push(item);
-    }
-  });
-  return destination;
-};
+const arrayMerge = require("./utils/array-merger");
 
 class YamlAppender extends Appender {
+  /**
+   * Combine arrays
+   *
+   * @param {object[]} target The target array
+   * @param {object[]} source Source array
+   * @param {object} options options
+   * @returns {object[]} The result array
+   */
+  combineMerge(target, source, options) {
+    const destination = target.slice();
+
+    source.forEach((item, index) => {
+      if (typeof destination[index] === "undefined") {
+        destination[index] = options.cloneUnlessOtherwiseSpecified(
+          item,
+          options
+        );
+      } else if (options.isMergeableObject(item)) {
+        destination[index] = merge(target[index], item, options);
+      } else if (target.indexOf(item) === -1) {
+        destination.push(item);
+      }
+    });
+    return destination;
+  }
+
   /**
    * Process the input.
    *
@@ -32,7 +44,10 @@ class YamlAppender extends Appender {
         let src = yaml.load(srcStr);
         const dst = yaml.load(destStr);
 
-        src = merge(dst, src, { arrayMerge: combineMerge });
+        src = merge(dst, src, {
+          arrayMerge,
+          strategy: context.options.arrayAppendStrategy,
+        });
 
         resolve({
           context,
