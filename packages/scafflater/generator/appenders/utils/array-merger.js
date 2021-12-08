@@ -56,7 +56,10 @@ const keyMerge = (target, source, options) => {
   const destination = target.slice();
 
   source.forEach((item) => {
-    if (!item[keyName]) return;
+    if (!item[keyName]) {
+      destination.push(item);
+      return;
+    }
 
     const index = destination.findIndex((e) => e[keyName] === item[keyName]);
 
