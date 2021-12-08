@@ -11,6 +11,7 @@ class ListPartialCommand extends Command {
 
       const options = new ScafflaterOptions({
         cacheStorage: listFlags.cache,
+        source: listFlags.templateSource,
       });
       const scafflater = new Scafflater(options);
 
@@ -79,6 +80,7 @@ ListPartialCommand.description = `Lists available partials in template
 `;
 
 const caches = ["homeDir", "tempDir"];
+const templatesSource = ["git", "githubClient", "isomorphicGit", "localFolder"];
 ListPartialCommand.flags = {
   output: flags.string({
     char: "o",
@@ -90,6 +92,12 @@ ListPartialCommand.flags = {
     description: "The cache strategy",
     default: "homeDir",
     options: caches,
+  }),
+  templateSource: flags.string({
+    char: "s",
+    description: "Template source indicating how the template is fetched",
+    default: "git",
+    options: templatesSource,
   }),
 };
 

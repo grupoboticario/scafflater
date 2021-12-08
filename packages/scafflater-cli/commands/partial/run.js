@@ -37,6 +37,7 @@ class RunPartialCommand extends Command {
 
       const options = new ScafflaterOptions({
         cacheStorage: runFlags.cache,
+        source: runFlags.templateSource,
       });
       const scafflater = new Scafflater(options);
 
@@ -195,6 +196,7 @@ RunPartialCommand.args = [
 ];
 
 const caches = ["homeDir", "tempDir"];
+const templatesSource = ["git", "githubClient", "isomorphicGit", "localFolder"];
 RunPartialCommand.flags = {
   template: flags.string({
     char: "t",
@@ -216,6 +218,12 @@ RunPartialCommand.flags = {
     description: "The parameters to init template",
     default: [],
     multiple: true,
+  }),
+  templateSource: flags.string({
+    char: "s",
+    description: "Template source indicating how the template is fetched",
+    default: "git",
+    options: templatesSource,
   }),
 };
 
