@@ -38,7 +38,7 @@
     "eslint-plugin-prettier": "3.4.0",
     "eslint-plugin-promise": "5.1.0",
     "fs-extra": "10.0.0",
-    "globby": "11.0.4",
+    "globby": "13.0.0",
     "jest": "27.0.4",
     "prettier": "2.3.2"
   }
