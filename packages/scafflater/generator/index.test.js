@@ -586,9 +586,8 @@ test("Strip config", async () => {
     "/target/path/folder-name/file-name.xml"
   );
   expect(fsUtil.saveFile.mock.calls[0][1])
-    .toBe(`<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+    .toBe(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <test>
     <prop>a sample test</prop>
-</test>
-`);
+</test>`);
 });
