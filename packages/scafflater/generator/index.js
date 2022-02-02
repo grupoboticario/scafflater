@@ -212,7 +212,10 @@ class Generator {
         result = _ctx.options.stripConfig(result);
 
         try {
-          result = prettier.format(result, { filepath: targetFilePath });
+          result = prettier.format(result, {
+            filepath: targetFilePath,
+            plugins: ["@prettier/plugin-xml"],
+          });
         } catch (error) {
           // Just to quiet prettier errors
         }

@@ -205,7 +205,7 @@ class ScafflaterOptions {
    */
   stripConfig(str) {
     const configRegex = new RegExp(
-      `.*${this.optionMarker}\\s*(?<json>{.*}).*`,
+      `.*${this.optionMarker}\\s*(?<json>{.*}).*\\n?`,
       "gi"
     );
     return str.replace(configRegex, "");

@@ -512,3 +512,83 @@ a sample test
     expect(fsUtil.saveFile.mock.calls[0][1]).toBe("a sample test");
   });
 });
+
+test("Strip config", async () => {
+  // ARRANGE
+  fsUtil.getDirTreeSync.mockReturnValue({
+    path: "the-partial-folder", // must be ignored
+    name: "the-partial-folder",
+    size: 200,
+    type: "directory",
+    children: [
+      {
+        path: "{{parameters.folderName}}",
+        name: "{{parameters.folderName}}",
+        size: 200,
+        type: "directory",
+        children: [
+          {
+            path: "{{parameters.folderName}}/{{parameters.fileName}}.xml",
+            name: "{{parameters.fileName}}.xml",
+            size: 100,
+            type: "file",
+            extension: ".txt",
+          },
+        ],
+      },
+    ],
+  });
+  fsUtil.readFileContent.mockReturnValue(
+    `# @scf-option  { "appenders": ["./appenders/json-appender"] }
+# @scf-option { "option": "option-value" }
+# @scf-option { "option2": "option2-value" }
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<test>
+    <prop>{{parameters.test}}</prop>
+</test>`
+  );
+  const ctx = {
+    mode: "debug",
+    originPath: "/source/path",
+    partial: {
+      name: "_init",
+      type: "init",
+    },
+    targetPath: "/target/path",
+    parameters: {
+      test: "a sample test",
+      folderName: "folder-name",
+      fileName: "file-name",
+    },
+    templatePath: "/template/path",
+    template: {
+      name: "test-template",
+      type: "template",
+      version: "0.0.1",
+    },
+    options: new ScafflaterOptions({ annotate: false }),
+    helpersPath: "./the-hbs-helpers",
+  };
+  fsUtil.pathExists.mockImplementation((path) => {
+    if (path.startsWith(ctx.targetPath)) return false;
+  });
+  fsUtil.loadScriptsAsObjects.mockResolvedValue([]);
+  fsUtil.listFilesByExtensionDeeply.mockResolvedValue([]);
+
+  const generator = new Generator(ctx);
+
+  // ACT
+  await generator.generate();
+
+  // ASSERT
+  expect(fsUtil.saveFile.mock.calls.length).toBe(1);
+  expect(fsUtil.saveFile.mock.calls[0][0]).toBe(
+    "/target/path/folder-name/file-name.xml"
+  );
+  expect(fsUtil.saveFile.mock.calls[0][1])
+    .toBe(`<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<test>
+    <prop>a sample test</prop>
+</test>
+`);
+});
