@@ -77,15 +77,15 @@ const keyMerge = (target, source, options) => {
 /**
  * Merge Arrays
  *
- * @param target Target Array
- * @param source Source Array
- * @param options options.strategy: Action to include generated code on target:
+ * @param {object[]} target Target Array
+ * @param {object[]} source Source Array
+ * @param {object} options options.strategy: Action to include generated code on target:
  *  - combine: The array will be combine item per item (Default)
  *  - concat: The arrays will be concatenated
  *  - replace: The source array will replace the target array
  *  - ignore: If the destination exists and is not empty, will ignore the source array.
  *  - key<keyName>: will use keyName as item key to merge arrays. The object of source will replace the object with the same key value on target.
- * @returns {object[]}
+ * @returns {object[]} The merged array
  */
 const arrayMerge = (target, source, options) => {
   switch (options.strategy) {

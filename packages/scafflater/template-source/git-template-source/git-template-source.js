@@ -105,7 +105,6 @@ class GitTemplateSource extends LocalFolderTemplateSource {
    *
    * @param {string} sourceKey - The source key of template. Will vary, depending on template source
    * @param {string} version - The template version
-   *
    * @returns {Promise<string>} The string to be fetched
    */
   async resolveVersion(sourceKey, version) {
@@ -135,7 +134,6 @@ class GitTemplateSource extends LocalFolderTemplateSource {
    * Gets the last version.
    *
    * @param {string} sourceKey - The source key of template. Will vary, depending on template source
-   * @param {string} version - The template version
    * @returns {Promise<string>} Returns the string with the last version
    * @throws {NoVersionAvailableError} Theres no version available for this sourceKey
    */
@@ -163,7 +161,7 @@ class GitTemplateSource extends LocalFolderTemplateSource {
    *
    * @param {string} sourceKey - The source key of template. Will vary, depending on template source
    * @param {string} version - The template version
-   * @returns {Promise<boolean>}
+   * @returns {Promise<boolean>} true if version is available
    * @throws {InvalidArgumentError} The version must be in semver pattern
    */
   async isVersionAvailable(sourceKey, version) {

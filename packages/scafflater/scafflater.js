@@ -77,8 +77,8 @@ class Scafflater {
    * Initializes the basic structure for scafflater template.
    *
    * @param {string} sourceKey - Source Template key
-   * @param {string} templateVersion - Template version
    * @param {object} parameters - Parameters used to generate the template
+   * @param {string} templateVersion - Template version
    * @param {string} targetPath - Path where the results must be placed
    * @returns {Promise<void>}
    */
@@ -146,7 +146,7 @@ class Scafflater {
     targetConfig.templates.push(
       new RanTemplate(
         localTemplate.name,
-        localTemplate.version,
+        templateVersion === "last" ? localTemplate.version : templateVersion,
         this.templateManager.templateSource.getSource(sourceKey),
         maskedParameters
       )

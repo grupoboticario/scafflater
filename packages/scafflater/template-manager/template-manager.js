@@ -57,7 +57,10 @@ class TemplateManager {
       sourceKey,
       version
     );
-    return this.templateCache.storeTemplate(tempTemplateFolder.folderPath);
+    return this.templateCache.storeTemplate(
+      tempTemplateFolder.folderPath,
+      version === "last" ? null : version
+    );
   }
 
   /**

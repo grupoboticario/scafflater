@@ -53,9 +53,10 @@ class TemplateCache {
    * Stores the template.
    *
    * @param {string} path - Path of template
+   * @param {string} version - Template version
    * @returns {Promise<LocalTemplate>} The cache template path
    */
-  async storeTemplate(path) {
+  async storeTemplate(path, version) {
     throw new Error("Method 'storeTemplate()' must be implemented.");
   }
 

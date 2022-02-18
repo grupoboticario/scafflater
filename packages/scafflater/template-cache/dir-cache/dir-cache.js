@@ -54,14 +54,15 @@ class DirCache extends TemplateCache {
    * Stores the template in the local file system.
    *
    * @param {string} templatePath - Path of template
+   * @param {string} templateVersion - Template version
    * @returns {Promise<string>} The path where template was cached.
    */
-  async storeTemplate(templatePath) {
+  async storeTemplate(templatePath, templateVersion = null) {
     const templateConfig = (await LocalTemplate.loadFromPath(templatePath))[0];
     const cachePath = path.join(
       this.storagePath,
       templateConfig.name,
-      templateConfig.version
+      templateVersion || templateConfig.version
     );
     await fs.ensureDir(cachePath);
     await fs.copy(templatePath, cachePath);

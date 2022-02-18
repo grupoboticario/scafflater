@@ -316,7 +316,6 @@ describe("getTemplate", () => {
           [{ name: "some-parameter" }]
         ),
       ]);
-    const cmd = "";
     jest.spyOn(util, "promisify").mockReturnValue((command) => {
       if (command.startsWith('git ls-remote --tags --sort="v:refname"')) {
         return {

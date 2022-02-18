@@ -85,7 +85,7 @@ class TemplateSource {
    *
    * @param {string} sourceKey - The source key of template. Will vary, depending on template source
    * @param {string} version - The template version
-   * @returns {Promise<boolean>}
+   * @returns {Promise<boolean>} true if the version is available
    */
   async isVersionAvailable(sourceKey, version) {
     throw new Error("Method 'isVersionAvaiable()' must be implemented.");
