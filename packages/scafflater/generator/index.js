@@ -101,11 +101,14 @@ class Generator {
     }
 
     if (tree.type === "directory") {
+      const _ctx = {
+        ...this.context,
+        ...{
+          options: await this.loadOptions(tree, this.context),
+        },
+      };
       for (const child of tree.children) {
-        await this.promisesHelper.exec(
-          this.context,
-          this._generate(this.context, child)
-        );
+        await this.promisesHelper.exec(_ctx, this._generate(_ctx, child));
       }
     }
 
