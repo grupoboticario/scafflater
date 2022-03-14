@@ -109,6 +109,7 @@ describe("getTemplate", () => {
     });
     const promise = githuClientTemplateSource.getTemplate(
       "https://github.com/github/path",
+      null,
       "/some/virtual/folder"
     );
 
@@ -127,6 +128,7 @@ describe("getTemplate", () => {
     });
     const promise = githubClientTemplateSource.getTemplate(
       "https://github.com/github/path",
+      null,
       "/some/virtual/folder"
     );
 
@@ -195,7 +197,11 @@ describe("getTemplate", () => {
     });
 
     // ACT
-    const promise = githubClientTemplateSource.getTemplate(repo, virtualFolder);
+    const promise = githubClientTemplateSource.getTemplate(
+      repo,
+      null,
+      virtualFolder
+    );
     const out = await promise;
 
     // ASSERT

@@ -37,9 +37,6 @@ class LocalFolderTemplateSource extends TemplateSource {
    * @returns {Promise<LocalTemplate>} The local template
    */
   async getTemplate(sourceKey, version = null, outputDir = null) {
-    if (version) {
-      console.warn("Versions are ignored for local template sources");
-    }
     const out = outputDir || (await fsUtil.getTempFolder());
 
     const _this = this;

@@ -67,10 +67,12 @@ class IsomorphicGitTemplateSource extends LocalFolderTemplateSource {
    * Gets the template and copies it in a local folder.
    *
    * @param {string} sourceKey - The source key (<OWNER>/<REPOSITORY>) of template.
+   * @param {string} version - The template version.
    * @param {?string} outputDir - Folder where template must be copied. If null, a temp folder will be used.
    * @returns {Promise<LocalTemplate>} The local template
    */
-  async getTemplate(sourceKey, outputDir = null) {
+  async getTemplate(sourceKey, version = "head", outputDir = null) {
+    // @TODO Implement version control
     const pathToClone = await fsUtil.getTempFolder();
     await clone(
       sourceKey,
@@ -80,7 +82,7 @@ class IsomorphicGitTemplateSource extends LocalFolderTemplateSource {
     );
 
     try {
-      return await super.getTemplate(pathToClone, outputDir);
+      return await super.getTemplate(pathToClone, version, outputDir);
     } catch (error) {
       if (error instanceof ScafflaterFileNotFoundError) {
         throw new ScafflaterFileNotFoundError(`${sourceKey}/.scafflater`);

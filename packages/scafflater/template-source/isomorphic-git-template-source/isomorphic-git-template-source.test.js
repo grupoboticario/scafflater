@@ -25,6 +25,7 @@ describe("getTemplate", () => {
     await expect(
       isomorphicGitTemplateSource.getTemplate(
         "http://some/github/path",
+        null,
         "/some/virtual/folder"
       )
     ).rejects.toThrow(ScafflaterFileNotFoundError);
@@ -40,6 +41,7 @@ describe("getTemplate", () => {
     await expect(
       isomorphicGitTemplateSource.getTemplate(
         "http://some/github/path",
+        null,
         "/some/virtual/folder"
       )
     ).rejects.toThrow(TemplateDefinitionNotFound);
