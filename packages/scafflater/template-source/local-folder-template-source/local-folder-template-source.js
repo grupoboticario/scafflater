@@ -32,10 +32,14 @@ class LocalFolderTemplateSource extends TemplateSource {
    * Gets the template and copies it in a local folder.
    *
    * @param {string} sourceKey - The source key (<OWNER>/<REPOSITORY>) of template.
+   * @param {string} version - The template version. This parameter is ignored for local template sources.
    * @param {?string} outputDir - Folder where template must be copied. If null, a temp folder will be used.
    * @returns {Promise<LocalTemplate>} The local template
    */
-  async getTemplate(sourceKey, outputDir = null) {
+  async getTemplate(sourceKey, version = null, outputDir = null) {
+    if (version) {
+      console.warn("Versions are ignored for local template sources");
+    }
     const out = outputDir || (await fsUtil.getTempFolder());
 
     const _this = this;
