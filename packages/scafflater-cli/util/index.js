@@ -1,6 +1,12 @@
 const ora = require("ora");
 const chalk = require("chalk");
 const Prompt = require("./prompt");
+const {
+  ParameterConfig,
+} = require("@scafflater/scafflater/scafflater-config/parameter-config");
+const {
+  PersistedParameter,
+} = require("@scafflater/scafflater/scafflater-config/persisted-parameter");
 
 const parseParametersFlags = (parameters) => {
   const result = {};
@@ -18,19 +24,42 @@ const parseParametersFlags = (parameters) => {
   return result;
 };
 
-const promptMissingParameters = async (parameterFlags, requireParameters) => {
+/**
+ *
+ * @param {string[]} parameterFlags Parameters received as parameters using command flags
+ * @param {ParameterConfig[]} requiredParameters Required parameters
+ * @param {?PersistedParameter[]} globalParameters Persisted global parameters
+ * @param {?PersistedParameter[]} templateParameters Persisted template parameters
+ * @returns {object} An object with all parameters prompted and loaded parameters
+ */
+const promptMissingParameters = async (
+  parameterFlags,
+  requiredParameters,
+  globalParameters = [],
+  templateParameters = []
+) => {
   const flags = parseParametersFlags(parameterFlags);
-  if (!requireParameters) return flags;
+  if (!requiredParameters) return flags;
 
   const missingParameters = [];
-  for (const rp of requireParameters) {
-    if (!flags[rp.name]) missingParameters.push(rp);
+  for (const rp of requiredParameters) {
+    if (
+      !flags[rp.name] &&
+      globalParameters.findIndex((p) => p.name === rp.name) < 0 &&
+      templateParameters.findIndex((p) => p.name === rp.name) < 0
+    )
+      missingParameters.push(rp);
   }
 
   const prompt =
     missingParameters.length > 0 ? await Prompt.prompt(missingParameters) : {};
 
-  return { ...flags, ...prompt };
+  return {
+    ...PersistedParameter.reduceParameters(globalParameters),
+    ...PersistedParameter.reduceParameters(templateParameters),
+    ...flags,
+    ...prompt,
+  };
 };
 
 const spinner = async (message, f) => {

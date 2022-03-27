@@ -1,6 +1,8 @@
 const { ScafflaterOptions } = require("../options");
 const { Config } = require("./config");
 const path = require("path");
+const { ParameterConfig } = require("./parameter-config");
+const PartialNotFoundError = require("../errors/partial-not-found-error");
 
 /**
  * @class LocalTemplate
@@ -16,7 +18,7 @@ class LocalTemplate {
    * @param {string} version - Template version
    * @param {LocalPartial[]} partials - The partials of the template
    * @param {(ScafflaterOptions|object)} options - Template options
-   * @param {object[]} parameters - Template parameters
+   * @param {ParameterConfig[]} parameters - Template parameters
    */
   constructor( // NOSONAR
     folderPath,
@@ -94,9 +96,43 @@ class LocalTemplate {
    * Parameters to generate template.
    *
    * @description Scafflater uses Inquirer to get the parameters through scafflater-cli. The objects in this list must be assigned to inquirer question object(https://github.com/SBoudrias/Inquirer.js#questions).
-   * @type {object[]}
+   * @type {ParameterConfig[]}
    */
   parameters;
+
+  /**
+   * List all parameter config with the specified scope
+   *
+   * @param {"global"|"template"|"partial"} scope The scope to look for
+   * @param {?string|LocalPartial} partial The name or the local partial if scoped parameters of partial must be included
+   * @returns {ParameterConfig[]} A list of the parameters with the requested scope
+   */
+  getParameterConfigsByScope(scope, partial = undefined) {
+    const parameters = this.parameters.filter((p) => p.scope === scope);
+
+    if (partial) {
+      const partialName =
+        partial instanceof String || typeof partial === "string"
+          ? partial
+          : partial.name;
+
+      const partialIndex = this.partials.findIndex(
+        (p) => p.name === partialName
+      );
+
+      if (partialIndex < 0) {
+        throw new PartialNotFoundError(this.name, partialName);
+      }
+
+      return [
+        ...parameters,
+        ...this.partials[partialIndex].parameters.filter(
+          (p) => p.scope === scope
+        ),
+      ];
+    }
+    return parameters;
+  }
 
   /**
    * Loads local template from a localPath
@@ -172,7 +208,7 @@ class LocalPartial {
    * @param {string} name - Partial name
    * @param {string} description - Partial description
    * @param {(ScafflaterOptions|object)} options - Partial options
-   * @param {object[]} parameters - Partial parameters
+   * @param {ParameterConfig[]} parameters - Partial parameters
    */
   constructor(folderPath, name, description, options = {}, parameters = []) {
     this.name = name;

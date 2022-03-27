@@ -3,6 +3,11 @@ const { Config } = require("./config");
 const glob = require("glob");
 const { TemplateConfig } = require("./template-config");
 const { PartialConfig } = require("./partial-config");
+const { PersistedParameter } = require("./persisted-parameter");
+const RanTemplate = require("./ran-template");
+const { Source } = require("./source");
+const { LocalTemplate } = require("./local-template");
+const { ParameterConfig } = require("./parameter-config");
 
 jest.mock("fs-extra");
 jest.mock("glob");
@@ -291,6 +296,134 @@ describe("ConfigLoader", () => {
       expect(configs[1].config).toStrictEqual(
         new Config(null, new PartialConfig("partial-name"))
       );
+    });
+  });
+
+  describe("getPersistedParameters", () => {
+    test("getPersistedParameters with global and no templateName", () => {
+      // ARRANGE
+      const config = new Config(
+        new TemplateConfig("template", "1"),
+        null,
+        null,
+        null,
+        [new PersistedParameter("global1", "the global parameter")]
+      );
+      const parameters = {
+        param1: 123,
+      };
+
+      // ACT
+      const result = config.getPersistedParameters(parameters);
+
+      // ASSERT
+      expect(result).toStrictEqual({
+        global1: "the global parameter",
+        param1: 123,
+      });
+    });
+
+    test("getPersistedParameters with global and templateName with parameters", () => {
+      // ARRANGE
+      const config = new Config(
+        new TemplateConfig("template", "1"),
+        null,
+        [
+          new RanTemplate(
+            "the-template",
+            "1",
+            new Source("some-source", "key"),
+            [],
+            [],
+            [new PersistedParameter("template1", "the template parameter")]
+          ),
+        ],
+        null,
+        [new PersistedParameter("global1", "the global parameter")]
+      );
+      const parameters = {
+        param1: 123,
+      };
+
+      // ACT
+      const result = config.getPersistedParameters(parameters, "the-template");
+
+      // ASSERT
+      expect(result).toStrictEqual({
+        global1: "the global parameter",
+        param1: 123,
+        template1: "the template parameter",
+      });
+    });
+  });
+
+  describe("setPersistedParameters", () => {
+    test("setPersistedParameters with global and template parameters, without partialNa", () => {
+      // ARRANGE
+      const config = new Config(null, null, [
+        new RanTemplate("the-template", "1"),
+      ]);
+      const localTemplate = new LocalTemplate(
+        "",
+        "",
+        "the-template",
+        "",
+        "1",
+        [],
+        {},
+        [
+          new ParameterConfig("template-param", "template"),
+          new ParameterConfig("global-param", "global"),
+        ]
+      );
+      const parameters = {
+        "template-param": "the-template-value",
+        "global-param": "the-global-value",
+      };
+
+      // ACT
+      config.setPersistedParameters(localTemplate, parameters);
+
+      // ASSERT
+      expect(config.globalParameters).toStrictEqual([
+        new PersistedParameter("global-param", "the-global-value"),
+      ]);
+      expect(config.templates[0].templateParameters).toStrictEqual([
+        new PersistedParameter("template-param", "the-template-value"),
+      ]);
+    });
+
+    test("getPersistedParameters with global and templateName with parameters", () => {
+      // ARRANGE
+      const config = new Config(
+        new TemplateConfig("template", "1"),
+        null,
+        [
+          new RanTemplate(
+            "the-template",
+            "1",
+            new Source("some-source", "key"),
+            [],
+            [],
+            [new PersistedParameter("template1", "the template parameter")]
+          ),
+        ],
+        null,
+        [new PersistedParameter("global1", "the global parameter")]
+      );
+      const parameters = {
+        param1: 123,
+      };
+
+      // ACT
+      const result = config.getPersistedParameters(parameters, "the-template");
+
+      // ASSERT
+      expect(result).toStrictEqual({
+        global1: "the global parameter",
+        param1: 123,
+        template1: "the template parameter",
+      });
     });
   });
 });

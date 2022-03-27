@@ -93,11 +93,6 @@ class Scafflater {
       templateVersion
     );
 
-    const maskedParameters = maskParameters(
-      parameters,
-      localTemplate.parameters
-    );
-
     const targetConfigPath = path.resolve(
       targetPath,
       ".scafflater",
@@ -110,6 +105,13 @@ class Scafflater {
     if (targetConfig.isInitialized(localTemplate.name)) {
       throw new TemplateInitialized(localTemplate.name);
     }
+
+    parameters = targetConfig.getPersistedParameters(parameters);
+
+    const maskedParameters = maskParameters(
+      parameters,
+      localTemplate.parameters
+    );
 
     const ctx = {
       template: localTemplate,
@@ -152,6 +154,7 @@ class Scafflater {
       )
     );
 
+    targetConfig.setPersistedParameters(localTemplate, parameters);
     await targetConfig.save(targetConfigPath);
   }
 
@@ -234,6 +237,11 @@ class Scafflater {
       );
     }
 
+    targetConfig.setPersistedParameters(
+      localTemplate,
+      parameters,
+      localPartial
+    );
     await targetConfig.save(targetConfigPath);
   }
 }

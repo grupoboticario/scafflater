@@ -1,6 +1,7 @@
 const { LocalPartial, LocalTemplate } = require("./local-template");
 const { Config } = require("./config");
 const { ScafflaterOptions } = require("../options");
+const { ParameterConfig } = require("./parameter-config");
 
 jest.mock("fs-extra");
 jest.mock("./config");
@@ -237,6 +238,73 @@ describe("Local Template", () => {
       ).rejects.toThrowError(
         "/some-other/partial-1-1/scafflater.jsonc: partial does not belong to any template."
       );
+    });
+
+    test("getParameterConfigsByScope", () => {
+      // ARRANGE
+      const localPartial = new LocalPartial("", "the-partial", "", {}, [
+        new ParameterConfig("the-global-partial-parameter", "global"),
+        new ParameterConfig("the-template-partial-parameter", "template"),
+        new ParameterConfig("the-partial-parameter", "partial"),
+      ]);
+      const template = new LocalTemplate(
+        "",
+        "",
+        "the-template",
+        "",
+        "",
+        [localPartial],
+        {},
+        [
+          new ParameterConfig("the-parameter", "partial"),
+          new ParameterConfig("the-global-parameter", "global"),
+          new ParameterConfig("the-template-parameter", "template"),
+        ]
+      );
+
+      // ACT
+      const globals = template.getParameterConfigsByScope("global");
+      const globalsWithPartialName = template.getParameterConfigsByScope(
+        "global",
+        "the-partial"
+      );
+      const globalsWithPartialObj = template.getParameterConfigsByScope(
+        "global",
+        localPartial
+      );
+      const templaters = template.getParameterConfigsByScope("template");
+      const templateWithPartialName = template.getParameterConfigsByScope(
+        "template",
+        "the-partial"
+      );
+      const templateWithPartialObj = template.getParameterConfigsByScope(
+        "template",
+        localPartial
+      );
+
+      // ASSERT
+      expect(globals).toStrictEqual([
+        new ParameterConfig("the-global-parameter", "global"),
+      ]);
+      expect(globalsWithPartialName).toStrictEqual([
+        new ParameterConfig("the-global-parameter", "global"),
+        new ParameterConfig("the-global-partial-parameter", "global"),
+      ]);
+      expect(globalsWithPartialObj).toStrictEqual([
+        new ParameterConfig("the-global-parameter", "global"),
+        new ParameterConfig("the-global-partial-parameter", "global"),
+      ]);
+      expect(templaters).toStrictEqual([
+        new ParameterConfig("the-template-parameter", "template"),
+      ]);
+      expect(templateWithPartialName).toStrictEqual([
+        new ParameterConfig("the-template-parameter", "template"),
+        new ParameterConfig("the-template-partial-parameter", "template"),
+      ]);
+      expect(templateWithPartialObj).toStrictEqual([
+        new ParameterConfig("the-template-parameter", "template"),
+        new ParameterConfig("the-template-partial-parameter", "template"),
+      ]);
     });
   });
 });

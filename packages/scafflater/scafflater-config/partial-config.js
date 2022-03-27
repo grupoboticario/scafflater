@@ -1,4 +1,5 @@
 const ScafflaterOptions = require("../options");
+const ParameterConfig = require("./parameter-config");
 
 /**
  * @class PartialConfig
@@ -12,12 +13,20 @@ class PartialConfig {
    * @param {?string} description - Partial description
    * @param {?(ScafflaterOptions|object)} options - Partial options
    * @param {?object[]} parameters - Partial parameters
+   * @param {?string[]} persistentParameters - List of parameters that should be saved to be used on future executions
    */
-  constructor(name, description = null, options = {}, parameters = []) {
+  constructor(
+    name,
+    description = null,
+    options = {},
+    parameters = [],
+    persistentParameters = []
+  ) {
     this.name = name;
     this.description = description;
     this.options = options;
     this.parameters = parameters;
+    this.persistentParameters = persistentParameters;
   }
 
   /**
@@ -46,7 +55,7 @@ class PartialConfig {
    * Parameters to generate partial.
    *
    * @description Scafflater uses Inquirer to get the parameters through scafflater-cli. The objects in this list must be assigned to inquirer question object(https://github.com/SBoudrias/Inquirer.js#questions).
-   * @type {object[]}
+   * @type {ParameterConfig[]}
    */
   parameters;
 }

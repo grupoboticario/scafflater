@@ -1,4 +1,5 @@
 const ScafflaterOptions = require("../options");
+const ParameterConfig = require("./parameter-config");
 
 /**
  * @class TemplateInfo
@@ -13,19 +14,22 @@ class TemplateConfig {
    * @param {?string} description - Template description
    * @param {?(ScafflaterOptions|object)} options - Template options
    * @param {?object[]} parameters - Template parameters
+   * @param {?string[]} persistentParameters - List of parameters that should be saved to be used on future executions
    */
   constructor(
     name,
     version,
     description = null,
     options = {},
-    parameters = []
+    parameters = [],
+    persistentParameters = []
   ) {
     this.name = name;
     this.description = description;
     this.version = version;
     this.options = options;
     this.parameters = parameters;
+    this.persistentParameters = persistentParameters;
   }
 
   /**
@@ -62,7 +66,7 @@ class TemplateConfig {
    * Parameters to generate template.
    *
    * @description Scafflater uses Inquirer to get the parameters through scafflater-cli. The objects in this list must be assigned to inquirer question object(https://github.com/SBoudrias/Inquirer.js#questions).
-   * @type {object[]}
+   * @type {ParameterConfig[]}
    */
   parameters;
 }

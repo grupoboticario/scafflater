@@ -62,6 +62,10 @@ describe("Scafflater", () => {
         isInitialized: () => {
           return false;
         },
+        getPersistedParameters: (p) => {
+          return p;
+        },
+        setPersistedParameters: jest.fn(),
       };
       Config.mockReturnValue(mockedConfig);
       Config.fromLocalPath.mockResolvedValue({
@@ -127,6 +131,10 @@ describe("Scafflater", () => {
           isInitialized: () => {
             return false;
           },
+          getPersistedParameters: (p) => {
+            return p;
+          },
+          setPersistedParameters: jest.fn(),
         },
       };
       Config.fromLocalPath.mockResolvedValue(mockedConfig);
@@ -213,6 +221,7 @@ describe("Scafflater", () => {
           ),
         ],
         save: jest.fn(),
+        setPersistedParameters: jest.fn(),
       },
     };
     const mockedLocalTemplate = new LocalTemplate(

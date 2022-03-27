@@ -1,4 +1,5 @@
 const { PartialConfig } = require("./partial-config");
+const { PersistedParameter } = require("./persisted-parameter");
 const RanTemplate = require("./ran-template");
 const { TemplateConfig } = require("./template-config");
 const fs = require("fs-extra");
@@ -8,6 +9,8 @@ const stripJsonComments = require("strip-json-comments");
 const { Source } = require("./source");
 const { ScafflaterOptions } = require("../options");
 const ScafflaterFileNotFoundError = require("../errors/scafflater-file-not-found-error");
+const { LocalPartial, LocalTemplate } = require("./local-template");
+const TemplateNotInitializedError = require("../errors/template-not-initialized-error");
 
 /**
  * @typedef ConfigLoadResult
@@ -61,12 +64,20 @@ class Config {
    * @param {?PartialConfig} partial The partial config
    * @param {?RanTemplate[]} templates The ran templates
    * @param {ScafflaterOptions|object} options The folder scafflater options
+   * @param {?PersistedParameter[]} globalParameters The stored global parameters values
    */
-  constructor(template = null, partial = null, templates = [], options = {}) {
+  constructor(
+    template = null,
+    partial = null,
+    templates = [],
+    options = {},
+    globalParameters = []
+  ) {
     this.template = template;
     this.partial = partial;
     this.templates = templates;
     this.options = options;
+    this.globalParameters = globalParameters;
   }
 
   /**
@@ -100,6 +111,13 @@ class Config {
   options;
 
   /**
+   * The stored global parameters values
+   *
+   * @type {PersistedParameter[]}
+   */
+  globalParameters;
+
+  /**
    * Saves the the config to a scafflater.jsonc file
    *
    * @param {string} filePath The file path where file must be saved
@@ -129,6 +147,80 @@ class Config {
    */
   isInitialized(templateName) {
     return this.templates.findIndex((t) => t.name === templateName) >= 0;
+  }
+
+  /**
+   * Merges the persisted parameters, either globals or templates parameters, with an object of existing parameters
+   *
+   * @param {?object} parameters Parameters to merge to
+   * @param {?string} templateName The template name to get persisted parameters from. Null if it must not be loaded.
+   * @returns {object} Object with the merged globals, templates and received parameters
+   */
+  getPersistedParameters(parameters = {}, templateName = undefined) {
+    let persistedParameters = PersistedParameter.reduceParameters(
+      this.globalParameters
+    );
+
+    if (templateName) {
+      const ranTemplate = this.templates.find((rt) => rt.name === templateName);
+      if (ranTemplate) {
+        persistedParameters = {
+          ...persistedParameters,
+          ...PersistedParameter.reduceParameters(
+            ranTemplate.templateParameters
+          ),
+        };
+      }
+    }
+    return {
+      ...persistedParameters,
+      ...parameters,
+    };
+  }
+
+  /**
+   * Check the scopes of template and partial parameters and stores in the appropriate parameter on config
+   *
+   * @param {LocalTemplate} template The template with the parameters to be analysed
+   * @param {object} parameters The object with the values to be persisted
+   * @param {LocalPartial} partial The partial with the parameters to be analysed
+   */
+  setPersistedParameters(template, parameters = {}, partial = null) {
+    const globalParameters = template.getParameterConfigsByScope(
+      "global",
+      partial
+    );
+    const templateParameters = template.getParameterConfigsByScope(
+      "template",
+      partial
+    );
+
+    for (const p of globalParameters) {
+      if (!parameters[p.name]) continue;
+      // TODO: warn that masked parameters cannot be persisted
+      if (p.mask) continue;
+      PersistedParameter.updateParameters(
+        this.globalParameters,
+        new PersistedParameter(p.name, parameters[p.name])
+      );
+    }
+
+    const templateIndex = this.templates.findIndex(
+      (t) => t.name === template.name
+    );
+    if (templateIndex < 0) {
+      throw new TemplateNotInitializedError(template.name);
+    }
+
+    for (const p of templateParameters) {
+      if (!parameters[p.name]) continue;
+      // TODO: warn that masked parameters cannot be persisted
+      if (p.mask) continue;
+      PersistedParameter.updateParameters(
+        this.templates[templateIndex].templateParameters,
+        new PersistedParameter(p.name, parameters[p.name])
+      );
+    }
   }
 
   /**

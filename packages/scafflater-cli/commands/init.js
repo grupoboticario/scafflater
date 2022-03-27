@@ -66,7 +66,8 @@ class InitCommand extends Command {
 
       const parameters = await promptMissingParameters(
         initFlags.parameters,
-        localTemplate.parameters
+        localTemplate.parameters,
+        outputConfig.globalParameters
       );
 
       await spinner("Running template initialization", async () => {

@@ -13,6 +13,49 @@ const path = require("path");
 const inquirer = require("inquirer");
 
 /**
+ * Try to load cached templates and load from source if it is not available
+ *
+ * @param {Config} outputConfig The output config
+ * @param {Scafflater} scafflater
+ * @returns {Promise<LocalTemplate[]>} A list of local template
+ */
+const loadTemplates = async (outputConfig, scafflater) => {
+  /**
+   * @type { LocalTemplate[]}
+   */
+  const localTemplates = [];
+
+  await spinner(`Getting templates`, async (spinnerControl) => {
+    for (const ranTemplate of outputConfig.templates) {
+      spinnerControl.text = `Getting ${chalk.bold(
+        ranTemplate.name
+      )} from ${chalk.underline(ranTemplate.source.key)}`;
+      let localTemplate =
+        await scafflater.templateManager.templateCache.getTemplate(
+          ranTemplate.name,
+          ranTemplate.version
+        );
+      if (!localTemplate) {
+        localTemplate = await scafflater.templateManager.getTemplateFromSource(
+          ranTemplate.source.key
+        );
+      }
+      if (!localTemplate) {
+        throw new Error(
+          `Could not get template '${chalk.bold(
+            ranTemplate.name
+          )}' from ${chalk.underline(ranTemplate.key)}`
+        );
+      }
+
+      localTemplates.push(localTemplate);
+    }
+  });
+
+  return Promise.resolve(localTemplates);
+};
+
+/**
  * A class to relate partial with templates.
  *
  * @class LocalPartialTemplate
@@ -59,38 +102,11 @@ class RunPartialCommand extends Command {
       /**
        * @type {LocalTemplate[]}
        */
-      const localTemplates = [];
+      let localTemplates = [];
       try {
-        await spinner(`Getting templates`, async (spinnerControl) => {
-          for (const ranTemplate of outputConfig.templates) {
-            spinnerControl.text = `Getting ${chalk.bold(
-              ranTemplate.name
-            )} from ${chalk.underline(ranTemplate.source.key)}`;
-            let localTemplate =
-              await scafflater.templateManager.templateCache.getTemplate(
-                ranTemplate.name,
-                ranTemplate.version
-              );
-            if (!localTemplate) {
-              localTemplate =
-                await scafflater.templateManager.getTemplateFromSource(
-                  ranTemplate.source.key
-                );
-            }
-            if (!localTemplate) {
-              throw new Error(
-                `Could not get template '${chalk.bold(
-                  ranTemplate.name
-                )}' from ${chalk.underline(ranTemplate.key)}`
-              );
-            }
-
-            localTemplates.push(localTemplate);
-          }
-        });
+        localTemplates = await loadTemplates(outputConfig, scafflater);
       } catch (error) {
         logger.error(error.message);
-        return;
       }
 
       // Create a list of all available template, related with theirs templates
@@ -163,7 +179,9 @@ class RunPartialCommand extends Command {
 
       const parameters = await promptMissingParameters(
         runFlags.parameters,
-        localPartial.parameters
+        localPartial.parameters,
+        outputConfig.globalParameters,
+        outputConfig.templates.find((rt) => rt.name === localPartial.name)
       );
 
       await spinner("Running partial template", async () => {

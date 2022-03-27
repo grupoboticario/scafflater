@@ -14,13 +14,22 @@ class RanTemplate {
    * @param {Source} source - Generated Template Source
    * @param {object[]} parameters - Template parameters
    * @param {RanPartial[]} partials - Generated partials for this template
+   * @param {?PersistedParameter[]} templateParameters List of saved template parameters to be used on future executions
    */
-  constructor(name, version, source, parameters = {}, partials = []) {
+  constructor(
+    name,
+    version,
+    source,
+    parameters = {},
+    partials = [],
+    templateParameters = []
+  ) {
     this.name = name;
     this.version = version;
     this.source = source;
     this.parameters = parameters;
     this.partials = partials;
+    this.templateParameters = templateParameters;
   }
 
   /**
@@ -59,6 +68,13 @@ class RanTemplate {
    * @type {object}
    */
   parameters;
+
+  /**
+   * Saved template parameters to be used on future executions.
+   *
+   * @type {object}
+   */
+  templateParameters;
 }
 
 module.exports = RanTemplate;
