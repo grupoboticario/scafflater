@@ -1,5 +1,6 @@
 const Source = require("./source");
 const RanPartial = require("./ran-partial");
+const { PersistedParameter } = require("./persisted-parameter");
 
 /**
  * @class RanTemplate
@@ -14,7 +15,7 @@ class RanTemplate {
    * @param {Source} source - Generated Template Source
    * @param {object[]} parameters - Template parameters
    * @param {RanPartial[]} partials - Generated partials for this template
-   * @param {?PersistedParameter[]} templateParameters List of saved template parameters to be used on future executions
+   * @param {PersistedParameter[]} templateParameters List of saved template parameters to be used on future executions
    */
   constructor(
     name,

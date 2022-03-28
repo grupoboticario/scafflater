@@ -16,7 +16,7 @@ const inquirer = require("inquirer");
  * Try to load cached templates and load from source if it is not available
  *
  * @param {Config} outputConfig The output config
- * @param {Scafflater} scafflater
+ * @param {Scafflater} scafflater The scafflater instance
  * @returns {Promise<LocalTemplate[]>} A list of local template
  */
 const loadTemplates = async (outputConfig, scafflater) => {
