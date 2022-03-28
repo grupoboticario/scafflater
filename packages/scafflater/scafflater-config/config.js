@@ -291,10 +291,22 @@ class Config {
       }
     }
 
+    const globalParameters = json.globalParameters
+      ? json.globalParameters.map((g) =>
+          Object.assign(new PersistedParameter(), g)
+        )
+      : [];
+
     return Promise.resolve({
       folderPath: path.dirname(filePath),
       filePath,
-      config: new Config(template, partial, templates, json.options ?? {}),
+      config: new Config(
+        template,
+        partial,
+        templates,
+        json.options ?? {},
+        globalParameters
+      ),
     });
   }
 

@@ -181,7 +181,9 @@ class RunPartialCommand extends Command {
         runFlags.parameters,
         localPartial.parameters,
         outputConfig.globalParameters,
-        outputConfig.templates.find((rt) => rt.name === localPartial.name)
+        outputConfig.templates.find(
+          (rt) => rt.name === localPartial.templateName
+        ).templateParameters
       );
 
       await spinner("Running partial template", async () => {

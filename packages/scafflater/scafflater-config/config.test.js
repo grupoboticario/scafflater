@@ -163,6 +163,10 @@ describe("ConfigLoader", () => {
       fs.pathExists.mockResolvedValueOnce(true);
       fs.readFile.mockResolvedValueOnce(
         `{
+          "globalParameters":[{
+            "name": "global-var",
+            "value": "global-var-value"
+          }],
           "template": {
             "name": "some-type"
           },
