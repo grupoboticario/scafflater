@@ -58,6 +58,8 @@ class Generator {
       `/${this.context.options.extensionFolderName}`,
       "**/.git/**/*",
       "**/node_modules/**/*",
+      "node_modules",
+      ".git",
     ];
     this.ignoredFolders = [
       path.resolve(context.templatePath, context.options.partialsFolderName),
@@ -128,7 +130,6 @@ class Generator {
     }
 
     const options = await this.loadOptions(tree, ctx);
-
     if (options.ignores(ctx.originPath, tree.path)) {
       return Promise.resolve();
     }
