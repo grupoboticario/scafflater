@@ -58,6 +58,7 @@
   },
   "devDependencies": {
     "@types/fs-extra": "9.0.12",
+    "memory-fs": "0.5.0",
     "mock-fs": "5.0.0"
   }
 }

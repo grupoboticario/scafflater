@@ -9,6 +9,10 @@ const {
   TemplateDefinitionNotFound,
 } = require("../../errors");
 
+jest.mock("../../fs-util", () => {
+  return { ...jest.requireActual("../../fs-util"), ...require("memory-fs") };
+});
+
 class MockedHttpError extends Error {
   constructor(status) {
     super();
