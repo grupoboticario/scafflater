@@ -9,46 +9,64 @@ const {
   TemplateDefinitionNotFound,
 } = require("../../errors");
 
-jest.mock("../../fs-util", () => {
-  const fsUtil = jest.requireActual("../../fs-util");
+jest.mock("os", () => {
+  const originalOs = jest.requireActual("../../fs-util");
   return {
-    ...fsUtil,
+    ...originalOs,
     ...{
-      getTempFolderSync: () => {
-        // Try catch to run on github pipeline(its not possible to create temp dir on pipelines)
-        try {
-          return fsUtil.getTempFolderSync();
-        } catch (error) {
-          const path = require("path");
-          const fs = require("fs");
-          const p = path.resolve(
-            "./",
-            new Date().getTime().toString() +
-              Math.floor(Math.random() * 10000).toString()
+      tmpdir: () => {
+        if (process.env.GITHUB_ACTION) {
+          return path.resolve(
+            process.env.GITHUB_PATH,
+            Math.floor(Math.random() * 10000).toString()
           );
-          fs.mkdirSync(p);
-          return p;
         }
-      },
-      getTempFolder: async () => {
-        // Try catch to run on github pipeline(its not possible to create temp dir on pipelines)
-        try {
-          return fsUtil.getTempFolder();
-        } catch (error) {
-          const path = require("path");
-          const fs = require("fs");
-          const p = path.resolve(
-            "./",
-            new Date().getTime().toString() +
-              Math.floor(Math.random() * 10000).toString()
-          );
-          fs.mkdirSync(p);
-          return p;
-        }
+        return originalOs.tmpdir();
       },
     },
   };
 });
+
+// jest.mock("../../fs-util", () => {
+//   const fsUtil = jest.requireActual("../../fs-util");
+//   return {
+//     ...fsUtil,
+//     ...{
+//       getTempFolderSync: () => {
+//         // Try catch to run on github pipeline(its not possible to create temp dir on pipelines)
+//         try {
+//           return fsUtil.getTempFolderSync();
+//         } catch (error) {
+//           const path = require("path");
+//           const fs = require("fs");
+//           const p = path.resolve(
+//             "./",
+//             new Date().getTime().toString() +
+//               Math.floor(Math.random() * 10000).toString()
+//           );
+//           fs.mkdirSync(p);
+//           return p;
+//         }
+//       },
+//       getTempFolder: async () => {
+//         // Try catch to run on github pipeline(its not possible to create temp dir on pipelines)
+//         try {
+//           return fsUtil.getTempFolder();
+//         } catch (error) {
+//           const path = require("path");
+//           const fs = require("fs");
+//           const p = path.resolve(
+//             "./",
+//             new Date().getTime().toString() +
+//               Math.floor(Math.random() * 10000).toString()
+//           );
+//           fs.mkdirSync(p);
+//           return p;
+//         }
+//       },
+//     },
+//   };
+// });
 
 class MockedHttpError extends Error {
   constructor(status) {
