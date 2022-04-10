@@ -27,10 +27,10 @@ jobs:
           git config --global user.name ${{ github.actor }}
           git config --global user.email '${{ github.actor }}@users.noreply.github.com'
 
-      - name: Setup node 15.x
+      - name: Setup node 16.x
         uses: actions/setup-node@v3
         with:
-          node-version: 15.x
+          node-version: 16.x
 
       - name: Setup npm
         run: npm install -g npm@7.19.0
@@ -97,10 +97,10 @@ jobs:
           git config --global user.name ${{ github.actor }}
           git config --global user.email '${{ github.actor }}@users.noreply.github.com'
 
-      - name: Setup node 15.x
+      - name: Setup node 16.x
         uses: actions/setup-node@v3
         with:
-          node-version: 15.x
+          node-version: 16.x
 
       - name: Setup npm
         run: npm install -g npm@7.19.0
