@@ -75,37 +75,38 @@ class OctokitTemplateSource extends LocalFolderTemplateSource {
    * @returns {Promise<LocalTemplate>} The local template
    */
   async getTemplate(sourceKey, version = "last", outputDir = null) {
-    const ghUrl = GitUrlParse(sourceKey);
-    const pathToClone = fsUtil.getTempFolderSync();
-    const zipballPath = path.join(fsUtil.getTempFolderSync(), "head.zip");
-
-    const resolvedVersion = await this.resolveVersion(sourceKey, version);
-
-    if (resolvedVersion.version === "head") {
-      const response = await this.octokit.request(
-        "GET /repos/{owner}/{repo}/zipball",
-        {
-          owner: ghUrl.owner,
-          repo: ghUrl.name,
-        }
-      );
-      fsUtil.appendFileSync(zipballPath, Buffer.from(response.data));
-    } else if (resolvedVersion.refType === "tag") {
-      const response = await this.octokit.request(
-        "GET /repos/{owner}/{repo}/zipball/{ref}",
-        {
-          owner: ghUrl.owner,
-          repo: ghUrl.name,
-          ref: resolvedVersion.version,
-        }
-      );
-      fsUtil.appendFileSync(zipballPath, Buffer.from(response.data));
-    }
-
     try {
+      const ghUrl = GitUrlParse(sourceKey);
+      const pathToClone = fsUtil.getTempFolderSync();
+      const zipballPath = path.join(fsUtil.getTempFolderSync(), "head.zip");
+
+      const resolvedVersion = await this.resolveVersion(sourceKey, version);
+
+      if (resolvedVersion.version === "head") {
+        const response = await this.octokit.request(
+          "GET /repos/{owner}/{repo}/zipball",
+          {
+            owner: ghUrl.owner,
+            repo: ghUrl.name,
+          }
+        );
+        fsUtil.appendFileSync(zipballPath, Buffer.from(response.data));
+      } else if (resolvedVersion.refType === "tag") {
+        const response = await this.octokit.request(
+          "GET /repos/{owner}/{repo}/zipball/{ref}",
+          {
+            owner: ghUrl.owner,
+            repo: ghUrl.name,
+            ref: resolvedVersion.version,
+          }
+        );
+        fsUtil.appendFileSync(zipballPath, Buffer.from(response.data));
+      }
+
       await unzip(zipballPath, pathToClone);
       return await super.getTemplate(pathToClone, outputDir);
     } catch (error) {
+      console.log(error.stack);
       if (error instanceof ScafflaterFileNotFoundError) {
         throw new ScafflaterFileNotFoundError(
           `${sourceKey}/.scafflater/scafflater.jsonc`
