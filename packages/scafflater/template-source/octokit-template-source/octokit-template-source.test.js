@@ -10,8 +10,27 @@ const {
 } = require("../../errors");
 
 jest.mock("../../fs-util", () => {
-  // eslint-disable-next-line node/no-unpublished-require
-  return { ...jest.requireActual("../../fs-util"), ...require("memory-fs") };
+  const fsUtil = jest.requireActual("../../fs-util");
+  return {
+    ...fsUtil,
+    ...{
+      getTempFolderSync: () => {
+        // Try catch to run on github pipeline(its not possible to create temp dir on pipelines)
+        try {
+          return fsUtil.getTempFolderSync();
+        } catch (error) {}
+        const path = require("path");
+        const fs = require("fs");
+        const p = path.resolve(
+          "./",
+          new Date().getTime().toString() +
+            Math.floor(Math.random() * 10000).toString()
+        );
+        fs.mkdirSync(p);
+        return p;
+      },
+    },
+  };
 });
 
 class MockedHttpError extends Error {
