@@ -10,6 +10,7 @@ const {
 } = require("../../errors");
 
 jest.mock("../../fs-util", () => {
+  // eslint-disable-next-line node/no-unpublished-require
   return { ...jest.requireActual("../../fs-util"), ...require("memory-fs") };
 });
 
