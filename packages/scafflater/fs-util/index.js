@@ -6,6 +6,7 @@ const path = require("path");
 const { EOL } = require("os");
 const stripJsonComments = require("strip-json-comments");
 const npmInstallExec = require("../util/npmInstall");
+const { Extract } = require("unzipper");
 
 /**
  * Loads js
@@ -15,6 +16,26 @@ const npmInstallExec = require("../util/npmInstall");
  */
 fs.require = (jsPath) => {
   return require(jsPath);
+};
+
+/**
+ * Unzips an file into a directory
+ *
+ * @param {string} zipfile Zip file path
+ * @param {string} dir Directory path where the file must be unzipped
+ * @returns {Promise} Returns a promise to await extraction
+ */
+fs.unzipAsync = (zipfile, dir) => {
+  const stream = fs.createReadStream(zipfile).pipe(Extract({ path: dir }));
+
+  return new Promise((resolve, reject) => {
+    stream.on("finish", () => {
+      resolve();
+    });
+    stream.on("error", (error) => {
+      reject(error);
+    });
+  });
 };
 
 /**

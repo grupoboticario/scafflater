@@ -1,7 +1,7 @@
 {
   "name": "scafflater",
   "description": "Scafflater",
-  "version": "0.0.69",
+  "version": "1.0.2",
   "author": "Chico Ribas (chicoribas)",
   "bugs": "https://github.com/scafflater/scafflater/issues",
   "homepage": "https://github.com/scafflater/scafflater",
@@ -36,7 +36,6 @@
     "eslint-plugin-jsdoc": "36.1.0",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-prettier": "3.4.0",
-    "eslint-plugin-promise": "6.0.0",
     "fs-extra": "10.0.0",
     "globby": "11.0.4",
     "jest": "27.0.4",

@@ -106,6 +106,7 @@ class ScafflaterOptions {
 
   source = "isomorphicGit";
   sources = {
+    octokit: "./octokit-template-source",
     git: "./git-template-source",
     githubClient: "./github-client-template-source",
     isomorphicGit: "./isomorphic-git-template-source",
