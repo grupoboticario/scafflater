@@ -18,16 +18,18 @@ jest.mock("../../fs-util", () => {
         // Try catch to run on github pipeline(its not possible to create temp dir on pipelines)
         try {
           return fsUtil.getTempFolderSync();
-        } catch (error) {}
-        const path = require("path");
-        const fs = require("fs");
-        const p = path.resolve(
-          "./",
-          new Date().getTime().toString() +
-            Math.floor(Math.random() * 10000).toString()
-        );
-        fs.mkdirSync(p);
-        return p;
+        } catch (error) {
+          const path = require("path");
+          const fs = require("fs");
+          const p = path.resolve(
+            "./",
+            new Date().getTime().toString() +
+              Math.floor(Math.random() * 10000).toString()
+          );
+          fs.mkdirSync(p);
+          console.log(`temp dir: ${p}`);
+          return p;
+        }
       },
     },
   };
