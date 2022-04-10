@@ -16,10 +16,7 @@ jest.mock("os", () => {
     ...{
       tmpdir: () => {
         if (process.env.GITHUB_ACTION) {
-          return path.resolve(
-            process.env.GITHUB_PATH,
-            Math.floor(Math.random() * 10000).toString()
-          );
+          return require("path").resolve(process.env.RUNNER_TEMP);
         }
         return originalOs.tmpdir();
       },
