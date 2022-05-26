@@ -5,7 +5,6 @@ const Appenders = require("./appenders");
 const HandlebarsProcessor = require("./processors/handlebars-processor");
 const prettier = require("prettier");
 const ScafflaterOptions = require("../options");
-const { FileProcessError } = require("../errors");
 const { isBinaryFile } = require("isbinaryfile");
 const { ignores } = require("../util");
 
