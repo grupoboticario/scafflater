@@ -33,7 +33,7 @@ class Processor {
     for (const processor of processors) {
       const processorResult = await processor.process(generationContext, input);
       generationContext = processorResult.context;
-      input = processorResult.result.trim();
+      input = processorResult.result;
     }
 
     return Promise.resolve(input);
