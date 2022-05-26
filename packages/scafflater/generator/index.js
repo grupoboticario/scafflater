@@ -93,6 +93,10 @@ class Generator {
       path.resolve(this.context.templatePath, this.context.helpersPath)
     );
 
+    this.context.prettierConfig = await this.loadPrettierOptions(
+      this.context.originPath
+    );
+
     const tree = fsUtil.getDirTreeSync(this.context.originPath);
 
     if (tree.type === "file") {
@@ -257,6 +261,18 @@ class Generator {
       const filePath = path.join(context.originPath, tree.name);
       return context.options.getFileOptions(filePath, context.options);
     }
+  }
+
+  async loadPrettierOptions(path) {
+    let config = await prettier.resolveConfig(path);
+
+    if (!config) config = {};
+
+    if (!config.plugins) config.plugins = [];
+
+    config.plugins.push("@prettier/plugin-xml");
+
+    return config;
   }
 }
 
