@@ -5,6 +5,7 @@ const Appenders = require("./appenders");
 const HandlebarsProcessor = require("./processors/handlebars-processor");
 const prettier = require("prettier");
 const ScafflaterOptions = require("../options");
+const { FileProcessError } = require("../errors");
 const { isBinaryFile } = require("isbinaryfile");
 const { ignores } = require("../util");
 
@@ -165,76 +166,83 @@ class Generator {
       }
     }
 
-    if (tree.type === "file") {
-      const originFilePath = path.join(ctx.originPath, tree.name);
+    try {
+      if (tree.type === "file") {
+        const originFilePath = path.join(ctx.originPath, tree.name);
 
-      const targetFilePath = path.join(ctx.targetPath, targetName);
-      let targetContent;
-      if (await fsUtil.pathExists(targetFilePath)) {
-        if (ctx.options.appendStrategy === "ignore") {
-          return Promise.resolve();
+        const targetFilePath = path.join(ctx.targetPath, targetName);
+        let targetContent;
+        if (await fsUtil.pathExists(targetFilePath)) {
+          if (ctx.options.appendStrategy === "ignore") {
+            return Promise.resolve();
+          }
+          targetContent = await fsUtil.readFileContent(targetFilePath);
         }
-        targetContent = await fsUtil.readFileContent(targetFilePath);
-      }
 
-      if (!(await isBinaryFile(originFilePath))) {
-        const originFileContent = await fsUtil.readFileContent(originFilePath);
+        if (!(await isBinaryFile(originFilePath))) {
+          const originFileContent = await fsUtil.readFileContent(
+            originFilePath
+          );
 
-        const processors = _ctx.options.processors.map((p) => {
-          if (this.extensions[p]) {
-            return new this.extensions[p]();
-          }
-          if (Processors.Processor[p]) {
-            return new Processors.Processor[p]();
-          }
-          return new (require(p))();
-        });
-        const srcContent = await Processors.Processor.runProcessorsPipeline(
-          processors,
-          _ctx,
-          originFileContent
-        );
-
-        const appenders = _ctx.options.appenders.map((a) => {
-          if (this.extensions[a]) {
-            return new this.extensions[a]();
-          }
-          if (Appenders.Appender[a]) {
-            return new Appenders.Appender[a]();
-          }
-          return new (require(a))();
-        });
-        let result = targetContent
-          ? await Appenders.Appender.runAppendersPipeline(
-              appenders,
-              _ctx,
-              srcContent,
-              targetContent
-            )
-          : srcContent;
-
-        result = _ctx.options.stripConfig(result);
-
-        try {
-          result = prettier.format(result, {
-            filepath: targetFilePath,
-            plugins: ["@prettier/plugin-xml"],
+          const processors = _ctx.options.processors.map((p) => {
+            if (this.extensions[p]) {
+              return new this.extensions[p]();
+            }
+            if (Processors.Processor[p]) {
+              return new Processors.Processor[p]();
+            }
+            return new (require(p))();
           });
-        } catch (error) {
-          // Just to quiet prettier errors
-        }
+          const srcContent = await Processors.Processor.runProcessorsPipeline(
+            processors,
+            _ctx,
+            originFileContent
+          );
 
-        await promisesHelper.exec(
-          _ctx,
-          fsUtil.saveFile(targetFilePath, result, false)
-        );
-      } else {
-        await fsUtil.ensureDir(path.dirname(targetFilePath));
-        await promisesHelper.exec(
-          _ctx,
-          fsUtil.copyFile(originFilePath, targetFilePath)
-        );
+          const appenders = _ctx.options.appenders.map((a) => {
+            if (this.extensions[a]) {
+              return new this.extensions[a]();
+            }
+            if (Appenders.Appender[a]) {
+              return new Appenders.Appender[a]();
+            }
+            return new (require(a))();
+          });
+          let result = targetContent
+            ? await Appenders.Appender.runAppendersPipeline(
+                appenders,
+                _ctx,
+                srcContent,
+                targetContent
+              )
+            : srcContent;
+
+          result = _ctx.options.stripConfig(result);
+
+          try {
+            result = prettier.format(result, {
+              filepath: targetFilePath,
+              plugins: ["@prettier/plugin-xml"],
+            });
+          } catch (error) {
+            // Just to quiet prettier errors
+          }
+
+          await promisesHelper.exec(
+            _ctx,
+            fsUtil.saveFile(targetFilePath, result, false)
+          );
+        } else {
+          await fsUtil.ensureDir(path.dirname(targetFilePath));
+          await promisesHelper.exec(
+            _ctx,
+            fsUtil.copyFile(originFilePath, targetFilePath)
+          );
+        }
       }
+    } catch (error) {
+      throw new Error(`${tree.path.replace(ctx.templatePath, "")}
+        ${error.message}`);
     }
 
     return promisesHelper.await();

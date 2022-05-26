@@ -10,7 +10,7 @@ const {
 } = require("../../errors");
 
 jest.mock("os", () => {
-  const originalOs = jest.requireActual("../../fs-util");
+  const originalOs = jest.requireActual("os");
   return {
     ...originalOs,
     ...{
