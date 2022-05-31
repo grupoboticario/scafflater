@@ -224,6 +224,7 @@ class Generator {
 
           try {
             result = prettier.format(result, {
+              ...this.context.prettierConfig,
               filepath: targetFilePath,
               plugins: ["@prettier/plugin-xml"],
             });
