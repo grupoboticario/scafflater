@@ -64,6 +64,10 @@ fs.loadScriptsAsObjects = async (folderPath, npmInstall = false) => {
   }
 
   if (npmInstall) {
+    // Coping to a fresh folder just to avoid workspaces references
+    const tmpdir = fs.getTempFolderSync();
+    await fs.copyEnsuringDest(folderPath, tmpdir);
+    folderPath = tmpdir;
     await npmInstallExec(folderPath);
   }
 
@@ -95,6 +99,10 @@ fs.listJsScripts = async (folderPath, npmInstall = false) => {
   }
 
   if (npmInstall) {
+    // Coping to a fresh folder just to avoid workspaces references
+    const tmpdir = fs.getTempFolderSync();
+    await fs.copyEnsuringDest(folderPath, tmpdir);
+    folderPath = tmpdir;
     await npmInstallExec(folderPath);
   }
 
