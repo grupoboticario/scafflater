@@ -4,6 +4,22 @@ const path = require("path");
 const npmInstall = require("../util/npmInstall");
 jest.mock("../util/npmInstall");
 
+jest.mock("os", () => {
+  const originalOs = jest.requireActual("os");
+  return {
+    ...originalOs,
+    ...{
+      tmpdir: () => {
+        // If is a Github Action process, use the temp directory created for the runner
+        if (process.env.GITHUB_ACTION) {
+          return require("path").resolve(process.env.RUNNER_TEMP);
+        }
+        return originalOs.tmpdir();
+      },
+    },
+  };
+});
+
 describe("fs-utils", () => {
   beforeEach(() => {
     jest.clearAllMocks();
