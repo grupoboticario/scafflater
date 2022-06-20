@@ -222,6 +222,7 @@ describe("Scafflater", () => {
         ],
         save: jest.fn(),
         setPersistedParameters: jest.fn(),
+        getPersistedParameters: jest.fn(),
       },
     };
     const mockedLocalTemplate = new LocalTemplate(

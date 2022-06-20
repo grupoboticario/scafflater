@@ -45,7 +45,9 @@ describe("Config Provider", () => {
     });
 
     // ACT
-    const newConfig = await options.getFolderOptions("some-folder-path");
+    const newConfig = await options.getFolderOptions("some-folder-path", {
+      options,
+    });
 
     // ASSERT
     expect(FileSystemUtils.readJSON.mock.calls.length).toBe(1);
@@ -93,7 +95,6 @@ describe("Config Provider", () => {
 
   test("Get config from file template", async () => {
     // ARRANGE
-    const config = new ScafflaterOptions();
     FileSystemUtils.readFileContent.mockResolvedValue(`
     # @scf-option {"processors":[ "a-new-processor" ]}
     # @scf-option {"lineCommentTemplate":"// {{comment}}"}
@@ -108,7 +109,7 @@ describe("Config Provider", () => {
     // ACT
     const newConfig = await new ScafflaterOptions().getFileOptions(
       "some/path",
-      config
+      { options: new ScafflaterOptions() }
     );
 
     // ASSERT

@@ -36,23 +36,26 @@ class Scafflater {
    * @returns {Promise<void>}
    */
   async run(originPath, parameters, templatePath, targetPath = "./", ctx = {}) {
-    const options = new ScafflaterOptions(ctx.options);
+    const options = new ScafflaterOptions({ ...this.options, ...ctx.options });
 
     const helpersPath = path.resolve(
       templatePath,
       options.scfFolderName,
       options.helpersFolderName
     );
+    options.logger.debug(`Helpers Path: ${helpersPath}`);
     const hooksPath = path.resolve(
       templatePath,
       options.scfFolderName,
       options.hooksFolderName
     );
+    options.logger.debug(`Hooks Path: ${hooksPath}`);
     const extensionPath = path.resolve(
       templatePath,
       options.scfFolderName,
       options.extensionFolderName
     );
+    options.logger.debug(`Extensions Path: ${extensionPath}`);
 
     const _ctx = {
       ...ctx,
@@ -92,6 +95,9 @@ class Scafflater {
       sourceKey,
       templateVersion
     );
+    this.options.logger.debug(
+      `Local Template Source: ${localTemplate.folderPath}`
+    );
 
     const targetConfigPath = path.resolve(
       targetPath,
@@ -101,12 +107,26 @@ class Scafflater {
 
     let targetConfig = (await Config.fromLocalPath(targetConfigPath, true))
       ?.config;
+    this.options.logger.debug(
+      `== TARGET CONFIG == \n ${JSON.stringify(
+        targetConfig,
+        null,
+        2
+      )} =================== \n`
+    );
 
     if (targetConfig.isInitialized(localTemplate.name)) {
       throw new TemplateInitialized(localTemplate.name);
     }
 
     parameters = targetConfig.getPersistedParameters(parameters);
+    this.options.logger.debug(
+      `== PERSISTED PARAMETERS == \n ${JSON.stringify(
+        targetConfig,
+        null,
+        2
+      )} ========================== \n`
+    );
 
     const maskedParameters = maskParameters(
       parameters,
@@ -116,7 +136,7 @@ class Scafflater {
     const ctx = {
       template: localTemplate,
       target: targetConfig,
-      options: localTemplate.options,
+      options: { ...this.options, ...localTemplate.options },
     };
 
     await this.run(
@@ -133,6 +153,7 @@ class Scafflater {
       localTemplate.options.initFolderName
     );
     if (await fs.pathExists(initPath)) {
+      this.options.logger.debug(`Run init on '${initPath}'`);
       await this.run(
         initPath,
         parameters,
@@ -175,6 +196,13 @@ class Scafflater {
       "scafflater.jsonc"
     );
     const targetConfig = (await Config.fromLocalPath(targetConfigPath))?.config;
+    this.options.logger.debug(
+      `== TARGET CONFIG == \n ${JSON.stringify(
+        targetConfig,
+        null,
+        2
+      )} =================== \n`
+    );
 
     const ranTemplate = targetConfig.templates.find(
       (t) => t.name === templateName
@@ -195,6 +223,9 @@ class Scafflater {
         `${templateName}: cannot load template from source ('${ranTemplate.source.name}': '${ranTemplate.source.key}').`
       );
     }
+    this.options.logger.debug(
+      `Local Template Source: ${localTemplate.folderPath}`
+    );
 
     let localPartial = localTemplate.partials.find(
       (p) => p.name === partialName
@@ -212,12 +243,21 @@ class Scafflater {
       );
     }
 
+    parameters = targetConfig.getPersistedParameters(parameters);
+    this.options.logger.debug(
+      `== PERSISTED PARAMETERS == \n ${JSON.stringify(
+        targetConfig,
+        null,
+        2
+      )} ========================== \n`
+    );
+
     const ctx = {
       partial: localPartial,
       template: localTemplate,
       templatePath: localTemplate.folderPath,
       target: targetConfig,
-      options: localPartial.options,
+      options: { ...this.options, ...localPartial.options },
     };
 
     await this.run(

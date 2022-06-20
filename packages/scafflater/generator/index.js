@@ -9,6 +9,16 @@ const { isBinaryFile } = require("isbinaryfile");
 const { ignores } = require("../util");
 
 /**
+ * @typedef {object} Context
+ * @description The context used by generator to generate files and folder structure
+ * @property {string} originPath The folder path to origin template files
+ * @property {object} parameters The parameters to generate the output
+ * @property {string} targetPath The path where generated files and folders will be saved
+ * @property {string} helpersPath The folder with handlebars helpers implementations
+ * @property {ScafflaterOptions} options The scafflater options.
+ */
+
+/**
  * Helper to execute Promises
  */
 class PromisesHelper {
@@ -16,8 +26,14 @@ class PromisesHelper {
     this.promises = [];
   }
 
+  /**
+   * Executes a promise
+   *
+   * @param {Context} ctx Context
+   * @param {Promise} promise Promise to execute
+   */
   async exec(ctx, promise) {
-    if (ctx.mode === "debug") {
+    if (ctx.options.mode === "debug") {
       await promise;
     } else {
       this.promises.push(promise);
@@ -29,15 +45,6 @@ class PromisesHelper {
   }
 }
 
-/**
- * @typedef {object} Context
- * @description The context used by generator to generate files and folder structure
- * @property {string} originPath The folder path to origin template files
- * @property {object} parameters The parameters to generate the output
- * @property {string} targetPath The path where generated files and folders will be saved
- * @property {string} helpersPath The folder with handlebars helpers implementations
- * @property {ScafflaterOptions} options The scafflater options.
- */
 class Generator {
   /**
    * Brief description of the function here.
@@ -79,12 +86,28 @@ class Generator {
       this.context.hooksPath,
       true
     );
+    this.context.options.logger.debug(
+      `Hooks Loaded: ${
+        Object.keys(this.hooks).length > 0
+          ? "No hook defined"
+          : Object.keys(this.hooks).join(", ")
+      }`
+    );
+
     this.extensions = await fsUtil.loadScriptsAsObjects(
       this.context.extensionPath,
       true
     );
+    this.context.options.logger.debug(
+      `Extensions Loaded: ${
+        Object.keys(this.extensions).length > 0
+          ? "No extension defined"
+          : Object.keys(this.extensions).join(", ")
+      }`
+    );
 
     if (this.hooks.onGenerateStart) {
+      this.context.options.logger.debug(`Executing 'onGenerateStart' hook`);
       await this.hooks.onGenerateStart(this.context);
     }
 
@@ -95,6 +118,11 @@ class Generator {
 
     this.context.prettierConfig = await this.loadPrettierOptions(
       this.context.originPath
+    );
+    this.context.options.logger.debug(
+      `=== PRETTIER CONFIG === \n  Loaded from: ${
+        this.context.originPath
+      }\n  ${JSON.stringify(this.context.prettierConfig, null, 2)}`
     );
 
     const tree = fsUtil.getDirTreeSync(this.context.originPath);
@@ -123,20 +151,30 @@ class Generator {
 
   /**
    *
-   * @param {any} ctx Context
+   * @param {Context} ctx Context
    * @param {any} tree Tree Details
    * @returns {Promise} Promise
    */
   async _generate(ctx, tree) {
     const promisesHelper = new PromisesHelper();
     if (ignores(ctx.originPath, tree.path, this.ignoredPatterns)) {
+      this.context.options.logger.info(
+        `Ignoring: ${tree.path.replace(ctx.templatePath, "")}`
+      );
       return Promise.resolve();
     }
 
     const options = await this.loadOptions(tree, ctx);
     if (options.ignores(ctx.originPath, tree.path)) {
+      this.context.options.logger.info(
+        `Ignoring: ${tree.path.replace(ctx.templatePath, "")}`
+      );
       return Promise.resolve();
     }
+
+    this.context.options.logger.info(
+      `Processing: ${tree.path.replace(ctx.templatePath, "")}`
+    );
 
     let targetName = tree.name;
     if (options.targetName != null) {
@@ -148,6 +186,7 @@ class Generator {
       targetName
     );
     if (targetName === "") {
+      this.context.options.logger.info(`\tIgnoring: Empty target name`);
       return Promise.resolve();
     }
 
@@ -177,6 +216,7 @@ class Generator {
         let targetContent;
         if (await fsUtil.pathExists(targetFilePath)) {
           if (ctx.options.appendStrategy === "ignore") {
+            _ctx.options.logger.info(`\tIgnoring: appendStrategy = 'ignore'`);
             return Promise.resolve();
           }
           targetContent = await fsUtil.readFileContent(targetFilePath);
@@ -229,7 +269,7 @@ class Generator {
               plugins: ["@prettier/plugin-xml"],
             });
           } catch (error) {
-            // Just to quiet prettier errors
+            _ctx.options.logger.debug(`\tPrettier error: \n${error.message}`);
           }
 
           await promisesHelper.exec(
@@ -237,6 +277,7 @@ class Generator {
             fsUtil.saveFile(targetFilePath, result, false)
           );
         } else {
+          _ctx.options.logger.info(`\tBinary file. Just copy to destination.`);
           await fsUtil.ensureDir(path.dirname(targetFilePath));
           await promisesHelper.exec(
             _ctx,
@@ -245,8 +286,10 @@ class Generator {
         }
       }
     } catch (error) {
-      throw new Error(`${tree.path.replace(ctx.templatePath, "")}
-        ${error.message}`);
+      _ctx.options.logger.error(`\tError: ${error.message}`);
+      throw new Error(
+        `${tree.path.replace(ctx.templatePath, "")}\t${error.message}`
+      );
     }
 
     return promisesHelper.await();
@@ -262,12 +305,12 @@ class Generator {
   async loadOptions(tree, context) {
     if (tree.type === "directory") {
       const dirPath = path.join(context.originPath, tree.name);
-      return context.options.getFolderOptions(dirPath, context.options);
+      return context.options.getFolderOptions(dirPath, context);
     }
 
     if (tree.type === "file") {
       const filePath = path.join(context.originPath, tree.name);
-      return context.options.getFileOptions(filePath, context.options);
+      return context.options.getFileOptions(filePath, context);
     }
   }
 

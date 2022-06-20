@@ -2,6 +2,8 @@ const path = require("path");
 const fsUtil = require("../fs-util");
 const { RegionProvider } = require("../generator/region-provider");
 const { ignores } = require("../util");
+const { logger } = require("../logger");
+const winston = require("winston");
 
 /**
  * @class ScafflaterOptions
@@ -14,6 +16,10 @@ class ScafflaterOptions {
   constructor(options = {}) {
     for (const option in options) {
       this[option] = options[option];
+    }
+
+    if (this.mode === "debug") {
+      this.logger.level = "debug";
     }
   }
 
@@ -118,6 +124,12 @@ class ScafflaterOptions {
   githubUsername = null;
   githubPassword = null;
 
+  /**
+   * @description Winston Logger instance
+   * @type {winston.logger}
+   */
+  logger = logger;
+
   ignores(basePath, folderOrFile) {
     if (Array.isArray(this.ignore)) {
       return ignores(basePath, folderOrFile, this.ignore);
@@ -131,14 +143,23 @@ class ScafflaterOptions {
    *
    * @description Looks for .scafflater file in folder, loads it if exists and returns an ScaffolderOptions object with the actual parameters with the loaded from file.
    * @param {string} folderPath Folder to load the Options
+   * @param {import("../generator").Context} context Context
    * @returns {Promise<ScafflaterOptions>} The merged Options
    */
-  async getFolderOptions(folderPath) {
+  async getFolderOptions(folderPath, context) {
     let result = { ...this };
     const scfFilePath = path.join(folderPath, this.scfFileName);
     if (await fsUtil.pathExists(scfFilePath)) {
       const info = await fsUtil.readJSON(scfFilePath);
       if (info.options) {
+        if (Object.keys(info.options).length > 0) {
+          context.options.logger
+            .debug(`Folder Config Loaded for '${folderPath.replace(
+            context.templatePath,
+            ""
+          )}' \n${JSON.stringify(info.options, null, 2)}
+        `);
+        }
         result = { ...result, ...info.options };
       }
     }
@@ -150,11 +171,19 @@ class ScafflaterOptions {
    *
    * @description Looks for @scf-option in file content, loads it if exists and returns an ScaffolderOptions object with the actual parameters with the loaded options from file.
    * @param {string} filePath File to load the Options
+   * @param {import("../generator").Context} context Context
    * @returns {Promise<ScafflaterOptions>} The merged Options
    */
-  async getFileOptions(filePath) {
+  async getFileOptions(filePath, context) {
     const fileContent = await fsUtil.readFileContent(filePath);
-    const result = this.getConfigFromString(fileContent);
+    const result = await this.getConfigFromString(fileContent);
+    if (result && Object.keys(result).length > 0) {
+      context.options.logger.debug(`File Config Loaded for '${filePath.replace(
+        context.templatePath,
+        ""
+      )}'\n${JSON.stringify({ ...result, logger: null }, null, 2)}
+      `);
+    }
     return Promise.resolve(result);
   }
 
