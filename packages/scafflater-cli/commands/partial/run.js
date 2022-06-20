@@ -82,6 +82,7 @@ class RunPartialCommand extends Command {
         cacheStorage: runFlags.cache,
         source: runFlags.templateSource,
       });
+      options.mode = runFlags.debug ? "debug" : "prod";
       const scafflater = new Scafflater(options);
 
       // Getting info from target path
@@ -186,14 +187,14 @@ class RunPartialCommand extends Command {
         ).templateParameters
       );
 
-      await spinner("Running partial template", async () => {
-        await scafflater.runPartial(
-          localPartial.templateName,
-          localPartial.name,
-          parameters,
-          runFlags.output
-        );
-      });
+      logger.info("Running partial template");
+
+      await scafflater.runPartial(
+        localPartial.templateName,
+        localPartial.name,
+        parameters,
+        runFlags.output
+      );
 
       logger.log("notice", "Partial results appended to output!");
     } catch (error) {
@@ -244,6 +245,11 @@ RunPartialCommand.flags = {
     description: "Template source indicating how the template is fetched",
     default: "git",
     options: templatesSource,
+  }),
+  debug: flags.boolean({
+    char: "d",
+    description: "Debug mode execution",
+    default: false,
   }),
 };
 

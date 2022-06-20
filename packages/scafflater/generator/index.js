@@ -33,11 +33,13 @@ class PromisesHelper {
    * @param {Promise} promise Promise to execute
    */
   async exec(ctx, promise) {
-    if (ctx.options.mode === "debug") {
-      await promise;
-    } else {
-      this.promises.push(promise);
-    }
+    await promise;
+
+    // if (ctx.options.mode === "debug") {
+    //   await promise;
+    // } else {
+    //   this.promises.push(promise);
+    // }
   }
 
   async await() {
@@ -266,7 +268,7 @@ class Generator {
             result = prettier.format(result, {
               ...this.context.prettierConfig,
               filepath: targetFilePath,
-              plugins: ["@prettier/plugin-xml"],
+              // plugins: ["@prettier/plugin-xml"],
             });
           } catch (error) {
             _ctx.options.logger.debug(`\tPrettier error: \n${error.message}`);
@@ -321,7 +323,7 @@ class Generator {
 
     if (!config.plugins) config.plugins = [];
 
-    config.plugins.push("@prettier/plugin-xml");
+    // config.plugins.push("@prettier/plugin-xml");
 
     return config;
   }

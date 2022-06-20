@@ -32,6 +32,7 @@ class InitCommand extends Command {
         iniArgs.source
       );
       config.source = source.source;
+      config.mode = initFlags.debug ? "debug" : "prod";
       const scafflater = new Scafflater(config);
 
       let localTemplate;
@@ -70,14 +71,14 @@ class InitCommand extends Command {
         outputConfig.globalParameters
       );
 
-      await spinner("Running template initialization", async () => {
-        await scafflater.init(
-          iniArgs.source,
-          parameters,
-          initFlags.version,
-          initFlags.output
-        );
-      });
+      logger.info("Running template initialization");
+
+      await scafflater.init(
+        iniArgs.source,
+        parameters,
+        initFlags.version,
+        initFlags.output
+      );
 
       logger.log(
         "notice",
@@ -129,6 +130,11 @@ InitCommand.flags = {
     char: "v",
     description: "The template version",
     default: "last",
+  }),
+  debug: flags.boolean({
+    char: "d",
+    description: "Debug mode execution",
+    default: false,
   }),
 };
 
