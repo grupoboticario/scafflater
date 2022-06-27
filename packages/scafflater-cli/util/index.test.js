@@ -1,5 +1,9 @@
 /* eslint-disable no-undef */
-const { parseParametersFlags, promptMissingParameters } = require(".");
+const {
+  parseParametersFlags,
+  promptMissingParameters,
+  parseParametersNames,
+} = require(".");
 const inquirer = require("inquirer");
 const {
   PersistedParameter,
@@ -114,5 +118,50 @@ describe("promptMissingParameters", () => {
     expect(result.name2).toBe("value2");
     expect(result.name3).toBe("the name");
     expect(result.name4).toBe(123);
+  });
+});
+
+describe("parseParametersNames", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+    jest.clearAllMocks();
+  });
+
+  test("Parse parameters", async () => {
+    // ARRANGE
+    const input = {
+      param1: "some-value",
+      "param2.name": "param-name",
+      "param2.description": "Parameter Description",
+      "param3[0]": "Position 0",
+      "param3[1]": "Position 1",
+      "param4[0].name": "name4.0",
+      "param4[0].description": "Description 4.0",
+      "param4[1].name": "name4.1",
+      "param4[1].description": "Description 4.1",
+    };
+
+    // ACT
+    const result = parseParametersNames(input);
+
+    // ASSERT
+    expect(result).toMatchObject({
+      param1: "some-value",
+      param2: {
+        name: "param-name",
+        description: "Parameter Description",
+      },
+      param3: ["Position 0", "Position 1"],
+      param4: [
+        {
+          name: "name4.0",
+          description: "Description 4.0",
+        },
+        {
+          name: "name4.1",
+          description: "Description 4.1",
+        },
+      ],
+    });
   });
 });

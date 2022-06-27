@@ -8,7 +8,11 @@ const {
   ScafflaterFileNotFoundError,
   ScafflaterError,
 } = require("@scafflater/scafflater");
-const { promptMissingParameters, spinner } = require("../util");
+const {
+  promptMissingParameters,
+  parseParametersNames,
+  spinner,
+} = require("../util");
 const chalk = require("chalk");
 const path = require("path");
 
@@ -65,10 +69,12 @@ class InitCommand extends Command {
         return;
       }
 
-      const parameters = await promptMissingParameters(
-        initFlags.parameters,
-        localTemplate.parameters,
-        outputConfig.globalParameters
+      const parameters = parseParametersNames(
+        await promptMissingParameters(
+          initFlags.parameters,
+          localTemplate.parameters,
+          outputConfig.globalParameters
+        )
       );
 
       logger.info("Running template initialization");

@@ -7,7 +7,11 @@ const {
   LocalTemplate,
   LocalPartial,
 } = require("@scafflater/scafflater");
-const { promptMissingParameters, spinner } = require("../../util");
+const {
+  promptMissingParameters,
+  parseParametersNames,
+  spinner,
+} = require("../../util");
 const chalk = require("chalk");
 const path = require("path");
 const inquirer = require("inquirer");
@@ -178,13 +182,15 @@ class RunPartialCommand extends Command {
 
       const localPartial = availablePartials[0];
 
-      const parameters = await promptMissingParameters(
-        runFlags.parameters,
-        localPartial.parameters,
-        outputConfig.globalParameters,
-        outputConfig.templates.find(
-          (rt) => rt.name === localPartial.templateName
-        ).templateParameters
+      const parameters = parseParametersNames(
+        await promptMissingParameters(
+          runFlags.parameters,
+          localPartial.parameters,
+          outputConfig.globalParameters,
+          outputConfig.templates.find(
+            (rt) => rt.name === localPartial.templateName
+          ).templateParameters
+        )
       );
 
       logger.info("Running partial template");

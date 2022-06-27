@@ -1,6 +1,7 @@
 const ora = require("ora");
 const chalk = require("chalk");
 const Prompt = require("./prompt");
+const { setProperty } = require("./dot-prop");
 const {
   ParameterConfig,
 } = require("@scafflater/scafflater/scafflater-config/parameter-config");
@@ -62,6 +63,15 @@ const promptMissingParameters = async (
   };
 };
 
+const parseParametersNames = (parameters) => {
+  const result = {};
+  for (const parameter in parameters) {
+    setProperty(result, parameter, parameters[parameter]);
+  }
+
+  return result;
+};
+
 const spinner = async (message, f) => {
   const spinnerControl = ora(message).start();
   try {
@@ -77,4 +87,5 @@ module.exports = {
   parseParametersFlags,
   promptMissingParameters,
   spinner,
+  parseParametersNames,
 };

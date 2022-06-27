@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 const { Scafflater } = require("./scafflater");
 const { TemplateManager } = require("./template-manager");
 const { ScafflaterOptions } = require("./options");
@@ -12,6 +11,7 @@ const RanPartial = require("./scafflater-config/ran-partial");
 const { Source } = require("./scafflater-config/source");
 const { TemplateSource } = require("./template-source");
 const { TemplateCache } = require("./template-cache");
+const { createLogger } = require("winston");
 
 jest.mock("./scafflater-config/config");
 jest.mock("./template-source");
@@ -320,6 +320,21 @@ describe("Scafflater", () => {
       expect(mockedConfig.config.save).toBeCalledWith(
         "/some/target/.scafflater/scafflater.jsonc"
       );
+    });
+  });
+
+  describe("Options parameters", () => {
+    test("Use logger from context", () => {
+      // ARRANGE
+      const logger = createLogger();
+      logger.debug = jest.fn();
+      const scafflater = new Scafflater({ logger });
+
+      // ACT
+      scafflater.options.logger.debug("testing");
+
+      // ASSERT
+      expect(logger.debug).toBeCalledWith("testing");
     });
   });
 });
