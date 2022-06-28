@@ -79,7 +79,7 @@ class GitTemplateSource extends LocalFolderTemplateSource {
     const tagArgument =
       resolvedVersion === "head" ? "" : ` -b ${resolvedVersion}`;
 
-    const r = await exec(
+    await exec(
       `git clone${tagArgument} ${sourceKey} ${pathToClone} -c core.protectNTFS=false`,
       {
         timeout: 15000,

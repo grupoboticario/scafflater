@@ -169,7 +169,9 @@ describe("getTemplate", () => {
     );
     expect(out).toBeInstanceOf(LocalTemplate);
     expect(out).toStrictEqual(expected);
-    expect(cmd).toBe("git clone some/repo temp/folder");
+    expect(cmd).toBe(
+      "git clone some/repo temp/folder -c core.protectNTFS=false"
+    );
   });
 
   test("A last version is requested, and there is an tag version. Should clone the version.", async () => {
@@ -231,7 +233,9 @@ describe("getTemplate", () => {
     );
     expect(out).toBeInstanceOf(LocalTemplate);
     expect(out).toStrictEqual(expected);
-    expect(cmd).toBe("git clone -b v0.0.64 some/repo temp/folder");
+    expect(cmd).toBe(
+      "git clone -b v0.0.64 some/repo temp/folder -c core.protectNTFS=false"
+    );
   });
 
   test("Request an existing tag version. Should clone the version.", async () => {
@@ -293,7 +297,9 @@ describe("getTemplate", () => {
     );
     expect(out).toBeInstanceOf(LocalTemplate);
     expect(out).toStrictEqual(expected);
-    expect(cmd).toBe("git clone -b v0.0.62 some/repo temp/folder");
+    expect(cmd).toBe(
+      "git clone -b v0.0.62 some/repo temp/folder -c core.protectNTFS=false"
+    );
   });
 
   test("Request an non existing tag version. Should throw.", async () => {
@@ -377,7 +383,9 @@ describe("getTemplate", () => {
         [{ name: "some-parameter" }]
       )
     );
-    expect(cmd).toBe("git clone some/repo temp/folder");
+    expect(cmd).toBe(
+      "git clone some/repo temp/folder -c core.protectNTFS=false"
+    );
   });
 
   test("Check Version is available", async () => {
