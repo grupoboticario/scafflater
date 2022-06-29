@@ -9,7 +9,6 @@ const stripJsonComments = require("strip-json-comments");
 const { Source } = require("./source");
 const { ScafflaterOptions } = require("../options");
 const ScafflaterFileNotFoundError = require("../errors/scafflater-file-not-found-error");
-const { LocalPartial, LocalTemplate } = require("./local-template");
 const TemplateNotInitializedError = require("../errors/template-not-initialized-error");
 
 /**
@@ -181,9 +180,9 @@ class Config {
   /**
    * Check the scopes of template and partial parameters and stores in the appropriate parameter on config
    *
-   * @param {LocalTemplate} template The template with the parameters to be analysed
+   * @param {import("./local-template").LocalTemplate} template The template with the parameters to be analyzed
    * @param {object} parameters The object with the values to be persisted
-   * @param {LocalPartial} partial The partial with the parameters to be analysed
+   * @param {import("./local-template").LocalPartial} partial The partial with the parameters to be analyzed
    */
   setPersistedParameters(template, parameters = {}, partial = null) {
     const globalParameters = template.getParameterConfigsByScope(
