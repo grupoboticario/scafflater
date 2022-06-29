@@ -11,6 +11,7 @@ const {
   promptMissingParameters,
   parseParametersNames,
   spinner,
+  parseKeyValueFlags,
 } = require("../../util");
 const chalk = require("chalk");
 const path = require("path");
@@ -85,6 +86,7 @@ class RunPartialCommand extends Command {
       const options = new ScafflaterOptions({
         cacheStorage: runFlags.cache,
         source: runFlags.templateSource,
+        ...parseKeyValueFlags(runFlags.options),
       });
       options.mode = runFlags.debug ? "debug" : "prod";
       const scafflater = new Scafflater(options);
@@ -230,9 +232,15 @@ RunPartialCommand.flags = {
     description: "The template which contains the partial to be run",
   }),
   output: flags.string({
-    char: "o",
+    char: "O",
     description: "The output folder",
     default: "./",
+  }),
+  options: flags.string({
+    char: "o",
+    description: "Scafflater options. Pattern: <option-name>:<option-value>",
+    default: [],
+    multiple: true,
   }),
   cache: flags.string({
     char: "c",

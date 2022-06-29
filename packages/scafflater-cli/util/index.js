@@ -9,7 +9,7 @@ const {
   PersistedParameter,
 } = require("@scafflater/scafflater/scafflater-config/persisted-parameter");
 
-const parseParametersFlags = (parameters) => {
+const parseKeyValueFlags = (parameters) => {
   const result = {};
 
   parameters.forEach((param) => {
@@ -39,7 +39,7 @@ const promptMissingParameters = async (
   globalParameters = [],
   templateParameters = []
 ) => {
-  const flags = parseParametersFlags(parameterFlags);
+  const flags = parseKeyValueFlags(parameterFlags);
   if (!requiredParameters) return flags;
 
   const missingParameters = [];
@@ -84,7 +84,7 @@ const spinner = async (message, f) => {
 };
 
 module.exports = {
-  parseParametersFlags,
+  parseKeyValueFlags,
   promptMissingParameters,
   spinner,
   parseParametersNames,

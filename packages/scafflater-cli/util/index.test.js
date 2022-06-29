@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 const {
-  parseParametersFlags,
+  parseKeyValueFlags,
   promptMissingParameters,
   parseParametersNames,
 } = require(".");
@@ -21,7 +21,7 @@ test("Parse Parameters Flags", () => {
   const parameters = ["name1:value1", "name2:value2"];
 
   // ACT
-  const result = parseParametersFlags(parameters);
+  const result = parseKeyValueFlags(parameters);
 
   // ASSERT
   expect(result.name1).toBe("value1");

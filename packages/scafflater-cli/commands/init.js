@@ -12,6 +12,7 @@ const {
   promptMissingParameters,
   parseParametersNames,
   spinner,
+  parseKeyValueFlags,
 } = require("../util");
 const chalk = require("chalk");
 const path = require("path");
@@ -27,17 +28,18 @@ class InitCommand extends Command {
         return;
       }
 
-      const config = new ScafflaterOptions({
+      const options = new ScafflaterOptions({
         cacheStorage: initFlags.cache,
         source: initFlags.templateSource,
+        ...parseKeyValueFlags(initFlags.options),
       });
       const source = TemplateSource.resolveTemplateSourceFromSourceKey(
-        config,
+        options,
         iniArgs.source
       );
-      config.source = source.source;
-      config.mode = initFlags.debug ? "debug" : "prod";
-      const scafflater = new Scafflater(config);
+      options.source = source.source;
+      options.mode = initFlags.debug ? "debug" : "prod";
+      const scafflater = new Scafflater(options);
 
       let localTemplate;
       await spinner(`Getting template from ${iniArgs.source}`, async () => {
@@ -110,9 +112,15 @@ const caches = ["homeDir", "tempDir"];
 const templatesSource = ["git", "githubClient", "isomorphicGit", "localFolder"];
 InitCommand.flags = {
   output: flags.string({
-    char: "o",
+    char: "O",
     description: "The output folder",
     default: "./",
+  }),
+  options: flags.string({
+    char: "o",
+    description: "Scafflater options. Pattern: <option-name>:<option-value>",
+    default: [],
+    multiple: true,
   }),
   cache: flags.string({
     char: "c",
@@ -128,7 +136,8 @@ InitCommand.flags = {
   }),
   parameters: flags.string({
     char: "p",
-    description: "The parameters to init template",
+    description:
+      "The parameters to init template. Pattern: <parameter-name>:<parameter-value>",
     default: [],
     multiple: true,
   }),
