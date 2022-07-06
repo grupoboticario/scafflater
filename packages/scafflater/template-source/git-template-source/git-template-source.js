@@ -168,10 +168,6 @@ class GitTemplateSource extends LocalFolderTemplateSource {
    * @throws {InvalidArgumentError} The version must be in semver pattern
    */
   async isVersionAvailable(sourceKey, version) {
-    if (!semver.valid(version)) {
-      throw new InvalidArgumentError("version", version);
-    }
-
     const exec = util.promisify(require("child_process").exec);
 
     const { stdout } = await exec(

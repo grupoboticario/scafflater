@@ -41,7 +41,8 @@ const loadTemplates = async (outputConfig, scafflater) => {
         );
       if (!localTemplate) {
         localTemplate = await scafflater.templateManager.getTemplateFromSource(
-          ranTemplate.source.key
+          ranTemplate.source.key,
+          ranTemplate.version
         );
       }
       if (!localTemplate) {
