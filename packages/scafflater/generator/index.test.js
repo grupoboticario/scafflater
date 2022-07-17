@@ -137,6 +137,64 @@ a sample test
     expect(fsUtil.saveFile.mock.calls.length).toBe(0);
   });
 
+  test("Does not change an existing file when appendStrategy equals 'appendIfExists'", async () => {
+    // ARRANGE
+    const ctx = {
+      templatePath: "/template/path",
+      template: {
+        name: "test-template",
+        type: "template",
+        version: "0.0.1",
+        config: {
+          lineCommentTemplate: "# {{comment}}",
+        },
+      },
+      originPath: "/source/path",
+      partial: {
+        name: "_init",
+        type: "init",
+      },
+      targetPath: "/target/path",
+      parameters: { test: "a sample test" },
+      options: new ScafflaterOptions({
+        annotate: false,
+        appendStrategy: "appendIfExists",
+      }),
+      helpersPath: "./the-hbs-helpers",
+    };
+    fsUtil.getDirTreeSync.mockReturnValue({
+      path: "just/a/sample/test.txt",
+      name: "test.txt",
+      size: 100,
+      type: "file",
+      extension: ".txt",
+    });
+    fsUtil.readFileContent.mockImplementation((path) => {
+      if (path.startsWith(ctx.targetPath)) return "existing content";
+
+      return "{{parameters.test}}";
+    });
+    fsUtil.pathExists.mockImplementation((path) => {
+      if (
+        path.startsWith(ctx.targetPath) ||
+        path.includes("hbs-builtin-helpers")
+      )
+        return false;
+    });
+    fsUtil.listFilesByExtensionDeeply.mockResolvedValue(["lineComment.js"]);
+    fsUtil.require.mockReturnValue(
+      require("./processors/hbs-builtin-helpers/lineComment")
+    );
+    fsUtil.loadScriptsAsObjects.mockResolvedValue([]);
+    const generator = new Generator(ctx);
+
+    // ACT
+    await generator.generate();
+
+    // ASSERT
+    expect(fsUtil.saveFile.mock.calls.length).toBe(0);
+  });
+
   test("Annotate masked parameters", async () => {
     // ARRANGE
     const ctx = {

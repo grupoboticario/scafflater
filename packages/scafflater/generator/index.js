@@ -222,6 +222,13 @@ class Generator {
             return Promise.resolve();
           }
           targetContent = await fsUtil.readFileContent(targetFilePath);
+        } else {
+          if (ctx.options.appendStrategy === "appendIfExists") {
+            _ctx.options.logger.info(
+              `\tIgnoring: appendStrategy = 'appendIfExists' and destination does not exists`
+            );
+            return Promise.resolve();
+          }
         }
 
         if (!(await isBinaryFile(originFilePath))) {
