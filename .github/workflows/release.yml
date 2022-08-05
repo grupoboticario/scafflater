@@ -39,7 +39,7 @@ jobs:
         id: npm-cache
         run: echo "::set-output name=dir::$(npm config get cache)"
 
-      - uses: actions/cache@v2.1.7
+      - uses: actions/cache@v3.0.6
         with:
           path: ${{ steps.npm-cache.outputs.dir }}
           key: ubuntu-latest-node-${{ hashFiles('**/package-lock.json') }}
@@ -109,7 +109,7 @@ jobs:
         id: npm-cache
         run: echo "::set-output name=dir::$(npm config get cache)"
 
-      - uses: actions/cache@v2.1.7
+      - uses: actions/cache@v3.0.6
         with:
           path: ${{ steps.npm-cache.outputs.dir }}
           key: ubuntu-latest-node-${{ hashFiles('**/package-lock.json') }}
