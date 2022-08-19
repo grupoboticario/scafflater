@@ -91,6 +91,6 @@ describe("Testing mocking fs-extra", () => {
     await fsUtil.getTempFolder();
 
     // ASSERT
-    expect(fs.mkdtemp.mock.calls[0][0]).toBe("/temp/dir");
+    expect(fs.mkdtemp.mock.calls[0][0]).toBe("/temp/dir/scf-");
   });
 });
