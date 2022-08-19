@@ -131,7 +131,7 @@ fs.listJsScripts = async (folderPath, npmInstall = false) => {
  * @returns {Promise<string>} The temp path
  */
 fs.getTempFolder = async () => {
-  return fs.mkdtemp(os.tmpdir());
+  return fs.mkdtemp(path.join(os.tmpdir(), "scf-"));
 };
 
 /**
@@ -140,7 +140,7 @@ fs.getTempFolder = async () => {
  * @returns {Promise<string>} The temp path
  */
 fs.getTempFolderSync = () => {
-  return fs.mkdtempSync(os.tmpdir());
+  return fs.mkdtempSync(path.join(os.tmpdir(), "scf-"));
 };
 
 /**
