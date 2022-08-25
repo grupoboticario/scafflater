@@ -150,3 +150,117 @@ spec:
     - flask-2`)
   );
 });
+
+test("Destiny Empty text", async () => {
+  // ARRANGE
+  const destinYaml = ``;
+
+  const srcYaml = `
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: >-
+    flask-2
+  description: >-
+    aeeeeeee
+  tags: [api, python, flask]
+  annotations:
+    github.com/project-slug: "gbsandbox/sandb-pdd-flask-2"
+    github.com/team-slug: "gbsandbox/pdd-team"
+    argocd/app-selector: "app=flask-2"
+spec:
+  type: service
+  lifecycle: experimental
+  owner: >-
+    pdd-team
+  system: >-
+    pdd`;
+
+  const yamlAppender = new YamlAppender();
+
+  // ACT
+  const result = await yamlAppender.append(
+    { options: new ScafflaterOptions() },
+    srcYaml,
+    destinYaml
+  );
+
+  // ASSERT
+  expect(yaml.load(result.result)).toStrictEqual(
+    yaml.load(`apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: flask-2
+  description: aeeeeeee
+  tags: 
+    - api
+    - python
+    - flask
+  annotations:
+    github.com/project-slug: gbsandbox/sandb-pdd-flask-2
+    github.com/team-slug: gbsandbox/pdd-team
+    argocd/app-selector: app=flask-2
+spec:
+  type: service
+  lifecycle: experimental
+  owner: pdd-team
+  system: pdd`)
+  );
+});
+
+test("Source Empty text", async () => {
+  // ARRANGE
+  const srcYaml = ``;
+
+  const destinyYaml = `
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: >-
+    flask-2
+  description: >-
+    aeeeeeee
+  tags: [api, python, flask]
+  annotations:
+    github.com/project-slug: "gbsandbox/sandb-pdd-flask-2"
+    github.com/team-slug: "gbsandbox/pdd-team"
+    argocd/app-selector: "app=flask-2"
+spec:
+  type: service
+  lifecycle: experimental
+  owner: >-
+    pdd-team
+  system: >-
+    pdd`;
+
+  const yamlAppender = new YamlAppender();
+
+  // ACT
+  const result = await yamlAppender.append(
+    { options: new ScafflaterOptions() },
+    srcYaml,
+    destinyYaml
+  );
+
+  // ASSERT
+  expect(yaml.load(result.result)).toStrictEqual(
+    yaml.load(`apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: flask-2
+  description: aeeeeeee
+  tags: 
+    - api
+    - python
+    - flask
+  annotations:
+    github.com/project-slug: gbsandbox/sandb-pdd-flask-2
+    github.com/team-slug: gbsandbox/pdd-team
+    argocd/app-selector: app=flask-2
+spec:
+  type: service
+  lifecycle: experimental
+  owner: pdd-team
+  system: pdd`)
+  );
+});

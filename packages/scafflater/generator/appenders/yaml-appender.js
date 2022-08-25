@@ -41,8 +41,8 @@ class YamlAppender extends Appender {
   append(context, srcStr, destStr) {
     return new Promise((resolve, reject) => {
       try {
-        let src = yaml.load(srcStr);
-        const dst = yaml.load(destStr);
+        let src = srcStr.trim() === "" ? {} : yaml.load(srcStr);
+        const dst = destStr.trim() === "" ? {} : yaml.load(destStr);
 
         src = merge(dst, src, {
           arrayMerge,
