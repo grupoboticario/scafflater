@@ -3,6 +3,11 @@ const merge = require("deepmerge");
 const arrayMerge = require("./utils/array-merger");
 
 class JsonAppender extends Appender {
+  removeJSONComments(json) {
+    const re = /\/\/(.*)/g;
+    return json.replace(re, "");
+  }
+
   /**
    * Process the input.
    *
@@ -14,8 +19,10 @@ class JsonAppender extends Appender {
   append(context, srcStr, destStr) {
     return new Promise((resolve, reject) => {
       try {
-        srcStr = context.options.stripConfig(srcStr);
-        let src = srcStr.trim() === "" ? {} : JSON.parse(srcStr);
+        srcStr = this.removeJSONComments(srcStr).trim();
+        destStr = this.removeJSONComments(destStr).trim();
+
+        let src = srcStr ? JSON.parse(srcStr) : {};
         const dst = destStr ? JSON.parse(destStr) : {};
 
         src = merge(dst, src, {

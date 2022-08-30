@@ -55,10 +55,12 @@ test("Empty Source Json", async () => {
   // ARRANGE
   const srcJson = `
   // @scf-option { "some": "config" }
+  // some comment
+
   {
     "new-property": "the property",
     "objectProperty": {
-      "new-object-prop": 10
+      "new-object-prop": 10 // some comment
     },
     "arrayProperty": [
       "new array item"
@@ -71,7 +73,8 @@ test("Empty Source Json", async () => {
   const result = await jsonAppender.append(
     { options: new ScafflaterOptions() },
     srcJson,
-    ""
+    `// @scf-option { "some": "config" }
+// some comment`
   );
 
   // ASSERT
@@ -90,7 +93,8 @@ test("Empty Source Json", async () => {
 
 test("Empty Destiny Json", async () => {
   // ARRANGE
-  const srcJson = ``;
+  const srcJson = `// @scf-option { "some": "config" }
+// some comment`;
 
   const jsonAppender = new JsonAppender();
 

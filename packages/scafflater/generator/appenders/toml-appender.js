@@ -41,7 +41,7 @@ class TomlAppender extends Appender {
   append(context, srcStr, destStr) {
     return new Promise((resolve, reject) => {
       try {
-        let src = srcStr.trim() === "" ? {} : TOML.parse(srcStr);
+        let src = TOML.parse(srcStr);
         const dst = TOML.parse(destStr);
 
         const customizer = (objValue, srcValue) => {

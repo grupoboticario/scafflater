@@ -72,7 +72,8 @@ test("Empty Source Toml", async () => {
   // ACT
   const result = await yamlAppender.append(
     { options: new ScafflaterOptions() },
-    "",
+    `# @scf-option { "appenders": ["./appenders/toml-appender"] }
+# some comment`,
     destYaml
   );
 
@@ -114,7 +115,8 @@ name = "Other"`;
   const result = await yamlAppender.append(
     { options: new ScafflaterOptions() },
     srcYaml,
-    ""
+    `# @scf-option { "appenders": ["./appenders/toml-appender"] }
+# some comment`
   );
 
   // ASSERT

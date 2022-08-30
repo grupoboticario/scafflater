@@ -153,7 +153,9 @@ spec:
 
 test("Destiny Empty text", async () => {
   // ARRANGE
-  const destinYaml = ``;
+  const destinYaml = `
+  # @scf-option { "appenders": ["./appenders/yaml-appender"] }
+  # some comment`;
 
   const srcYaml = `
 apiVersion: backstage.io/v1alpha1
@@ -210,7 +212,10 @@ spec:
 
 test("Source Empty text", async () => {
   // ARRANGE
-  const srcYaml = ``;
+  const srcYaml = `
+  # @scf-option { "appenders": ["./appenders/yaml-appender"] }
+  # some comment
+  `;
 
   const destinyYaml = `
 apiVersion: backstage.io/v1alpha1
