@@ -118,3 +118,38 @@ test("Empty Destiny Json", async () => {
   }`)
   );
 });
+
+test("Strip comments", async () => {
+  // ARRANGE
+  const srcJson = `// @scf-option { "some": "config" }
+/*
+  some comment
+*/
+{
+  "http-sample": "http://some.url"
+}
+`;
+
+  const jsonAppender = new JsonAppender();
+
+  // ACT
+  const result = await jsonAppender.append(
+    { options: new ScafflaterOptions() },
+    srcJson,
+    destJson
+  );
+
+  // ASSERT
+  expect(JSON.parse(result.result)).toStrictEqual(
+    JSON.parse(`{
+    "property": "the property",
+    "http-sample": "http://some.url",
+    "objectProperty": {
+      "prop1": 10
+    },
+    "arrayProperty": [
+      "array item"
+    ]
+  }`)
+  );
+});

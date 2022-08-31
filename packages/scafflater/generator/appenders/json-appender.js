@@ -1,13 +1,9 @@
 const Appender = require("./appender");
 const merge = require("deepmerge");
 const arrayMerge = require("./utils/array-merger");
+const stripJsonComments = require("strip-json-comments");
 
 class JsonAppender extends Appender {
-  removeJSONComments(json) {
-    const re = /\/\/(.*)/g;
-    return json.replace(re, "");
-  }
-
   /**
    * Process the input.
    *
@@ -19,8 +15,8 @@ class JsonAppender extends Appender {
   append(context, srcStr, destStr) {
     return new Promise((resolve, reject) => {
       try {
-        srcStr = this.removeJSONComments(srcStr).trim();
-        destStr = this.removeJSONComments(destStr).trim();
+        srcStr = stripJsonComments(srcStr).trim();
+        destStr = stripJsonComments(destStr).trim();
 
         let src = srcStr ? JSON.parse(srcStr) : {};
         const dst = destStr ? JSON.parse(destStr) : {};
