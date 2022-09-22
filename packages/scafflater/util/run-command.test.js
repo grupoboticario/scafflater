@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 const { runCommand } = require("./run-command");
-const { spawn } = require("child_process");
+const { exec } = require("child_process");
 
 jest.mock("child_process");
 
@@ -24,7 +24,7 @@ describe("runCommand", () => {
         putOn[event] = fn;
       },
     };
-    spawn.mockReturnValue(process);
+    exec.mockReturnValue(process);
 
     // ACT
     const premise = runCommand("ls");
@@ -54,7 +54,7 @@ describe("runCommand", () => {
         putOn[event] = fn;
       },
     };
-    spawn.mockReturnValue(process);
+    exec.mockReturnValue(process);
 
     // ACT
     const premise = runCommand("ls");
@@ -83,7 +83,7 @@ describe("runCommand", () => {
         putOn[event] = fn;
       },
     };
-    spawn.mockReturnValue(process);
+    exec.mockReturnValue(process);
 
     // ACT
     const premise = runCommand("ls");

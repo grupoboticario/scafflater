@@ -5,6 +5,28 @@ const { ParameterConfig } = require("./parameter-config");
 const PartialNotFoundError = require("../errors/partial-not-found-error");
 
 /**
+ * @class LocalTemplateHooks
+ * @description Defines the hooks scripts for templates
+ */
+class LocalTemplateHooks {
+  /**
+   * Pre Run script
+   *
+   * @description Script to be run before template init
+   * @type {string}
+   */
+  preRun;
+
+  /**
+   * Pot Run script
+   *
+   * @description Script to be run after template init
+   * @type {string}
+   */
+  postRun;
+}
+
+/**
  * @class LocalTemplate
  */
 class LocalTemplate {
@@ -19,6 +41,7 @@ class LocalTemplate {
    * @param {LocalPartial[]} partials - The partials of the template
    * @param {(ScafflaterOptions|object)} options - Template options
    * @param {ParameterConfig[]} parameters - Template parameters
+   * @param {LocalTemplateHooks[]} hooks - Template hooks
    */
   constructor( // NOSONAR
     folderPath,
@@ -28,7 +51,8 @@ class LocalTemplate {
     version,
     partials = [],
     options = {},
-    parameters = []
+    parameters = [],
+    hooks = {}
   ) {
     this.name = name;
     this.description = description;
@@ -38,6 +62,7 @@ class LocalTemplate {
     this.folderPath = folderPath;
     this.configPath = configPath;
     this.options = new ScafflaterOptions(options);
+    this.hooks = hooks;
   }
 
   /**
@@ -99,6 +124,14 @@ class LocalTemplate {
    * @type {ParameterConfig[]}
    */
   parameters;
+
+  /**
+   * Template hooks
+   *
+   * @description Template hooks scripts
+   * @type {LocalTemplateHooks}
+   */
+  hooks;
 
   /**
    * List all parameter config with the specified scope
@@ -164,7 +197,8 @@ class LocalTemplate {
           templateConfig.config.template.version,
           [],
           templateConfig.config.template.options,
-          templateConfig.config.template.parameters
+          templateConfig.config.template.parameters,
+          templateConfig.config.template.hooks
         )
       );
     }
@@ -188,13 +222,36 @@ class LocalTemplate {
           partialConfig.config.partial.name,
           partialConfig.config.partial.description,
           partialConfig.config.partial.options,
-          partialConfig.config.partial.parameters
+          partialConfig.config.partial.parameters,
+          partialConfig.config.partial.hooks
         )
       );
     }
 
     return Promise.resolve(result);
   }
+}
+
+/**
+ * @class LocalPartialHooks
+ * @description Defines the hooks scripts for partials
+ */
+class LocalPartialHooks {
+  /**
+   * Pre Run script
+   *
+   * @description Script to be run before partial run
+   * @type {string}
+   */
+  preRun;
+
+  /**
+   * Pot Run script
+   *
+   * @description Script to be run after partial run
+   * @type {string}
+   */
+  postRun;
 }
 
 /**
@@ -209,13 +266,22 @@ class LocalPartial {
    * @param {string} description - Partial description
    * @param {(ScafflaterOptions|object)} options - Partial options
    * @param {ParameterConfig[]} parameters - Partial parameters
+   * @param {LocalPartialHooks[]} hooks - Partial hooks
    */
-  constructor(folderPath, name, description, options = {}, parameters = []) {
+  constructor(
+    folderPath,
+    name,
+    description,
+    options = {},
+    parameters = [],
+    hooks = {}
+  ) {
     this.name = name;
     this.description = description;
     this.options = new ScafflaterOptions(options);
     this.parameters = parameters;
     this.folderPath = folderPath;
+    this.hooks = hooks;
   }
 
   /**
@@ -247,6 +313,14 @@ class LocalPartial {
    * @type {ScafflaterOptions}
    */
   options;
+
+  /**
+   * Partial hooks
+   *
+   * @description Partial hooks scripts
+   * @type {LocalPartialHooks}
+   */
+  hooks;
 
   /**
    * Loads local partial from a localPath

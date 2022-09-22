@@ -2,6 +2,28 @@ const ScafflaterOptions = require("../options");
 const ParameterConfig = require("./parameter-config");
 
 /**
+ * @class PartialHooks
+ * @description Defines the hooks scripts for partials
+ */
+class PartialHooks {
+  /**
+   * Pre Run script
+   *
+   * @description Script to be run before partial run
+   * @type {string}
+   */
+  preRun;
+
+  /**
+   * Pot Run script
+   *
+   * @description Script to be run after partial run
+   * @type {string}
+   */
+  postRun;
+}
+
+/**
  * @class PartialConfig
  * @description Describes a partial Config
  */
@@ -14,19 +36,22 @@ class PartialConfig {
    * @param {?(ScafflaterOptions|object)} options - Partial options
    * @param {?object[]} parameters - Partial parameters
    * @param {?string[]} persistentParameters - List of parameters that should be saved to be used on future executions
+   * @param {?PartialHooks} hooks - Partial hooks
    */
   constructor(
     name,
     description = null,
     options = {},
     parameters = [],
-    persistentParameters = []
+    persistentParameters = [],
+    hooks = {}
   ) {
     this.name = name;
     this.description = description;
     this.options = options;
     this.parameters = parameters;
     this.persistentParameters = persistentParameters;
+    this.hooks = hooks;
   }
 
   /**
@@ -58,6 +83,14 @@ class PartialConfig {
    * @type {ParameterConfig[]}
    */
   parameters;
+
+  /**
+   * Partial hooks
+   *
+   * @description Partial hooks scripts
+   * @type {PartialHooks}
+   */
+  hooks;
 }
 
 module.exports = { PartialConfig };

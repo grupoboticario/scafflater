@@ -2,6 +2,28 @@ const ScafflaterOptions = require("../options");
 const ParameterConfig = require("./parameter-config");
 
 /**
+ * @class TemplateHooks
+ * @description Defines the hooks scripts for templates
+ */
+class TemplateHooks {
+  /**
+   * Pre Run script
+   *
+   * @description Script to be run before template init
+   * @type {string}
+   */
+  preRun;
+
+  /**
+   * Pot Run script
+   *
+   * @description Script to be run before template init
+   * @type {string}
+   */
+  postRun;
+}
+
+/**
  * @class TemplateInfo
  * @description Describes a template config
  */
@@ -15,6 +37,7 @@ class TemplateConfig {
    * @param {?(ScafflaterOptions|object)} options - Template options
    * @param {?object[]} parameters - Template parameters
    * @param {?string[]} persistentParameters - List of parameters that should be saved to be used on future executions
+   * @param {?TemplateHooks} hooks - Template hooks
    */
   constructor(
     name,
@@ -22,7 +45,8 @@ class TemplateConfig {
     description = null,
     options = {},
     parameters = [],
-    persistentParameters = []
+    persistentParameters = [],
+    hooks = {}
   ) {
     this.name = name;
     this.description = description;
@@ -30,6 +54,7 @@ class TemplateConfig {
     this.options = options;
     this.parameters = parameters;
     this.persistentParameters = persistentParameters;
+    this.hooks = hooks;
   }
 
   /**
@@ -69,6 +94,14 @@ class TemplateConfig {
    * @type {ParameterConfig[]}
    */
   parameters;
+
+  /**
+   * Template hooks
+   *
+   * @description Template hooks scripts
+   * @type {TemplateHooks}
+   */
+  hooks;
 }
 
 module.exports = { TemplateConfig };

@@ -8,6 +8,7 @@ const RanTemplate = require("./scafflater-config/ran-template");
 const RanPartial = require("./scafflater-config/ran-partial");
 const { TemplateInitialized } = require("./errors");
 const fs = require("fs-extra");
+const { runCommand } = require("./util/run-command");
 
 /**
  * Scafflater class
@@ -139,6 +140,17 @@ class Scafflater {
       options: { ...this.options, ...localTemplate.options },
     };
 
+    // Running Pre Script
+    if (localTemplate.hooks?.preRun) {
+      ctx.options.logger.info(
+        `Executing pre run script: "${localTemplate.hooks.preRun}"`
+      );
+      await runCommand(localTemplate.hooks.preRun, {
+        cwd: targetPath,
+        logger: ctx.options.logger,
+      });
+    }
+
     await this.run(
       localTemplate.folderPath,
       parameters,
@@ -161,6 +173,17 @@ class Scafflater {
         targetPath,
         ctx
       );
+    }
+
+    // Running Post Script
+    if (localTemplate.hooks?.postRun) {
+      ctx.options.logger.info(
+        `Executing post run script: "${localTemplate.hooks.postRun}"`
+      );
+      await runCommand(localTemplate.hooks.postRun, {
+        cwd: targetPath,
+        logger: ctx.options.logger,
+      });
     }
 
     // Reloading config, just in case it was update in generation
@@ -260,6 +283,17 @@ class Scafflater {
       options: { ...this.options, ...localPartial.options },
     };
 
+    // Running Pre Script
+    if (localPartial.hooks?.preRun) {
+      ctx.options.logger.info(
+        `Executing pre run script: "${localPartial.hooks.preRun}"`
+      );
+      await runCommand(localPartial.hooks.preRun, {
+        cwd: targetPath,
+        logger: ctx.options.logger,
+      });
+    }
+
     await this.run(
       localPartial.folderPath,
       parameters,
@@ -267,6 +301,17 @@ class Scafflater {
       targetPath,
       ctx
     );
+
+    // Running Post Script
+    if (localPartial.hooks?.postRun) {
+      ctx.options.logger.info(
+        `Executing post run script: "${localPartial.hooks.postRun}"`
+      );
+      await runCommand(localPartial.hooks.postRun, {
+        cwd: targetPath,
+        logger: ctx.options.logger,
+      });
+    }
 
     if (localPartial.options.logRun) {
       ranTemplate.partials.push(

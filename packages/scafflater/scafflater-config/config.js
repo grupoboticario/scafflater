@@ -268,7 +268,9 @@ class Config {
         json.template.version,
         json.template.description,
         json.template.options,
-        json.template.parameters
+        json.template.parameters,
+        json.template.persistedParameters,
+        json.template.hooks
       );
     }
     let partial = null;
