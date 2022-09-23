@@ -164,7 +164,7 @@ describe("getLastVersion", () => {
 
     // ACT
     const lastVersion = await octokitTemplateSource.getLastVersion(
-      "some version"
+      "https://github.com/some/template"
     );
 
     // ASSERT
