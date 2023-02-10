@@ -92,4 +92,39 @@ describe("runCommand", () => {
     // ASSERT
     await expect(premise).rejects.toBe("ERROR MESSAGE");
   });
+
+  test("Command in a specific path", async () => {
+    // ARRANGE
+    const putStdout = [];
+    const putOn = [];
+    const process = {
+      stdout: {
+        setEncoding: jest.fn(),
+        on: (event, fn) => {
+          putStdout[event] = fn;
+        },
+      },
+      stderr: {
+        setEncoding: jest.fn(),
+        on: jest.fn(),
+      },
+      on: (event, fn) => {
+        putOn[event] = fn;
+      },
+    };
+    exec.mockReturnValue(process);
+
+    // ACT
+    const premise = runCommand("ls", { path: "some-path" });
+    putStdout.data("test_output");
+    putOn.close(0);
+
+    await premise;
+
+    // ASSERT
+    expect(exec).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ cwd: "some-path" })
+    );
+  });
 });

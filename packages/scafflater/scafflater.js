@@ -146,7 +146,7 @@ class Scafflater {
         `Executing pre run script: "${localTemplate.hooks.preRun}"`
       );
       await runCommand(localTemplate.hooks.preRun, {
-        cwd: targetPath,
+        path: targetPath,
         logger: ctx.options.logger,
       });
     }
@@ -181,7 +181,7 @@ class Scafflater {
         `Executing post run script: "${localTemplate.hooks.postRun}"`
       );
       await runCommand(localTemplate.hooks.postRun, {
-        cwd: targetPath,
+        path: targetPath,
         logger: ctx.options.logger,
       });
     }
@@ -289,7 +289,7 @@ class Scafflater {
         `Executing pre run script: "${localPartial.hooks.preRun}"`
       );
       await runCommand(localPartial.hooks.preRun, {
-        cwd: targetPath,
+        path: targetPath,
         logger: ctx.options.logger,
       });
     }
@@ -308,7 +308,7 @@ class Scafflater {
         `Executing post run script: "${localPartial.hooks.postRun}"`
       );
       await runCommand(localPartial.hooks.postRun, {
-        cwd: targetPath,
+        path: targetPath,
         logger: ctx.options.logger,
       });
     }
