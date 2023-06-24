@@ -7,6 +7,7 @@ const prettier = require("prettier");
 const ScafflaterOptions = require("../options");
 const { isBinaryFile } = require("isbinaryfile");
 const { ignores } = require("../util");
+const { glob } = require("glob");
 
 /**
  * @typedef {object} Context
@@ -178,127 +179,136 @@ class Generator {
       `Processing: ${tree.path.replace(ctx.templatePath, "")}`
     );
 
-    let targetName = tree.name;
+    let targetNameOption = tree.name;
     if (options.targetName != null) {
-      targetName = options.targetName;
+      targetNameOption = options.targetName;
     }
-    targetName = await Processors.Processor.runProcessorsPipeline(
-      [this.handlebarsProcessor],
-      ctx,
-      targetName
-    );
-    if (targetName === "") {
+    const targetNames = await this.resolveTargetNames(targetNameOption, ctx);
+
+    if (targetNames.findIndex((name) => name !== "") < 0) {
       this.context.options.logger.info(`\tIgnoring: Empty target name`);
       return Promise.resolve();
     }
-
-    const _ctx = {
-      ...ctx,
-      ...{
-        originPath: path.join(ctx.originPath, tree.name),
-        targetPath: path.join(ctx.targetPath, targetName),
-        options,
-      },
-    };
-
-    if (tree.type === "directory") {
-      for (const child of tree.children) {
-        // Removing target name from context.
-        // The intens inside this folder must not be affected by this config.
-        _ctx.options.targetName = null;
-        await promisesHelper.exec(ctx, this._generate(_ctx, child));
-      }
+    if (targetNames.length > 1) {
+      this.context.options.logger.info(
+        `\tMultiple targets detected. The result will be appended on multiple destinations:`
+      );
+      targetNames.forEach((name) =>
+        this.context.options.logger.info(`\t\t${name}`)
+      );
     }
 
-    try {
-      if (tree.type === "file") {
-        const originFilePath = path.join(ctx.originPath, tree.name);
+    for (const targetName of targetNames) {
+      const _ctx = {
+        ...ctx,
+        ...{
+          originPath: path.join(ctx.originPath, tree.name),
+          targetPath: path.join(ctx.targetPath, targetName),
+          options,
+        },
+      };
 
-        const targetFilePath = path.join(ctx.targetPath, targetName);
-        let targetContent;
-        if (await fsUtil.pathExists(targetFilePath)) {
-          if (ctx.options.appendStrategy === "ignore") {
-            _ctx.options.logger.info(`\tIgnoring: appendStrategy = 'ignore'`);
-            return Promise.resolve();
-          }
-          targetContent = await fsUtil.readFileContent(targetFilePath);
-        } else {
-          if (ctx.options.appendStrategy === "appendIfExists") {
-            _ctx.options.logger.info(
-              `\tIgnoring: appendStrategy = 'appendIfExists' and destination does not exists`
-            );
-            return Promise.resolve();
-          }
-        }
-
-        if (!(await isBinaryFile(originFilePath))) {
-          const originFileContent = await fsUtil.readFileContent(
-            originFilePath
-          );
-
-          const processors = _ctx.options.processors.map((p) => {
-            if (this.extensions[p]) {
-              return new this.extensions[p]();
-            }
-            if (Processors.Processor[p]) {
-              return new Processors.Processor[p]();
-            }
-            return new (require(p))();
-          });
-          const srcContent = await Processors.Processor.runProcessorsPipeline(
-            processors,
-            _ctx,
-            originFileContent
-          );
-
-          const appenders = _ctx.options.appenders.map((a) => {
-            if (this.extensions[a]) {
-              return new this.extensions[a]();
-            }
-            if (Appenders.Appender[a]) {
-              return new Appenders.Appender[a]();
-            }
-            return new (require(a))();
-          });
-          let result = targetContent
-            ? await Appenders.Appender.runAppendersPipeline(
-                appenders,
-                _ctx,
-                srcContent,
-                targetContent
-              )
-            : srcContent;
-
-          result = _ctx.options.stripConfig(result);
-
-          try {
-            result = prettier.format(result, {
-              ...this.context.prettierConfig,
-              filepath: targetFilePath,
-              // plugins: ["@prettier/plugin-xml"],
-            });
-          } catch (error) {
-            _ctx.options.logger.debug(`\tPrettier error: \n${error.message}`);
-          }
-
-          await promisesHelper.exec(
-            _ctx,
-            fsUtil.saveFile(targetFilePath, result, false)
-          );
-        } else {
-          _ctx.options.logger.info(`\tBinary file. Just copy to destination.`);
-          await fsUtil.ensureDir(path.dirname(targetFilePath));
-          await promisesHelper.exec(
-            _ctx,
-            fsUtil.copyFile(originFilePath, targetFilePath)
-          );
+      if (tree.type === "directory") {
+        for (const child of tree.children) {
+          // Removing target name from context.
+          // The intens inside this folder must not be affected by this config.
+          _ctx.options.targetName = null;
+          await promisesHelper.exec(ctx, this._generate(_ctx, child));
         }
       }
-    } catch (error) {
-      _ctx.options.logger.error(`\tError: ${error.message}`);
-      throw new Error(
-        `${tree.path.replace(ctx.templatePath, "")}\t${error.message}`
-      );
+
+      try {
+        if (tree.type === "file") {
+          const originFilePath = path.join(ctx.originPath, tree.name);
+
+          const targetFilePath = path.join(ctx.targetPath, targetName);
+          let targetContent;
+          if (await fsUtil.pathExists(targetFilePath)) {
+            if (ctx.options.appendStrategy === "ignore") {
+              _ctx.options.logger.info(`\tIgnoring: appendStrategy = 'ignore'`);
+              return Promise.resolve();
+            }
+            targetContent = await fsUtil.readFileContent(targetFilePath);
+          } else {
+            if (ctx.options.appendStrategy === "appendIfExists") {
+              _ctx.options.logger.info(
+                `\tIgnoring: appendStrategy = 'appendIfExists' and destination does not exists`
+              );
+              return Promise.resolve();
+            }
+          }
+
+          if (!(await isBinaryFile(originFilePath))) {
+            const originFileContent = await fsUtil.readFileContent(
+              originFilePath
+            );
+
+            const processors = _ctx.options.processors.map((p) => {
+              if (this.extensions[p]) {
+                return new this.extensions[p]();
+              }
+              if (Processors.Processor[p]) {
+                return new Processors.Processor[p]();
+              }
+              return new (require(p))();
+            });
+            const srcContent = await Processors.Processor.runProcessorsPipeline(
+              processors,
+              _ctx,
+              originFileContent
+            );
+
+            const appenders = _ctx.options.appenders.map((a) => {
+              if (this.extensions[a]) {
+                return new this.extensions[a]();
+              }
+              if (Appenders.Appender[a]) {
+                return new Appenders.Appender[a]();
+              }
+              return new (require(a))();
+            });
+            let result = targetContent
+              ? await Appenders.Appender.runAppendersPipeline(
+                  appenders,
+                  _ctx,
+                  srcContent,
+                  targetContent
+                )
+              : srcContent;
+
+            result = _ctx.options.stripConfig(result);
+
+            try {
+              result = prettier.format(result, {
+                ...this.context.prettierConfig,
+                filepath: targetFilePath,
+                // plugins: ["@prettier/plugin-xml"],
+              });
+            } catch (error) {
+              _ctx.options.logger.debug(`\tPrettier error: \n${error.message}`);
+            }
+
+            await promisesHelper.exec(
+              _ctx,
+              fsUtil.saveFile(targetFilePath, result, false)
+            );
+          } else {
+            _ctx.options.logger.info(
+              `\tBinary file. Just copy to destination.`
+            );
+            await fsUtil.ensureDir(path.dirname(targetFilePath));
+            await promisesHelper.exec(
+              _ctx,
+              fsUtil.copyFile(originFilePath, targetFilePath)
+            );
+          }
+        }
+      } catch (error) {
+        _ctx.options.logger.error(`\tError: ${error.message}`);
+        throw new Error(
+          `${tree.path.replace(ctx.templatePath, "")}\t${error.message}`
+        );
+      }
     }
 
     return promisesHelper.await();
@@ -333,6 +343,22 @@ class Generator {
     // config.plugins.push("@prettier/plugin-xml");
 
     return config;
+  }
+
+  async resolveTargetNames(targetName, context) {
+    const targetGlobPattern = /glob<(?<pattern>.*)>/gi;
+    const e = targetGlobPattern.exec(targetName);
+    if (e?.groups.pattern) {
+      return glob.sync(e.groups.pattern, { cwd: context.targetPath });
+    }
+
+    return [
+      await Processors.Processor.runProcessorsPipeline(
+        [this.handlebarsProcessor],
+        context,
+        targetName
+      ),
+    ];
   }
 }
 

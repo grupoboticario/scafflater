@@ -1,6 +1,7 @@
 const fsUtil = require("../fs-util");
 const { ScafflaterOptions } = require("../options");
 const Generator = require("./");
+const { glob } = require("glob");
 
 jest.mock("../fs-util");
 jest.mock("isbinaryfile");
@@ -648,4 +649,29 @@ test("Strip config", async () => {
     <prop>a sample test</prop>
 </test>
 `);
+});
+
+describe("Resolve Target Name", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+    jest.restoreAllMocks();
+  });
+
+  test("Receive a glob pattern. Should use it to resolve", async () => {
+    // ARRANGE
+    jest.spyOn(glob, "sync").mockImplementation(() => {
+      return [];
+    });
+    const generator = new Generator({
+      targetPath: ".",
+      templatePath: ".",
+      options: new ScafflaterOptions(),
+    });
+
+    // ACT
+    await generator.resolveTargetNames("glob</some/glob/pattern>", {});
+
+    // ASSERT
+    expect(glob.sync).toBeCalledWith("/some/glob/pattern", expect.anything());
+  });
 });

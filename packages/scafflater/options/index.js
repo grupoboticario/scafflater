@@ -27,7 +27,15 @@ class ScafflaterOptions {
   startRegionMarker = "@scf-region";
   endRegionMarker = "@end-scf-region";
   optionMarker = "@scf-option";
-  // Can be handlebars
+
+  /**
+   * Target name.
+   *
+   * @description Name or path when generated text must be appended. Possible values are:
+   *  - text: simple text of the target
+   *  - handlebars: handlebars expressions can be used to build targets based on context
+   *  - glob<patterns>: glob patters, to indicate targets. This can be used to append content on multiples targets.
+   */
   targetName = null;
 
   /**
