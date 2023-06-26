@@ -185,7 +185,7 @@ class Generator {
     }
     const targetNames = await this.resolveTargetNames(targetNameOption, ctx);
 
-    if (targetNames.every((name) => name !== "")) {
+    if (targetNames.every((name) => name === "")) {
       this.context.options.logger.info(`\tIgnoring: Empty target name`);
       return Promise.resolve();
     }
@@ -199,6 +199,10 @@ class Generator {
     }
 
     for (const targetName of targetNames) {
+      if (targetName === "") {
+        // empty names must be ignored
+        continue;
+      }
       const _ctx = {
         ...ctx,
         ...{
