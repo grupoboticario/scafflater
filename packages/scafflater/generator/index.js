@@ -185,7 +185,7 @@ class Generator {
     }
     const targetNames = await this.resolveTargetNames(targetNameOption, ctx);
 
-    if (targetNames.findIndex((name) => name !== "") < 0) {
+    if (targetNames.every((name) => name !== "")) {
       this.context.options.logger.info(`\tIgnoring: Empty target name`);
       return Promise.resolve();
     }
