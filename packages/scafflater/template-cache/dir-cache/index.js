@@ -1,3 +1,3 @@
-const DirCache = require("./dir-cache");
+import DirCache from "./dir-cache";
 
-module.exports = DirCache;
+export default DirCache;

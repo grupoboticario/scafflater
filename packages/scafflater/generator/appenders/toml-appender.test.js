@@ -1,5 +1,5 @@
-const TomlAppender = require("./toml-appender");
-const { ScafflaterOptions } = require("../../options");
+import TomlAppender from "./toml-appender";
+import ScafflaterOptions from "../../options";
 
 const destYaml = `
 title = 'TOML Example'

@@ -1,7 +1,20 @@
-const { ScafflaterOptions } = require(".");
-const FileSystemUtils = require("../fs-util");
+import { jest } from "@jest/globals";
 
-jest.mock("../fs-util");
+jest.unstable_mockModule("../fs-util", () => {
+  const mock = {
+    pathExists: jest.fn(),
+    readJSON: jest.fn(),
+    readFileContent: jest.fn(),
+  };
+
+  return {
+    default: mock,
+    ...mock,
+  };
+});
+
+const FileSystemUtils = (await import("../fs-util")).default;
+const ScafflaterOptions = (await import("./index")).default;
 
 describe("Config Provider", () => {
   afterEach(() => {

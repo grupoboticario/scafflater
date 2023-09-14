@@ -1,12 +1,30 @@
-const ListCommand = require("./list");
-const {
-  Scafflater,
-  TemplateManager,
-  logger,
-  Config,
-} = require("@scafflater/scafflater");
+import { jest } from "@jest/globals";
+import {
+  LocalPartial,
+  LocalTemplate,
+} from "../../../scafflater/scafflater-config";
 
-jest.mock("@scafflater/scafflater");
+jest.unstable_mockModule("@scafflater/scafflater", () => {
+  return {
+    Scafflater: jest.fn(),
+    TemplateManager: class {
+      getTemplate = jest.fn();
+    },
+    logger: {
+      info: jest.fn(),
+      print: jest.fn(),
+    },
+    Config: {
+      fromLocalPath: jest.fn(),
+    },
+    ScafflaterOptions: jest.fn(),
+  };
+});
+
+const { Scafflater, TemplateManager, logger, Config } = await import(
+  "@scafflater/scafflater"
+);
+const ListCommand = (await import("./list")).default;
 
 describe("ListCommand", () => {
   beforeEach(() => {
@@ -50,22 +68,19 @@ describe("ListCommand", () => {
       },
     });
     templateManager.getTemplate.mockResolvedValue(
-      new (jest.requireActual("@scafflater/scafflater").LocalTemplate)(
+      new LocalTemplate(
         "/some/template/path",
         "/some/template/path/.scafflater/scafflater.jsonc",
         "some-template",
         "The template",
         "0.0.1",
         [
-          new (jest.requireActual("@scafflater/scafflater").LocalPartial)(
+          new LocalPartial(
             "/some/partial/path",
             "the-partial",
             "This is an partial"
           ),
-          new (jest.requireActual("@scafflater/scafflater").LocalPartial)(
-            "/some/partial/path",
-            "the-partial"
-          ),
+          new LocalPartial("/some/partial/path", "the-partial"),
         ]
       )
     );
@@ -96,7 +111,7 @@ describe("ListCommand", () => {
       },
     });
     templateManager.getTemplate.mockResolvedValue(
-      new (jest.requireActual("@scafflater/scafflater").LocalTemplate)(
+      new LocalTemplate(
         "/some/template/path",
         "some-template",
         "The template",

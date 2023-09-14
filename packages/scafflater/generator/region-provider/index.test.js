@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
-const { ScafflaterOptions } = require("../../options");
-const { RegionProvider, Region, RegionTag, RegionTagType } = require(".");
+import ScafflaterOptions from "../../options";
+import { RegionProvider, Region, RegionTag, RegionTagType } from "./index";
 
 test("List regions in a well formatted content", () => {
   // ARRANGE

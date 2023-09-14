@@ -1,5 +1,5 @@
-const echoHelper = require("./echo");
-const Handlebars = require("handlebars");
+import echoHelper from "./echo";
+import Handlebars from "handlebars";
 
 test("Handlebars call", () => {
   Handlebars.registerHelper("echo", echoHelper);

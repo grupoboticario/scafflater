@@ -1,5 +1,5 @@
-const base64Helper = require("./base64");
-const Handlebars = require("handlebars");
+import base64Helper from "./base64";
+import Handlebars from "handlebars";
 
 test("Handlebars call", () => {
   Handlebars.registerHelper("base64", base64Helper);

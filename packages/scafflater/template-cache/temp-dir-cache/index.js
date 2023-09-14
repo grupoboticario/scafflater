@@ -1,3 +1,3 @@
-const TempDirCache = require("./temp-dir-cache");
+import { TempDirCache } from "./temp-dir-cache";
 
-module.exports = TempDirCache;
+export default TempDirCache;

@@ -1,3 +1,2 @@
-const TemplateManager = require("./template-manager");
-
-module.exports = { TemplateManager };
+import TemplateManager from "./template-manager";
+export default TemplateManager;

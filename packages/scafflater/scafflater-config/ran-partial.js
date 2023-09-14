@@ -2,7 +2,7 @@
  * @class RanPartial
  * @description Has information about how an partial was generated.
  */
-class RanPartial {
+export default class RanPartial {
   /**
    * Creates a template
    *
@@ -29,5 +29,3 @@ class RanPartial {
    */
   parameters;
 }
-
-module.exports = RanPartial;

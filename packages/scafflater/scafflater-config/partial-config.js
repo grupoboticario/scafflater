@@ -1,11 +1,11 @@
-const ScafflaterOptions = require("../options");
-const ParameterConfig = require("./parameter-config");
+import ScafflaterOptions from "../options";
+import ParameterConfig from "./parameter-config";
 
 /**
  * @class PartialHooks
  * @description Defines the hooks scripts for partials
  */
-class PartialHooks {
+export class PartialHooks {
   /**
    * Pre Run script
    *
@@ -27,7 +27,7 @@ class PartialHooks {
  * @class PartialConfig
  * @description Describes a partial Config
  */
-class PartialConfig {
+export default class PartialConfig {
   /**
    * Creates a Partial
    *
@@ -92,5 +92,3 @@ class PartialConfig {
    */
   hooks;
 }
-
-module.exports = { PartialConfig };

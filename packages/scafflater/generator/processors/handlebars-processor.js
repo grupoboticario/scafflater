@@ -1,17 +1,17 @@
-const Processor = require("./processor");
-const Handlebars = require("handlebars");
-const fsUtil = require("../../fs-util");
-const path = require("path");
-const Case = require("./hbs-builtin-helpers/case");
-const lineComment = require("./hbs-builtin-helpers/lineComment");
-const echo = require("./hbs-builtin-helpers/echo");
+import Processor from "./processor";
+import Handlebars from "handlebars";
+import fsUtil from "../../fs-util";
+import path from "path";
+import Case from "./hbs-builtin-helpers/case";
+import lineComment from "./hbs-builtin-helpers/lineComment";
+import echo from "./hbs-builtin-helpers/echo";
 
 /**
  * Compile and apply the handlebar js on input
  *
  * @augments Processor
  */
-class HandlebarsProcessor extends Processor {
+export default class HandlebarsProcessor extends Processor {
   constructor() {
     super();
     Handlebars.registerHelper("case", Case);
@@ -45,5 +45,3 @@ class HandlebarsProcessor extends Processor {
     }
   }
 }
-
-module.exports = HandlebarsProcessor;

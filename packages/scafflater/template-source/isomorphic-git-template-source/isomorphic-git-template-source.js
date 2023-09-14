@@ -1,13 +1,15 @@
-const fsUtil = require("../../fs-util");
-const git = require("isomorphic-git");
-const http = require("isomorphic-git/http/node");
-const fs = require("fs-extra");
-const LocalFolderTemplateSource = require("../local-folder-template-source/local-folder-template-source");
-const { ScafflaterOptions } = require("../../options");
-const { LocalTemplate } = require("../../scafflater-config/local-template");
-const { Source } = require("../../scafflater-config/source");
-const ScafflaterFileNotFoundError = require("../../errors/scafflater-file-not-found-error");
-const { TemplateDefinitionNotFound } = require("../../errors");
+import fsUtil from "../../fs-util";
+import git from "isomorphic-git";
+import http from "isomorphic-git/http/node";
+import fs from "fs-extra";
+import LocalFolderTemplateSource from "../local-folder-template-source/local-folder-template-source";
+import ScafflaterOptions from "../../options";
+import { LocalTemplate } from "../../scafflater-config/local-template";
+import Source from "../../scafflater-config/source";
+import {
+  TemplateDefinitionNotFound,
+  ScafflaterFileNotFoundError,
+} from "../../errors";
 
 /**
  * Clones a repo to a local path.
@@ -43,7 +45,7 @@ async function clone(repo, localPath, username = null, password = null) {
   }
 }
 
-class IsomorphicGitTemplateSource extends LocalFolderTemplateSource {
+export default class IsomorphicGitTemplateSource extends LocalFolderTemplateSource {
   /**
    * Checks if the sourceKey is valid for this TemplateSource
    *
@@ -107,5 +109,3 @@ class IsomorphicGitTemplateSource extends LocalFolderTemplateSource {
     });
   }
 }
-
-module.exports = IsomorphicGitTemplateSource;

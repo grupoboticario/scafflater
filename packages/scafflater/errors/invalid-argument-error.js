@@ -1,6 +1,6 @@
-const ScafflaterError = require("./scafflater-error");
+import ScafflaterError from "./scafflater-error";
 
-class InvalidArgumentError extends ScafflaterError {
+export default class InvalidArgumentError extends ScafflaterError {
   constructor(argName, argValue) {
     super(`'${argValue}' is not a valid value for '${argName}'`);
     this.argName = argName;
@@ -8,5 +8,3 @@ class InvalidArgumentError extends ScafflaterError {
     this.name = "InvalidArgumentError";
   }
 }
-
-module.exports = InvalidArgumentError;

@@ -1,12 +1,22 @@
-/* eslint-disable no-undef */
-const DirCache = require("./dir-cache");
-const fsUtil = require("../../fs-util");
-const fs = require("fs-extra");
-const path = require("path");
-const { LocalTemplate } = require("../../scafflater-config/local-template");
+import { jest } from "@jest/globals";
+import path from "path";
+import { LocalTemplate } from "../../scafflater-config/local-template";
 
-jest.mock("../../fs-util");
-jest.mock("fs-extra");
+jest.unstable_mockModule("../../fs-util", () => {
+  const ret = {
+    pathExists: jest.fn(),
+    readJSON: jest.fn(),
+    ensureDir: jest.fn(),
+    copy: jest.fn(),
+  };
+  return {
+    default: ret,
+    ...ret,
+  };
+});
+
+const fsUtil = await import("../../fs-util");
+const DirCache = (await import("./dir-cache")).default;
 
 describe("Dir template Cache", () => {
   afterEach(() => {
@@ -119,8 +129,8 @@ describe("Dir template Cache", () => {
     await dirCache.storeTemplate(p);
 
     // ASSERT
-    expect(fs.copy.mock.calls[0][0]).toBe(p);
-    expect(fs.copy.mock.calls[0][1]).toBe(
+    expect(fsUtil.copy.mock.calls[0][0]).toBe(p);
+    expect(fsUtil.copy.mock.calls[0][1]).toBe(
       "path/to/some/cached-template/some-name/some-version"
     );
   });

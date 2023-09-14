@@ -1,21 +1,24 @@
-const LocalFolderTemplateSource = require("../local-folder-template-source/local-folder-template-source");
-const fsUtil = require("../../fs-util");
-const { ScafflaterOptions } = require("../../options");
-const { LocalTemplate } = require("../../scafflater-config/local-template");
-const { Source } = require("../../scafflater-config/source");
-const ScafflaterFileNotFoundError = require("../../errors/scafflater-file-not-found-error");
-const { TemplateDefinitionNotFound } = require("../../errors");
-const util = require("util");
-const exec = util.promisify(require("child_process").exec);
-const {
+import LocalFolderTemplateSource from "../local-folder-template-source/local-folder-template-source";
+import fsUtil from "../../fs-util";
+import ScafflaterOptions from "../../options";
+import { LocalTemplate } from "../../scafflater-config/local-template";
+import Source from "../../scafflater-config/source";
+import {
+  TemplateDefinitionNotFound,
+  ScafflaterFileNotFoundError,
+} from "../../errors";
+import { promisify } from "util";
+import {
   GithubClientNotInstalledError,
   GithubClientUserNotLoggedError,
-} = require("./errors");
+} from "./errors";
+import { exec } from "child_process";
 
+const execAsync = promisify(exec);
 const repoRegex =
   /(https:\/\/github.com\/|git@github.com:|^)(?<org>[a-z0-9_\-.]+)\/(?<repo>[a-z0-9_\-.]+)/;
 
-class GithubClientTemplateSource extends LocalFolderTemplateSource {
+export default class GithubClientTemplateSource extends LocalFolderTemplateSource {
   /**
    * Checks if the sourceKey is valid for this TemplateSource
    *
@@ -57,7 +60,7 @@ class GithubClientTemplateSource extends LocalFolderTemplateSource {
    */
   static async checkGhClient() {
     try {
-      await exec("gh auth status");
+      await execAsync("gh auth status");
       return true;
     } catch (error) {
       if (error.message.match(/command not found/gi)) {
@@ -85,7 +88,7 @@ class GithubClientTemplateSource extends LocalFolderTemplateSource {
     const { org, repo } =
       GithubClientTemplateSource.parseRepoAddress(sourceKey);
 
-    await exec(`gh repo clone ${org}/${repo} ${pathToClone}`);
+    await execAsync(`gh repo clone ${org}/${repo} ${pathToClone}`);
 
     try {
       return await super.getTemplate(pathToClone, version, outputDir);
@@ -117,5 +120,3 @@ class GithubClientTemplateSource extends LocalFolderTemplateSource {
     });
   }
 }
-
-module.exports = GithubClientTemplateSource;

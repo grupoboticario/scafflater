@@ -2,9 +2,10 @@
   "name": "@scafflater/scafflater",
   "description": "Scafflater - Scaffold using templates",
   "version": "0.0.79",
-  "main": "./index.js",
+  "exports": "./index.js",
+  "type": "module",
   "scripts": {
-    "test": "jest",
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --collectCoverage",
     "types": "tsc --declaration --allowJs --emitDeclarationOnly --outDir types",
     "prepack": "npm shrinkwrap && cp ../../README.md ."
   },
@@ -25,7 +26,7 @@
   "homepage": "https://github.com/scafflater/scafflater#readme",
   "types": "./types/index.d.ts",
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=18"
   },
   "dependencies": {
     "@ltd/j-toml": "1.38.0",
@@ -60,6 +61,8 @@
   },
   "devDependencies": {
     "@types/fs-extra": "9.0.12",
-    "mock-fs": "5.0.0"
+    "@types/unzipper": "0.10.7",
+    "mock-fs": "5.0.0",
+    "@jest/globals": "29.7.0"
   }
 }

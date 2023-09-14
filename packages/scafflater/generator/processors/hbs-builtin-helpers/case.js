@@ -1,9 +1,9 @@
-const changeCase = require("change-case");
-const { titleCase } = require("title-case");
-const { lowerCase } = require("lower-case");
-const { upperCase } = require("upper-case");
-const { lowerCaseFirst } = require("lower-case-first");
-const { upperCaseFirst } = require("upper-case-first");
+import changeCase from "change-case";
+import { titleCase } from "title-case";
+import { lowerCase } from "lower-case";
+import { upperCase } from "upper-case";
+import { lowerCaseFirst } from "lower-case-first";
+import { upperCaseFirst } from "upper-case-first";
 
 changeCase.titleCase = titleCase;
 changeCase.lowerCase = lowerCase;
@@ -15,7 +15,7 @@ changeCase.noCaseAndTitle = (str) => {
   return titleCase(changeCase.noCase(str));
 };
 
-module.exports = (op, string) => {
+export default (op, string) => {
   if (!changeCase[op] || typeof changeCase[op] !== "function") {
     throw new Error(`${op} is not a valid case operation`);
   }

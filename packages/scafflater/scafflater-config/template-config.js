@@ -1,11 +1,11 @@
-const ScafflaterOptions = require("../options");
-const ParameterConfig = require("./parameter-config");
+import ScafflaterOptions from "../options";
+import ParameterConfig from "./parameter-config";
 
 /**
  * @class TemplateHooks
  * @description Defines the hooks scripts for templates
  */
-class TemplateHooks {
+export class TemplateHooks {
   /**
    * Pre Run script
    *
@@ -27,7 +27,7 @@ class TemplateHooks {
  * @class TemplateInfo
  * @description Describes a template config
  */
-class TemplateConfig {
+export default class TemplateConfig {
   /**
    * Creates a template
    *
@@ -103,5 +103,3 @@ class TemplateConfig {
    */
   hooks;
 }
-
-module.exports = { TemplateConfig };

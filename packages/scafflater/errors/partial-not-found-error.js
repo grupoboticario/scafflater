@@ -1,6 +1,6 @@
-const ScafflaterError = require("./scafflater-error");
+import ScafflaterError from "./scafflater-error";
 
-class PartialNotFoundError extends ScafflaterError {
+export default class PartialNotFoundError extends ScafflaterError {
   constructor(templateName, partialName) {
     super(
       `The partial '${partialName}' was not found on template '${templateName}'`
@@ -9,5 +9,3 @@ class PartialNotFoundError extends ScafflaterError {
     this.partialName = partialName;
   }
 }
-
-module.exports = PartialNotFoundError;

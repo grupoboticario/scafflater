@@ -1,41 +1,46 @@
-const { TemplateCache } = require("./");
-const LocalTemplateCache = require("./home-dir-cache");
+import TemplateCache from "./template-cache";
+import LocalTemplateCache from "./home-dir-cache";
 
-test("Throws an exception when the storage does not exists", () => {
-  // ARRANGE
-  const config = { cacheStorage: "bla" };
+describe("TemplateCache", () => {
+  test("Throws an exception when the storage does not exists", async () => {
+    // ARRANGE
 
-  // ACT and ASSERT
-  expect(() => {
-    TemplateCache.getTemplateCache(config);
-  }).toThrowError("There's no module for source 'bla'");
-});
+    // ACT
+    const ret = TemplateCache.getTemplateCache({ cacheStorage: "bla" });
 
-test("Gets the template storage in config", () => {
-  // ARRANGE
-  const config = { cacheStorage: "homeDir" };
+    // and ASSERT
+    await expect(ret).rejects.toThrowError(
+      "There's no module for source 'bla'"
+    );
+  });
 
-  // ACT
-  const result = TemplateCache.getTemplateCache(config);
+  test("Gets the template storage in config", async () => {
+    // ARRANGE
 
-  // ASSERT
-  // eslint-disable-next-line no-proto
-  expect(result.__proto__ instanceof TemplateCache).toBe(true);
-  expect(result instanceof LocalTemplateCache).toBe(true);
-});
+    // ACT
+    const result = await TemplateCache.getTemplateCache({
+      cacheStorage: "homeDir",
+    });
 
-test("Constructor call must throw", () => {
-  expect(() => {
-    // NOSONAR
-    // eslint-disable-next-line no-new
-    new TemplateCache();
-  }).toThrow();
-});
+    // ASSERT
+    // eslint-disable-next-line no-proto
+    expect(result.__proto__ instanceof TemplateCache).toBe(true);
+    expect(result instanceof LocalTemplateCache).toBe(true);
+  });
 
-test("Implementation Constructor call must throw", () => {
-  expect(() => {
-    // NOSONAR
-    // eslint-disable-next-line no-new
-    new LocalTemplateCache();
-  }).not.toThrow();
+  test("Constructor call must throw", () => {
+    expect(() => {
+      // NOSONAR
+      // eslint-disable-next-line no-new
+      new TemplateCache();
+    }).toThrow();
+  });
+
+  test("Implementation Constructor call must throw", () => {
+    expect(() => {
+      // NOSONAR
+      // eslint-disable-next-line no-new
+      new LocalTemplateCache();
+    }).not.toThrow();
+  });
 });

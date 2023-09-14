@@ -1,18 +1,16 @@
-const os = require("os");
-const path = require("path");
-const { ScafflaterOptions } = require("../../options");
-const DirCache = require("../dir-cache");
+import os from "os";
+import path from "path";
+import ScafflaterOptions from "../../options";
+import DirCache from "../dir-cache";
 
 /**
  * Stores templates in the local file system.
  *
  * @augments DirCache
  */
-class HomeDirCache extends DirCache {
+export default class HomeDirCache extends DirCache {
   constructor(config = {}) {
     config = { ...new ScafflaterOptions(), ...config };
     super(path.join(os.homedir(), ".scafflater", "templates"), config);
   }
 }
-
-module.exports = HomeDirCache;

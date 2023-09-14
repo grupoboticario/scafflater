@@ -1,6 +1,6 @@
-const { ScafflaterError } = require("../../errors");
+import { ScafflaterError } from "../../errors";
 
-class VersionDoesNotExist extends ScafflaterError {
+export default class VersionDoesNotExist extends ScafflaterError {
   constructor(sourceKey, version) {
     super(
       `Theres no version '${version}' available on template source: ${sourceKey}.`
@@ -8,5 +8,3 @@ class VersionDoesNotExist extends ScafflaterError {
     this.sourceKey = sourceKey;
   }
 }
-
-module.exports = VersionDoesNotExist;

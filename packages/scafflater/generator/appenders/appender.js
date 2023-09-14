@@ -1,7 +1,7 @@
-const Annotator = require("../annotator/annotator");
-const { EOL } = require("os");
+import Annotator from "../annotator/annotator";
+import { EOL } from "os";
 
-class Appender {
+export default class Appender {
   /**
    * @typedef {object} AppenderResult
    * @property {object} context The context of generation. The processor can change context output to next processors.
@@ -62,5 +62,3 @@ class Appender {
     return Promise.resolve(destStr.trim());
   }
 }
-
-module.exports = Appender;

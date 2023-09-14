@@ -1,13 +1,15 @@
-const TemplateSource = require("../template-source");
-const fsUtil = require("../../fs-util");
-const path = require("path");
-const { LocalTemplate } = require("../../scafflater-config/local-template");
-const { ScafflaterOptions } = require("../../options");
-const { Source } = require("../../scafflater-config/source");
-const ScafflaterFileNotFoundError = require("../../errors/scafflater-file-not-found-error");
-const TemplateDefinitionNotFound = require("../../errors/template-definition-not-found-error");
+import TemplateSource from "../template-source";
+import fsUtil from "../../fs-util";
+import path from "path";
+import { LocalTemplate } from "../../scafflater-config/local-template";
+import ScafflaterOptions from "../../options";
+import Source from "../../scafflater-config/source";
+import {
+  ScafflaterFileNotFoundError,
+  TemplateDefinitionNotFound,
+} from "../../errors";
 
-class LocalFolderTemplateSource extends TemplateSource {
+export default class LocalFolderTemplateSource extends TemplateSource {
   /**
    * Checks if the sourceKey is valid for this TemplateSource
    *
@@ -76,5 +78,3 @@ class LocalFolderTemplateSource extends TemplateSource {
     return new Source("localFolder", key);
   }
 }
-
-module.exports = LocalFolderTemplateSource;

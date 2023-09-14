@@ -1,7 +1,7 @@
-const { RegionProvider } = require("../region-provider");
-const Appender = require("./appender");
+import { RegionProvider } from "../region-provider";
+import Appender from "./appender";
 
-class RegionAppender extends Appender {
+export default class RegionAppender extends Appender {
   /**
    * Process the input.
    *
@@ -66,5 +66,3 @@ class RegionAppender extends Appender {
     });
   }
 }
-
-module.exports = RegionAppender;

@@ -1,10 +1,8 @@
-const ScafflaterError = require("./scafflater-error");
+import ScafflaterError from "./scafflater-error";
 
-class FileProcessError extends ScafflaterError {
+export default class FileProcessError extends ScafflaterError {
   constructor(filepath, message) {
     super(`${filepath}: ${message}`);
     this.templateName = filepath;
   }
 }
-
-module.exports = FileProcessError;

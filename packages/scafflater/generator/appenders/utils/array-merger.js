@@ -1,4 +1,4 @@
-const merge = require("deepmerge");
+import merge from "deepmerge";
 
 /**
  * Combine arrays. Combine the array item by item.
@@ -87,7 +87,7 @@ const keyMerge = (target, source, options) => {
  *  - key<keyName>: will use keyName as item key to merge arrays. The object of source will replace the object with the same key value on target.
  * @returns {object[]} The merged array
  */
-const arrayMerge = (target, source, options) => {
+export default function arrayMerge(target, source, options) {
   switch (options.strategy) {
     case "combine":
       return combineMerge(target, source, options);
@@ -100,6 +100,4 @@ const arrayMerge = (target, source, options) => {
     default:
       return keyMerge(target, source, options);
   }
-};
-
-module.exports = arrayMerge;
+}

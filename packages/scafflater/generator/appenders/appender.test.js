@@ -1,4 +1,4 @@
-const Appender = require("./appender");
+import Appender from "./appender";
 
 describe("Appender", () => {
   const existingContent = `some existing content`;

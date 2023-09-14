@@ -1,10 +1,35 @@
-const { LocalPartial, LocalTemplate } = require("./local-template");
-const { Config } = require("./config");
-const { ScafflaterOptions } = require("../options");
-const { ParameterConfig } = require("./parameter-config");
+import { jest } from "@jest/globals";
 
-jest.mock("fs-extra");
-jest.mock("./config");
+import ScafflaterOptions from "../options";
+import ParameterConfig from "./parameter-config";
+
+jest.unstable_mockModule("fs-extra", () => {
+  const mock = {
+    pathExists: jest.fn(),
+    readJSON: jest.fn(),
+    readFileContent: jest.fn(),
+  };
+
+  return {
+    default: mock,
+    ...mock,
+  };
+});
+
+jest.unstable_mockModule("./config", () => {
+  const mock = {
+    scanLocalPath: jest.fn(),
+    fromLocalPath: jest.fn(),
+  };
+
+  return {
+    default: mock,
+    ...mock,
+  };
+});
+
+const Config = await import("./config");
+const { LocalPartial, LocalTemplate } = await import("./local-template");
 
 describe("Local Template", () => {
   describe("Local Partial", () => {

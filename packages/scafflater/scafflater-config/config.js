@@ -1,15 +1,15 @@
-const { PartialConfig } = require("./partial-config");
-const { PersistedParameter } = require("./persisted-parameter");
-const RanTemplate = require("./ran-template");
-const { TemplateConfig } = require("./template-config");
-const fs = require("fs-extra");
-const path = require("path");
-const glob = require("glob");
-const stripJsonComments = require("strip-json-comments");
-const { Source } = require("./source");
-const { ScafflaterOptions } = require("../options");
-const ScafflaterFileNotFoundError = require("../errors/scafflater-file-not-found-error");
-const TemplateNotInitializedError = require("../errors/template-not-initialized-error");
+import PartialConfig from "./partial-config";
+import PersistedParameter from "./persisted-parameter";
+import RanTemplate from "./ran-template";
+import TemplateConfig from "./template-config";
+import fs from "../fs-util";
+import path from "path";
+import { glob } from "glob";
+import stripJsonComments from "strip-json-comments";
+import Source from "./source";
+import ScafflaterOptions from "../options";
+import ScafflaterFileNotFoundError from "../errors/scafflater-file-not-found-error";
+import TemplateNotInitializedError from "../errors/template-not-initialized-error";
 
 /**
  * @typedef ConfigLoadResult
@@ -25,21 +25,7 @@ const TemplateNotInitializedError = require("../errors/template-not-initialized-
  * @returns {Promise<string[]>} List of file names
  */
 const listScafflaterFiles = async (folderPath) => {
-  return new Promise((resolve, reject) => {
-    try {
-      glob(
-        `/**/scafflater.jsonc`,
-        { root: folderPath, dot: true },
-        (err, files) => {
-          if (err) reject(err);
-          if (!files || files.length <= 0) resolve([]);
-          resolve(files);
-        }
-      );
-    } catch (error) {
-      reject(error);
-    }
-  });
+  return glob(`/**/scafflater.jsonc`, { root: folderPath, dot: true });
 };
 
 /**
@@ -56,7 +42,7 @@ function isEmptyObject(obj) {
  * @class Output
  * @description Output configuration, with info about generated templates and partials.
  */
-class Config {
+export default class Config {
   /**
    *
    * @param {?TemplateConfig} template The template config
@@ -342,5 +328,3 @@ class Config {
     return Promise.resolve(configs);
   }
 }
-
-module.exports = { Config };

@@ -1,15 +1,17 @@
-const LocalFolderTemplateSource = require("../local-folder-template-source/local-folder-template-source");
-const fsUtil = require("../../fs-util");
-const { ScafflaterOptions } = require("../../options");
-const { LocalTemplate } = require("../../scafflater-config/local-template");
-const { Source } = require("../../scafflater-config/source");
-const ScafflaterFileNotFoundError = require("../../errors/scafflater-file-not-found-error");
-const { TemplateDefinitionNotFound } = require("../../errors");
-const { NoVersionAvailableError, VersionDoesNotExist } = require("../errors");
-const GitUrlParse = require("git-url-parse");
-const { Octokit } = require("@octokit/rest");
-const path = require("path");
-const { Parse } = require("unzipper");
+import LocalFolderTemplateSource from "../local-folder-template-source/local-folder-template-source";
+import fsUtil from "../../fs-util";
+import ScafflaterOptions from "../../options";
+import { LocalTemplate } from "../../scafflater-config/local-template";
+import Source from "../../scafflater-config/source";
+import {
+  TemplateDefinitionNotFound,
+  ScafflaterFileNotFoundError,
+} from "../../errors";
+import { NoVersionAvailableError, VersionDoesNotExist } from "../errors";
+import GitUrlParse from "git-url-parse";
+import { Octokit } from "@octokit/rest";
+import path from "path";
+import { Parse } from "unzipper";
 
 /**
  * A custom unzip do extract a zip downloaded from Github
@@ -41,7 +43,7 @@ const unzip = (zipfile, dir) => {
   });
 };
 
-class OctokitTemplateSource extends LocalFolderTemplateSource {
+export default class OctokitTemplateSource extends LocalFolderTemplateSource {
   /**
    * Checks if the sourceKey is valid for this TemplateSource
    *
@@ -295,5 +297,3 @@ class OctokitTemplateSource extends LocalFolderTemplateSource {
     });
   }
 }
-
-module.exports = OctokitTemplateSource;

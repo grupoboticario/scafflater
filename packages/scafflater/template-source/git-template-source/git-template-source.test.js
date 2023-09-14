@@ -1,17 +1,31 @@
-/* eslint-disable no-undef */
-const GitTemplateSource = require("./git-template-source");
-const fsUtil = require("../../fs-util");
-const { LocalTemplate } = require("../../scafflater-config/local-template");
-const {
+import { jest } from "@jest/globals";
+import { LocalTemplate } from "../../scafflater-config/local-template";
+import {
   ScafflaterFileNotFoundError,
   TemplateDefinitionNotFound,
-} = require("../../errors");
-const { GitNotInstalledError, GitUserNotLoggedError } = require("./errors");
-const util = require("util");
-const InvalidArgumentError = require("../../errors/invalid-argument-error");
-const { NoVersionAvailableError, VersionDoesNotExist } = require("../errors");
+  InvalidArgumentError,
+} from "../../errors";
+import { NoVersionAvailableError, VersionDoesNotExist } from "../errors";
+import { GitNotInstalledError, GitUserNotLoggedError } from "./errors";
+import util from "util";
 
-jest.mock("../../fs-util");
+jest.unstable_mockModule("../../fs-util", () => {
+  const mock = {
+    pathExists: jest.fn(),
+    getTempFolder: jest.fn(),
+    getTempFolderSync: jest.fn(),
+    copy: jest.fn(),
+  };
+
+  return {
+    __esModule: true,
+    default: mock,
+    ...mock,
+  };
+});
+
+const fsUtil = await import("../../fs-util");
+const GitTemplateSource = (await import("./git-template-source")).default;
 
 describe("getTemplate", () => {
   afterEach(() => {

@@ -1,15 +1,10 @@
-const ora = require("ora");
-const chalk = require("chalk");
-const Prompt = require("./prompt");
-const { setProperty } = require("./dot-prop");
-const {
-  ParameterConfig,
-} = require("@scafflater/scafflater/scafflater-config/parameter-config");
-const {
-  PersistedParameter,
-} = require("@scafflater/scafflater/scafflater-config/persisted-parameter");
+import ora from "ora";
+import chalk from "chalk";
+import Prompt from "./prompt";
+import { setProperty } from "./dot-prop";
+import { ParameterConfig, PersistedParameter } from "@scafflater/scafflater";
 
-const parseParametersFlags = (parameters) => {
+export function parseParametersFlags(parameters) {
   const result = {};
 
   parameters.forEach((param) => {
@@ -23,7 +18,7 @@ const parseParametersFlags = (parameters) => {
   });
 
   return result;
-};
+}
 
 /**
  *
@@ -33,12 +28,12 @@ const parseParametersFlags = (parameters) => {
  * @param {?PersistedParameter[]} templateParameters Persisted template parameters
  * @returns {object} An object with all parameters prompted and loaded parameters
  */
-const promptMissingParameters = async (
+export async function promptMissingParameters(
   parameterFlags,
   requiredParameters,
   globalParameters = [],
   templateParameters = []
-) => {
+) {
   const flags = parseParametersFlags(parameterFlags);
   if (!requiredParameters) return flags;
 
@@ -61,18 +56,16 @@ const promptMissingParameters = async (
     ...flags,
     ...prompt,
   };
-};
-
-const parseParametersNames = (parameters) => {
+}
+export function parseParametersNames(parameters) {
   const result = {};
   for (const parameter in parameters) {
     setProperty(result, parameter, parameters[parameter]);
   }
 
   return result;
-};
-
-const spinner = async (message, f) => {
+}
+export async function spinner(message, f) {
   const spinnerControl = ora(message).start();
   try {
     await f(spinnerControl);
@@ -81,11 +74,4 @@ const spinner = async (message, f) => {
     throw error;
   }
   spinnerControl.stopAndPersist({ symbol: chalk.green("✔") });
-};
-
-module.exports = {
-  parseParametersFlags,
-  promptMissingParameters,
-  spinner,
-  parseParametersNames,
-};
+}

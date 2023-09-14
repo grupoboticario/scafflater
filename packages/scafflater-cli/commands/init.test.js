@@ -1,7 +1,43 @@
-const InitCommand = require("./init");
-const scafflater = require("@scafflater/scafflater");
+import { jest } from "@jest/globals";
+import {
+  PersistedParameter,
+  LocalTemplate,
+} from "../../scafflater/scafflater-config";
 
-jest.mock("@scafflater/scafflater");
+jest.unstable_mockModule("@scafflater/scafflater", () => {
+  return {
+    Scafflater: jest.fn(),
+    TemplateManager: class {
+      getTemplateFromSource = jest.fn();
+    },
+    TemplateSource: {
+      resolveTemplateSourceFromSourceKey: jest.fn(),
+    },
+    Config: {
+      fromLocalPath: jest.fn(),
+    },
+    logger: {
+      info: jest.fn(),
+      log: jest.fn(),
+      error: jest.fn(),
+    },
+    ParameterConfig: jest.fn(),
+    PersistedParameter,
+    ScafflaterError: jest.fn(),
+    ScafflaterFileNotFoundError: jest.fn(),
+    ScafflaterOptions: jest.fn(),
+    LocalFolderTemplateSource: class {
+      constructor() {
+        this.options = {};
+      }
+      static isValidSourceKey = jest.fn();
+      getTemplate = jest.fn();
+    },
+  };
+});
+
+const InitCommand = (await import("./init.js")).default;
+const scafflater = await import("@scafflater/scafflater");
 
 const templateManager = new scafflater.TemplateManager();
 const mockedScafflater = {
@@ -33,7 +69,7 @@ describe("InitCommand", () => {
     jest
       .spyOn(templateManager, "getTemplateFromSource")
       .mockResolvedValue(
-        new (jest.requireActual("@scafflater/scafflater").LocalTemplate)(
+        new LocalTemplate(
           "/some/path",
           "/some/path/.scafflater/scafflater.jsonc",
           "some-new-template"

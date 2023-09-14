@@ -1,4 +1,4 @@
-module.exports = {
-  GithubClientNotInstalledError: require("./github-client-not-installed"),
-  GithubClientUserNotLoggedError: require("./github-client-user-not-logged"),
-};
+import GithubClientNotInstalledError from "./github-client-not-installed";
+import GithubClientUserNotLoggedError from "./github-client-user-not-logged";
+
+export { GithubClientNotInstalledError, GithubClientUserNotLoggedError };

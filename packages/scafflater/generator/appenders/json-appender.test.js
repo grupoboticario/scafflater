@@ -1,5 +1,5 @@
-const { ScafflaterOptions } = require("../../options");
-const JsonAppender = require("./json-appender");
+import ScafflaterOptions from "../../options";
+import JsonAppender from "./json-appender";
 
 const destJson = `{
   "property": "the property",

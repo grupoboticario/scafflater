@@ -1,10 +1,54 @@
-const fsUtil = require("../fs-util");
-const { ScafflaterOptions } = require("../options");
-const Generator = require("./");
-const { glob } = require("glob");
+import { jest } from "@jest/globals";
+import { createRequire } from "node:module";
+import path from "node:path";
 
-jest.mock("../fs-util");
-jest.mock("isbinaryfile");
+jest.unstable_mockModule("../fs-util", async () => {
+  const ret = {
+    saveFile: jest.fn(),
+    readFileContent: jest.fn(),
+    pathExists: jest.fn(),
+    getDirTreeSync: jest.fn(),
+    loadScriptsAsObjects: jest.fn(),
+    listFilesByExtensionDeeply: jest.fn(),
+    require: (jsPath) => {
+      try {
+        const p = path.resolve(import.meta.url);
+        const require = createRequire(p);
+
+        return require(jsPath);
+      } catch (error) {
+        if (error.code === "ERR_REQUIRE_ESM") {
+          return import(jsPath);
+        }
+        throw error;
+      }
+    },
+  };
+
+  return {
+    ...ret,
+    default: ret,
+  };
+});
+
+jest.unstable_mockModule("isbinaryfile", () => {
+  return {
+    ...jest.requireActual("isbinaryfile"),
+    isBinaryFile: jest.fn(),
+  };
+});
+
+jest.unstable_mockModule("glob", () => {
+  return {
+    glob: jest.fn(),
+  };
+});
+
+const fsUtil = await import("../fs-util");
+const Generator = (await import("./index")).default;
+const { glob } = await import("glob");
+const ScafflaterOptions = (await import("../options")).default;
+const { isBinaryFile } = await import("isbinaryfile");
 
 describe("Generator Tests", () => {
   afterEach(() => {
@@ -55,10 +99,8 @@ describe("Generator Tests", () => {
         return true;
     });
     fsUtil.listFilesByExtensionDeeply.mockResolvedValue(["lineComment.js"]);
-    fsUtil.require.mockReturnValue(
-      require("./processors/hbs-builtin-helpers/lineComment")
-    );
     fsUtil.loadScriptsAsObjects.mockResolvedValue([]);
+    isBinaryFile.mockResolvedValue(false);
     const generator = new Generator(ctx);
 
     // ACT
@@ -125,9 +167,6 @@ a sample test
         return true;
     });
     fsUtil.listFilesByExtensionDeeply.mockResolvedValue(["lineComment.js"]);
-    fsUtil.require.mockReturnValue(
-      require("./processors/hbs-builtin-helpers/lineComment")
-    );
     fsUtil.loadScriptsAsObjects.mockResolvedValue([]);
     const generator = new Generator(ctx);
 
@@ -183,9 +222,6 @@ a sample test
         return false;
     });
     fsUtil.listFilesByExtensionDeeply.mockResolvedValue(["lineComment.js"]);
-    fsUtil.require.mockReturnValue(
-      require("./processors/hbs-builtin-helpers/lineComment")
-    );
     fsUtil.loadScriptsAsObjects.mockResolvedValue([]);
     const generator = new Generator(ctx);
 
@@ -659,9 +695,7 @@ describe("Resolve Target Name", () => {
 
   test("Receive a glob pattern. Should use it to resolve", async () => {
     // ARRANGE
-    jest.spyOn(glob, "sync").mockImplementation(() => {
-      return [];
-    });
+    glob.mockResolvedValue([]);
     const generator = new Generator({
       targetPath: ".",
       templatePath: ".",
@@ -672,6 +706,6 @@ describe("Resolve Target Name", () => {
     await generator.resolveTargetNames("glob</some/glob/pattern>", {});
 
     // ASSERT
-    expect(glob.sync).toBeCalledWith("/some/glob/pattern", expect.anything());
+    expect(glob).toBeCalledWith("/some/glob/pattern", expect.anything());
   });
 });

@@ -1,20 +1,20 @@
-const { Command, flags } = require("@oclif/command");
-const {
+import { Command, flags } from "@oclif/command";
+import {
   Scafflater,
   ScafflaterOptions,
   logger,
   Config,
   LocalTemplate,
   LocalPartial,
-} = require("@scafflater/scafflater");
-const {
+} from "@scafflater/scafflater";
+import {
   promptMissingParameters,
   parseParametersNames,
   spinner,
-} = require("../../util");
-const chalk = require("chalk");
-const path = require("path");
-const inquirer = require("inquirer");
+} from "../../util";
+import chalk from "chalk";
+import path from "path";
+import inquirer from "inquirer";
 
 /**
  * Try to load cached templates and load from source if it is not available
@@ -77,7 +77,7 @@ class LocalPartialTemplate extends LocalPartial {
   }
 }
 
-class RunPartialCommand extends Command {
+export default class RunPartialCommand extends Command {
   async run() {
     try {
       const { args: runArgs, flags: runFlags } = this.parse(RunPartialCommand);
@@ -258,5 +258,3 @@ RunPartialCommand.flags = {
     default: false,
   }),
 };
-
-module.exports = RunPartialCommand;

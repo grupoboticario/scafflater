@@ -1,4 +1,4 @@
-const reValidate = require("./regex");
+import reValidate from "./regex";
 
 test("The input is valid, should return true", () => {
   // ARRANGE

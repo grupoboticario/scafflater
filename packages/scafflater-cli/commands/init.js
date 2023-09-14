@@ -1,5 +1,5 @@
-const { Command, flags } = require("@oclif/command");
-const {
+import { Command, flags } from "@oclif/command";
+import {
   Scafflater,
   TemplateSource,
   logger,
@@ -7,16 +7,16 @@ const {
   ScafflaterOptions,
   ScafflaterFileNotFoundError,
   ScafflaterError,
-} = require("@scafflater/scafflater");
-const {
+} from "@scafflater/scafflater";
+import {
   promptMissingParameters,
   parseParametersNames,
   spinner,
-} = require("../util");
-const chalk = require("chalk");
-const path = require("path");
+} from "../util";
+import chalk from "chalk";
+import path from "path";
 
-class InitCommand extends Command {
+export default class InitCommand extends Command {
   async run() {
     try {
       const { args: iniArgs, flags: initFlags } = this.parse(InitCommand);
@@ -143,5 +143,3 @@ InitCommand.flags = {
     default: false,
   }),
 };
-
-module.exports = InitCommand;

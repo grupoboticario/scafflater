@@ -1,4 +1,4 @@
-const { exec } = require("child_process");
+import { exec } from "child_process";
 
 /**
  * @class runCommandOptions
@@ -33,7 +33,7 @@ const getDefaultLogger = () => {
  * @param {runCommandOptions} options Run command options
  * @returns {Promise<string>} Promise of output message
  */
-const runCommand = (command, options = {}) => {
+export default function runCommand(command, options = {}) {
   options.logger = options?.logger ?? getDefaultLogger();
   return new Promise((resolve, reject) => {
     try {
@@ -72,8 +72,4 @@ const runCommand = (command, options = {}) => {
       reject(error);
     }
   });
-};
-
-module.exports = {
-  runCommand,
-};
+}

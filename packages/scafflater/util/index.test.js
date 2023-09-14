@@ -1,7 +1,7 @@
-/* eslint-disable node/no-unpublished-require */
-const { maskParameters, buildLineComment, ignores } = require("./");
-const { ScafflaterOptions } = require("../options");
-const mock = require("mock-fs");
+import { jest } from "@jest/globals";
+import { maskParameters, buildLineComment, ignores } from "./";
+import ScafflaterOptions from "../options";
+import mock, { restore } from "mock-fs";
 
 describe("util", () => {
   beforeEach(() => {
@@ -9,7 +9,7 @@ describe("util", () => {
   });
 
   afterEach(() => {
-    mock.restore();
+    restore();
   });
 
   test("Mask Parameters", () => {

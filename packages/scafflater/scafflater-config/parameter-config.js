@@ -2,7 +2,7 @@
  * @class ParameterConfig
  * @description Describes a parameter. This object accept all parameters to get parameter from user through inquirer.
  */
-class ParameterConfig {
+export default class ParameterConfig {
   /**
    * Creates a parameter
    *
@@ -35,5 +35,3 @@ class ParameterConfig {
    */
   scope;
 }
-
-module.exports = { ParameterConfig };

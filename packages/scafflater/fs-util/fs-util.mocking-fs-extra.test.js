@@ -1,12 +1,29 @@
 /* eslint-disable no-undef */
-const fsUtil = require("../fs-util");
-const path = require("path");
-const fs = require("fs-extra");
-const os = require("os");
-const { EOL } = require("os");
+import { jest } from "@jest/globals";
+import path from "path";
+import { fileURLToPath } from "url";
 
-jest.mock("fs-extra");
-jest.mock("os");
+jest.unstable_mockModule("fs-extra", () => {
+  const ret = jest.createMockFromModule("fs-extra");
+
+  return { default: ret, ...ret };
+});
+
+jest.unstable_mockModule("os", () => {
+  const ret = {
+    tmpdir: jest.fn(),
+    EOL: jest.requireActual("os").EOL,
+  };
+
+  return { default: ret, ...ret };
+});
+
+const fs = await import("fs-extra");
+const os = await import("os");
+const fsUtil = (await import("./index")).default;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe("Testing mocking fs-extra", () => {
   beforeEach(() => {
@@ -22,7 +39,7 @@ describe("Testing mocking fs-extra", () => {
     await fsUtil.saveFile(filePath, "new data", true);
 
     // ASSERT
-    expect(fs.writeFile.mock.calls[0][1]).toBe(EOL + EOL + "new data");
+    expect(fs.writeFile.mock.calls[0][1]).toBe(os.EOL + os.EOL + "new data");
   });
 
   test("save File without append", async () => {

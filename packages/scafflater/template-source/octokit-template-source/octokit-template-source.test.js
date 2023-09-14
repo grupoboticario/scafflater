@@ -1,17 +1,17 @@
-/* eslint-disable no-undef */
-const OctokitTemplateSource = require("./octokit-template-source");
-const { NoVersionAvailableError } = require("../errors");
-const { Octokit } = require("@octokit/rest");
-const path = require("path");
-const fs = require("fs");
-const {
+import { jest } from "@jest/globals";
+import { NoVersionAvailableError } from "../errors";
+import path from "path";
+import url from "url";
+import fs from "fs";
+import {
   ScafflaterFileNotFoundError,
   TemplateDefinitionNotFound,
-} = require("../../errors");
+} from "../../errors";
 
-jest.mock("os", () => {
+jest.unstable_mockModule("os", () => {
   const originalOs = jest.requireActual("os");
-  return {
+  const mock = {
+    __esModule: true, // Use it when dealing with esModules
     ...originalOs,
     ...{
       tmpdir: () => {
@@ -23,7 +23,29 @@ jest.mock("os", () => {
       },
     },
   };
+
+  return {
+    ...mock,
+    default: mock,
+  };
 });
+const mockOctokit = {
+  request: jest.fn(),
+};
+jest.unstable_mockModule("@octokit/rest", () => {
+  return {
+    Octokit: class {
+      constructor() {
+        return mockOctokit;
+      }
+    },
+  };
+});
+
+const Octokit = (await import("@octokit/rest")).Octokit;
+const OctokitTemplateSource = (await import("./octokit-template-source"))
+  .default;
+const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
 class MockedHttpError extends Error {
   constructor(status) {
@@ -40,7 +62,7 @@ const getByteArray = (filePath) => {
   return result;
 };
 
-describe("getTempalte", () => {
+describe("getTemplate", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.resetAllMocks();
@@ -49,7 +71,7 @@ describe("getTempalte", () => {
   test("Get head", async () => {
     // ARRANGE
     const octokitTemplateSource = new OctokitTemplateSource();
-    new Octokit().request.mockResolvedValueOnce({
+    new Octokit().request.mockResolvedValue({
       data: getByteArray(path.resolve(__dirname, "__mocks__/test-ok.zip")),
     });
 

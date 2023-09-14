@@ -1,6 +1,6 @@
-const YamlAppender = require("./yaml-appender");
-const yaml = require("js-yaml");
-const { ScafflaterOptions } = require("../../options");
+import YamlAppender from "./yaml-appender";
+import yaml from "js-yaml";
+import ScafflaterOptions from "../../options";
 
 const destYaml = `apiVersion: backstage.io/v1alpha1
 kind: Location

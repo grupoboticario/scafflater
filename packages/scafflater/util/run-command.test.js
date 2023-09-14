@@ -1,8 +1,13 @@
-/* eslint-disable no-undef */
-const { runCommand } = require("./run-command");
-const { exec } = require("child_process");
+import { jest } from "@jest/globals";
 
-jest.mock("child_process");
+jest.unstable_mockModule("child_process", () => {
+  return {
+    exec: jest.fn(),
+  };
+});
+
+const { exec } = await import("child_process");
+const runCommand = (await import("./run-command")).default;
 
 describe("runCommand", () => {
   test("Execute Command Successfully", async () => {

@@ -1,6 +1,6 @@
-const { ScafflaterError } = require("../../../errors");
+import { ScafflaterError } from "../../../errors";
 
-class GithubClientNotInstalledError extends ScafflaterError {
+export default class GithubClientNotInstalledError extends ScafflaterError {
   constructor() {
     super(
       `The github client is not installed.\nPlease visit https://cli.github.com/ and install it.`
@@ -8,5 +8,3 @@ class GithubClientNotInstalledError extends ScafflaterError {
     this.name = "GithubClientNotInstalledError";
   }
 }
-
-module.exports = GithubClientNotInstalledError;

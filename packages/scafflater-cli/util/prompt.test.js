@@ -1,7 +1,15 @@
-const Prompt = require("./prompt");
-const inquirer = require("inquirer");
+import { jest } from "@jest/globals";
 
-jest.mock("inquirer");
+jest.unstable_mockModule("inquirer", () => {
+  return {
+    default: {
+      prompt: jest.fn(),
+    },
+  };
+});
+
+const Prompt = (await import("./prompt")).default;
+const inquirer = (await import("inquirer")).default;
 
 test("Prompt questions", async () => {
   // ARRANGE

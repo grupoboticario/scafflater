@@ -1,6 +1,15 @@
-const fsUtils = require(".");
-const fs = require("fs-extra");
-jest.mock("fs-extra");
+import { jest } from "@jest/globals";
+
+jest.unstable_mockModule("fs-extra", () => {
+  const ret = jest.createMockFromModule("fs-extra");
+  return {
+    ...ret,
+    default: ret,
+  };
+});
+
+const fsUtils = (await import("./index")).default;
+const fs = await import("fs-extra");
 
 describe("Mock glob", () => {
   beforeEach(() => {
@@ -30,7 +39,7 @@ describe("Mock glob", () => {
     const folderPath = "some/path";
 
     // ACT
-    await fsUtils.writeJSON(folderPath, obj, false);
+    fsUtils.writeJSON(folderPath, obj, false);
 
     // ASSERT
     expect(fs.writeFile).toHaveBeenCalledWith(

@@ -1,8 +1,7 @@
-/* eslint-disable no-undef */
-const TemplateSource = require("./template-source");
-const IsomorphicGitTemplateSource = require("./isomorphic-git-template-source");
+import TemplateSource from "./template-source";
+import IsomorphicGitTemplateSource from "./isomorphic-git-template-source";
 
-test("Resolve template source", () => {
+test("Resolve template source", async () => {
   // ARRANGE
   const config = {
     source: "isomorphicGit",
@@ -15,7 +14,7 @@ test("Resolve template source", () => {
   };
 
   // ACT
-  const out = TemplateSource.resolveTemplateSourceFromSourceKey(
+  const out = await TemplateSource.resolveTemplateSourceFromSourceKey(
     config,
     "https://github.com/scafflater/scafflater-template"
   );
@@ -24,39 +23,41 @@ test("Resolve template source", () => {
   expect(out).toBeInstanceOf(IsomorphicGitTemplateSource);
 });
 
-test("Throws an exception when the source does not exists", () => {
+test("Throws an exception when the source does not exists", async () => {
   // ARRANGE
-  const config = { source: "bla" };
 
-  // ACT and ASSERT
-  expect(() => {
-    TemplateSource.getTemplateSource(config);
-  }).toThrowError("There's no module for source 'bla'");
+  // ACT
+  const source = TemplateSource.getTemplateSource({ source: "bla" });
+
+  // ASSERT
+  await expect(source).rejects.toThrowError(
+    "There's no module for source 'bla'"
+  );
 });
 
-test("Gets the template source in config", () => {
+test("Gets the template source in config", async () => {
   // ARRANGE
   const config = { source: "isomorphicGit" };
 
   // ACT
-  const result = TemplateSource.getTemplateSource(config);
+  const result = await TemplateSource.getTemplateSource(config);
 
   // ASSERT
   // eslint-disable-next-line no-proto
-  expect(result.__proto__ instanceof TemplateSource).toBe(true);
+  expect(result instanceof TemplateSource).toBe(true);
   expect(result instanceof IsomorphicGitTemplateSource).toBe(true);
 });
 
-test("Gets the github source from a github source key", () => {
+test("Gets the github source from a github source key", async () => {
   // ARRANGE
   const config = {};
   const sourceKey = "https://github.com/jekyll/jekyll.git";
 
   // ACT
-  const result = TemplateSource.getTemplateSource(sourceKey, config);
+  const result = await TemplateSource.getTemplateSource(sourceKey, config);
 
   // ASSERT
   // eslint-disable-next-line no-proto
-  expect(result.__proto__ instanceof TemplateSource).toBe(true);
+  expect(result instanceof TemplateSource).toBe(true);
   expect(result instanceof IsomorphicGitTemplateSource).toBe(true);
 });

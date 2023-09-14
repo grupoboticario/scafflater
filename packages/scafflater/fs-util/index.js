@@ -1,12 +1,12 @@
-const fs = require("fs-extra");
-const os = require("os");
-const dirTree = require("directory-tree");
-const glob = require("glob");
-const path = require("path");
-const { EOL } = require("os");
-const stripJsonComments = require("strip-json-comments");
-const npmInstallExec = require("../util/npmInstall");
-const { Extract } = require("unzipper");
+import fs from "fs-extra";
+import os from "os";
+import dirTree from "directory-tree";
+import { glob } from "glob";
+import path from "path";
+import stripJsonComments from "strip-json-comments";
+import npmInstallExec from "../util/npmInstall";
+import { Extract } from "unzipper";
+import { createRequire } from "node:module";
 
 /**
  * Loads js
@@ -15,7 +15,15 @@ const { Extract } = require("unzipper");
  * @returns {object} Loaded script
  */
 fs.require = (jsPath) => {
-  return require(jsPath);
+  try {
+    const require = createRequire(jsPath);
+    return require(jsPath);
+  } catch (error) {
+    if (error.code === "ERR_REQUIRE_ESM") {
+      return import(jsPath);
+    }
+    throw error;
+  }
 };
 
 /**
@@ -71,7 +79,7 @@ fs.loadScriptsAsObjects = async (folderPath, npmInstall = false) => {
     await npmInstallExec(folderPath);
   }
 
-  return require(folderPath);
+  return fs.require(folderPath);
 };
 
 /**
@@ -206,7 +214,7 @@ fs.writeJSON = async (filePath, obj, indent = true) => {
 fs.saveFile = async (filePath, data, append = true) => {
   const option = { flag: "w" };
   if ((await fs.pathExists(filePath)) && append) {
-    data = EOL + EOL + data;
+    data = os.EOL + os.EOL + data;
     option.flag = "a";
   }
   await fs.ensureDir(path.dirname(filePath));
@@ -240,17 +248,8 @@ fs.getDirTreeSync = (folderPath, includeFiles = true) => {
  * @returns {Promise<string[]>} List of file names
  */
 fs.listFilesDeeply = async (folderPath, filePattern) => {
-  return new Promise((resolve, reject) => {
-    try {
-      glob(filePattern, { root: folderPath }, (err, files) => {
-        if (err) reject(err);
-        if (!files || files.length <= 0) resolve(null);
-        resolve(files);
-      });
-    } catch (error) {
-      reject(error);
-    }
-  });
+  const files = await glob(filePattern, { root: folderPath });
+  return files.length > 0 ? files : null;
 };
 
 /**
@@ -275,4 +274,4 @@ fs.listFilesByNameDeeply = async (folderPath, fileName) => {
   return fs.listFilesDeeply(folderPath, `/**/${fileName}`);
 };
 
-module.exports = fs;
+export default fs;

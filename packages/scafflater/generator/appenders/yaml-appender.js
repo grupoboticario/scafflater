@@ -1,9 +1,9 @@
-const Appender = require("./appender");
-const yaml = require("js-yaml");
-const merge = require("deepmerge");
-const arrayMerge = require("./utils/array-merger");
+import Appender from "./appender";
+import yaml from "js-yaml";
+import merge from "deepmerge";
+import arrayMerge from "./utils/array-merger";
 
-class YamlAppender extends Appender {
+export default class YamlAppender extends Appender {
   /**
    * Combine arrays
    *
@@ -62,5 +62,3 @@ class YamlAppender extends Appender {
     });
   }
 }
-
-module.exports = YamlAppender;

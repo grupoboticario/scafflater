@@ -1,5 +1,5 @@
-const arrayMerge = require("./array-merger");
-const merge = require("deepmerge");
+import arrayMerge from "./array-merger";
+import merge from "deepmerge";
 
 const obj1 = {
   arr: [

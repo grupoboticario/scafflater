@@ -1,4 +1,4 @@
-const { PersistedParameter } = require("./persisted-parameter");
+import PersistedParameter from "./persisted-parameter";
 
 test("reduceParameters", () => {
   // ARRANGE

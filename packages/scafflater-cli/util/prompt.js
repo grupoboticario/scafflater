@@ -1,10 +1,10 @@
-const inquirer = require("inquirer");
-const regexValidate = require("./validators/regex");
+import inquirer from "inquirer";
+import regexValidate from "./validators/regex";
 
 /**
  * Class to prompt user
  */
-class Prompt {
+export default class Prompt {
   /**
    * Prompts the user values the questions in config.prompt.
    *
@@ -34,5 +34,3 @@ class Prompt {
     });
   }
 }
-
-module.exports = Prompt;

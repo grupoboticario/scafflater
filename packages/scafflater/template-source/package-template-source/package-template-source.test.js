@@ -1,11 +1,26 @@
-/* eslint-disable no-undef */
-const PackageTemplateSource = require("./package-template-source");
-const util = require("util");
-const fsUtil = require("../../fs-util");
-const { LocalTemplate } = require("../../scafflater-config/local-template");
-const { ScafflaterFileNotFoundError } = require("../../errors");
+import { jest } from "@jest/globals";
+import util from "util";
+import { LocalTemplate } from "../../scafflater-config/local-template";
+import { ScafflaterFileNotFoundError } from "../../errors";
 
-jest.mock("../../fs-util");
+jest.unstable_mockModule("../../fs-util", () => {
+  const mock = {
+    getTempFolderSync: jest.fn(),
+    getTempFolder: jest.fn(),
+    copy: jest.fn(),
+    pathExists: jest.fn(),
+  };
+
+  return {
+    __esModule: true,
+    default: mock,
+    ...mock,
+  };
+});
+
+const fsUtil = (await import("../../fs-util")).default;
+const PackageTemplateSource = (await import("./package-template-source"))
+  .default;
 
 describe("getTemplate", () => {
   afterEach(() => {
@@ -16,8 +31,9 @@ describe("getTemplate", () => {
   test("get template", async () => {
     const packageTemplateSource = new PackageTemplateSource();
     const virtualFolder = "/some/virtual/folder";
-    jest.spyOn(fsUtil, "getTempFolderSync").mockReturnValue("some/temp/folder");
-    jest.spyOn(fsUtil, "getTempFolder").mockReturnValue("some/temp/folder");
+    fsUtil.getTempFolderSync.mockReturnValue("some/temp/folder");
+    fsUtil.getTempFolder.mockReturnValue("some/temp/folder");
+
     jest
       .spyOn(LocalTemplate, "loadFromPath")
       .mockResolvedValue([

@@ -1,9 +1,30 @@
-const fsUtil = require("../../fs-util");
-const HandlebarsProcessor = require("./handlebars-processor");
-const Handlebars = require("handlebars");
+import { jest } from "@jest/globals";
 
-jest.mock("../../fs-util");
-jest.mock("handlebars");
+jest.unstable_mockModule("../../fs-util", () => {
+  var ret = {
+    pathExists: jest.fn(),
+    listFilesByExtensionDeeply: jest.fn(),
+    require: jest.fn(),
+  };
+
+  return {
+    ...ret,
+    default: ret,
+  };
+});
+
+jest.unstable_mockModule("handlebars", () => {
+  var ret = jest.createMockFromModule("handlebars");
+
+  return {
+    ...ret,
+    default: ret,
+  };
+});
+
+const fsUtil = await import("../../fs-util");
+const HandlebarsProcessor = (await import("./handlebars-processor")).default;
+const Handlebars = (await import("handlebars")).default;
 
 describe("HandlebarsProcessor", () => {
   beforeEach(() => {

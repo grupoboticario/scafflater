@@ -1,20 +1,26 @@
-/* eslint-disable no-undef */
-const {
-  parseParametersFlags,
-  promptMissingParameters,
-  parseParametersNames,
-} = require(".");
-const inquirer = require("inquirer");
-const {
-  PersistedParameter,
-} = require("@scafflater/scafflater/scafflater-config/persisted-parameter");
+import { jest } from "@jest/globals";
+import { PersistedParameter } from "../../scafflater/scafflater-config";
 
-jest.mock("inquirer");
-jest.mock("@scafflater/scafflater/fs-util");
-jest.mock("@scafflater/scafflater/logger");
-jest.mock("@scafflater/scafflater/template-manager");
-jest.mock("@scafflater/scafflater/template-cache");
-jest.mock("@scafflater/scafflater");
+jest.unstable_mockModule("inquirer", () => {
+  return {
+    default: {
+      prompt: jest.fn(),
+    },
+  };
+});
+
+jest.unstable_mockModule("@scafflater/scafflater", () => {
+  return {
+    Scafflater: jest.fn(),
+    PersistedParameter: PersistedParameter,
+    ParameterConfig: jest.fn(),
+  };
+});
+
+const { parseParametersFlags, promptMissingParameters, parseParametersNames } =
+  await import("./index");
+
+const { prompt } = (await import("inquirer")).default;
 
 test("Parse Parameters Flags", () => {
   // ARRANGE
@@ -49,7 +55,7 @@ describe("promptMissingParameters", () => {
         message: "What`s the system/project/product?",
       },
     ];
-    inquirer.prompt.mockReturnValue({ name2: "value2" });
+    prompt.mockReturnValue({ name2: "value2" });
 
     // ACT
     const result = await promptMissingParameters(
@@ -58,7 +64,7 @@ describe("promptMissingParameters", () => {
     );
 
     // ASSERT
-    expect(inquirer.prompt.mock.calls[0][0]).toStrictEqual([
+    expect(prompt.mock.calls[0][0]).toStrictEqual([
       {
         type: "input",
         name: "name2",
@@ -96,7 +102,7 @@ describe("promptMissingParameters", () => {
         message: "What`s your age?",
       },
     ];
-    inquirer.prompt.mockReturnValue({ name2: "value2" });
+    prompt.mockReturnValue({ name2: "value2" });
 
     // ACT
     const result = await promptMissingParameters(
@@ -107,7 +113,7 @@ describe("promptMissingParameters", () => {
     );
 
     // ASSERT
-    expect(inquirer.prompt.mock.calls[0][0]).toStrictEqual([
+    expect(prompt.mock.calls[0][0]).toStrictEqual([
       {
         type: "input",
         name: "name2",

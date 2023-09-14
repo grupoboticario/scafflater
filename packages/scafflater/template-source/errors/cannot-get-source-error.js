@@ -1,10 +1,8 @@
-const { ScafflaterError } = require("../../errors");
+import { ScafflaterError } from "../../errors";
 
-class CannotGetSourceError extends ScafflaterError {
+export default class CannotGetSourceError extends ScafflaterError {
   constructor(sourceKey) {
     super(`Cannot get template source: ${sourceKey}.`);
     this.sourceKey = sourceKey;
   }
 }
-
-module.exports = CannotGetSourceError;

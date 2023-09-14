@@ -1,15 +1,15 @@
-const { Command, flags } = require("@oclif/command");
-const chalk = require("chalk");
-const {
+import { Command, flags } from "@oclif/command";
+import chalk from "chalk";
+import {
   Scafflater,
   ScafflaterOptions,
   logger,
   Config,
-} = require("@scafflater/scafflater");
-const cliui = require("cliui");
-const path = require("path");
+} from "@scafflater/scafflater";
+import cliui from "cliui";
+import path from "path";
 
-class ListPartialCommand extends Command {
+export default class ListPartialCommand extends Command {
   async run() {
     try {
       const { flags: listFlags } = this.parse(ListPartialCommand);
@@ -105,5 +105,3 @@ ListPartialCommand.flags = {
     options: templatesSource,
   }),
 };
-
-module.exports = ListPartialCommand;

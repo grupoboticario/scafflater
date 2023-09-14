@@ -1,3 +1,3 @@
-const TemplateCache = require("./template-cache");
+import TemplateCache from "./template-cache";
 
-module.exports = { TemplateCache };
+export default TemplateCache;

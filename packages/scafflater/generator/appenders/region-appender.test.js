@@ -1,5 +1,5 @@
-const { ScafflaterOptions } = require("../../options");
-const RegionAppender = require("./region-appender");
+import ScafflaterOptions from "../../options";
+import RegionAppender from "./region-appender";
 
 test("Append to an existing region", async () => {
   // ARRANGE

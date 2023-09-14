@@ -2,7 +2,7 @@
  * @class PersistedParameter
  * @description Describes a persisted parameter. It will be used to store parameter for global and template scopes
  */
-class PersistedParameter {
+export default class PersistedParameter {
   /**
    * Creates a parameter
    *
@@ -60,5 +60,3 @@ class PersistedParameter {
     }
   }
 }
-
-module.exports = { PersistedParameter };

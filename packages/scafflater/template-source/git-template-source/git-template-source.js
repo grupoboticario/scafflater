@@ -1,18 +1,21 @@
-const LocalFolderTemplateSource = require("../local-folder-template-source/local-folder-template-source");
-const fsUtil = require("../../fs-util");
-const { ScafflaterOptions } = require("../../options");
-const { LocalTemplate } = require("../../scafflater-config/local-template");
-const { Source } = require("../../scafflater-config/source");
-const ScafflaterFileNotFoundError = require("../../errors/scafflater-file-not-found-error");
-const { TemplateDefinitionNotFound } = require("../../errors");
-const util = require("util");
-const { GitNotInstalledError, GitUserNotLoggedError } = require("./errors");
-const { EOL } = require("os");
-const InvalidArgumentError = require("../../errors/invalid-argument-error");
-const semver = require("semver");
-const { NoVersionAvailableError, VersionDoesNotExist } = require("../errors");
+import LocalFolderTemplateSource from "../local-folder-template-source/local-folder-template-source";
+import fsUtil from "../../fs-util";
+import ScafflaterOptions from "../../options";
+import { LocalTemplate } from "../../scafflater-config/local-template";
+import Source from "../../scafflater-config/source";
+import util from "util";
+import { EOL } from "os";
+import semver from "semver";
+import {
+  ScafflaterFileNotFoundError,
+  TemplateDefinitionNotFound,
+  InvalidArgumentError,
+} from "../../errors";
+import { NoVersionAvailableError, VersionDoesNotExist } from "../errors";
+import { GitNotInstalledError, GitUserNotLoggedError } from "./errors";
+import { exec } from "child_process";
 
-class GitTemplateSource extends LocalFolderTemplateSource {
+export default class GitTemplateSource extends LocalFolderTemplateSource {
   /**
    * Checks if the sourceKey is valid for this TemplateSource
    *
@@ -41,8 +44,8 @@ class GitTemplateSource extends LocalFolderTemplateSource {
    */
   static async checkGitClient() {
     try {
-      const exec = util.promisify(require("child_process").exec);
-      const { stdout, stderr } = await exec("git config user.name", {
+      const execPromise = util.promisify(exec);
+      const { stdout, stderr } = await execPromise("git config user.name", {
         timeout: 15000,
       });
       if ((stdout + stderr).trim().length <= 0) {
@@ -73,13 +76,13 @@ class GitTemplateSource extends LocalFolderTemplateSource {
 
     const pathToClone = fsUtil.getTempFolderSync();
 
-    const exec = util.promisify(require("child_process").exec);
+    const execPromise = util.promisify(exec);
 
     const resolvedVersion = await this.resolveVersion(sourceKey, version);
     const tagArgument =
       resolvedVersion === "head" ? "" : ` -b ${resolvedVersion}`;
 
-    await exec(
+    await execPromise(
       `git clone${tagArgument} ${sourceKey} ${pathToClone} -c core.protectNTFS=false`,
       {
         timeout: 15000,
@@ -141,9 +144,9 @@ class GitTemplateSource extends LocalFolderTemplateSource {
    * @throws {NoVersionAvailableError} Theres no version available for this sourceKey
    */
   async getLastVersion(sourceKey) {
-    const exec = util.promisify(require("child_process").exec);
+    const execPromise = util.promisify(exec);
 
-    const { stdout } = await exec(
+    const { stdout } = await execPromise(
       `git ls-remote --tags --sort="v:refname" ${sourceKey}`
     );
 
@@ -172,9 +175,8 @@ class GitTemplateSource extends LocalFolderTemplateSource {
       throw new InvalidArgumentError("version", version);
     }
 
-    const exec = util.promisify(require("child_process").exec);
-
-    const { stdout } = await exec(
+    const execPromise = util.promisify(exec);
+    const { stdout } = await execPromise(
       `git ls-remote --tags --sort="v:refname" ${sourceKey}`
     );
 
@@ -204,5 +206,3 @@ class GitTemplateSource extends LocalFolderTemplateSource {
     });
   }
 }
-
-module.exports = GitTemplateSource;

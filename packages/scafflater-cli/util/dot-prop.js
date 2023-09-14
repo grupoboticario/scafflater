@@ -10,7 +10,7 @@ const digits = new Set("0123456789");
 /**
  * @param path
  */
-function getPathSegments(path) {
+export function getPathSegments(path) {
   const parts = [];
   let currentSegment = "";
   let currentPart = "start";
@@ -158,7 +158,7 @@ function getPathSegments(path) {
  * @param object
  * @param key
  */
-function isStringIndex(object, key) {
+export function isStringIndex(object, key) {
   if (typeof key !== "number" && Array.isArray(object)) {
     const index = Number.parseInt(key, 10);
     return Number.isInteger(index) && object[index] === object[key];
@@ -171,7 +171,7 @@ function isStringIndex(object, key) {
  * @param object
  * @param key
  */
-function assertNotStringIndex(object, key) {
+export function assertNotStringIndex(object, key) {
   if (isStringIndex(object, key)) {
     throw new Error("Cannot use string index");
   }
@@ -182,7 +182,7 @@ function assertNotStringIndex(object, key) {
  * @param path
  * @param value
  */
-function getProperty(object, path, value) {
+export function getProperty(object, path, value) {
   if (!isObject(object) || typeof path !== "string") {
     return value === undefined ? object : value;
   }
@@ -223,7 +223,7 @@ function getProperty(object, path, value) {
  * @param path
  * @param value
  */
-function setProperty(object, path, value) {
+export function setProperty(object, path, value) {
   if (!isObject(object) || typeof path !== "string") {
     return object;
   }
@@ -252,7 +252,7 @@ function setProperty(object, path, value) {
  * @param object
  * @param path
  */
-function deleteProperty(object, path) {
+export function deleteProperty(object, path) {
   if (!isObject(object) || typeof path !== "string") {
     return false;
   }
@@ -281,7 +281,7 @@ function deleteProperty(object, path) {
  * @param object
  * @param path
  */
-function hasProperty(object, path) {
+export function hasProperty(object, path) {
   if (!isObject(object) || typeof path !== "string") {
     return false;
   }
@@ -305,7 +305,7 @@ function hasProperty(object, path) {
 /**
  * @param path
  */
-function escapePath(path) {
+export function escapePath(path) {
   if (typeof path !== "string") {
     throw new TypeError("Expected a string");
   }
@@ -317,7 +317,7 @@ function escapePath(path) {
 /**
  * @param value
  */
-function entries(value) {
+export function entries(value) {
   if (Array.isArray(value)) {
     return value.map((value, index) => [index, value]);
   }
@@ -328,7 +328,7 @@ function entries(value) {
 /**
  * @param pathSegments
  */
-function stringifyPath(pathSegments) {
+export function stringifyPath(pathSegments) {
   let result = "";
 
   for (let [index, segment] of entries(pathSegments)) {
@@ -347,7 +347,7 @@ function stringifyPath(pathSegments) {
  * @param object
  * @param currentPath
  */
-function* deepKeysIterator(object, currentPath = []) {
+export function* deepKeysIterator(object, currentPath = []) {
   if (!isObject(object)) {
     if (currentPath.length > 0) {
       yield stringifyPath(currentPath);
@@ -364,15 +364,6 @@ function* deepKeysIterator(object, currentPath = []) {
 /**
  * @param object
  */
-function deepKeys(object) {
+export function deepKeys(object) {
   return [...deepKeysIterator(object)];
 }
-
-module.exports = {
-  getProperty,
-  setProperty,
-  deleteProperty,
-  hasProperty,
-  escapePath,
-  deepKeys,
-};

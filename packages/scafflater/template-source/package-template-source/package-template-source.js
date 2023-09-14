@@ -1,9 +1,10 @@
-const { LocalFolderTemplateSource } = require("..");
-const util = require("util");
-const ScafflaterFileNotFoundError = require("../../errors/scafflater-file-not-found-error");
-const { TemplateDefinitionNotFound } = require("../../errors");
-const logger = require("winston");
-const fsUtil = require("../../fs-util");
+import LocalFolderTemplateSource from "../local-folder-template-source";
+import util from "util";
+import ScafflaterFileNotFoundError from "../../errors/scafflater-file-not-found-error";
+import { TemplateDefinitionNotFound } from "../../errors";
+import logger from "winston";
+import fsUtil from "../../fs-util";
+import { exec as execSync } from "child_process";
 
 /**
  * Gets the template and copies it in a local folder.
@@ -12,10 +13,10 @@ const fsUtil = require("../../fs-util");
  * @param {?string} outputDir - Folder where template must be copied. If null, a temp folder will be used.
  * @returns {Promise<LocalTemplate>} The local template
  */
-class PackageTemplateSource extends LocalFolderTemplateSource {
+export default class PackageTemplateSource extends LocalFolderTemplateSource {
   async getTemplate(sourceKey, outputDir = null) {
     try {
-      const exec = util.promisify(require("child_process").exec);
+      const exec = util.promisify(execSync);
       const tempPath = fsUtil.getTempFolderSync();
 
       const packageStatus = await exec(
@@ -69,5 +70,3 @@ class PackageTemplateSource extends LocalFolderTemplateSource {
     }
   }
 }
-
-module.exports = PackageTemplateSource;

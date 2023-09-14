@@ -4,7 +4,7 @@
  * @property {string} result The result string of process.
  */
 
-class Processor {
+export default class Processor {
   /**
    * Process the input.
    *
@@ -39,5 +39,3 @@ class Processor {
     return Promise.resolve(input);
   }
 }
-
-module.exports = Processor;

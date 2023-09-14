@@ -1,3 +1,1 @@
-class ScafflaterError extends Error {}
-
-module.exports = ScafflaterError;
+export default class ScafflaterError extends Error {}

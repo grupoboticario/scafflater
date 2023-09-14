@@ -2,7 +2,7 @@
  * @class Source
  * @description The source from where Generated template was got.
  */
-class Source {
+export default class Source {
   /**
    * Creates a Source
    *
@@ -40,5 +40,3 @@ class Source {
    */
   options;
 }
-
-module.exports = { Source };

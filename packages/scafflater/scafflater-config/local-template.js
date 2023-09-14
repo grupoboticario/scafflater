@@ -1,14 +1,14 @@
-const { ScafflaterOptions } = require("../options");
-const { Config } = require("./config");
-const path = require("path");
-const { ParameterConfig } = require("./parameter-config");
-const PartialNotFoundError = require("../errors/partial-not-found-error");
+import ScafflaterOptions from "../options";
+import Config from "./config";
+import path from "path";
+import ParameterConfig from "./parameter-config";
+import PartialNotFoundError from "../errors/partial-not-found-error";
 
 /**
  * @class LocalTemplateHooks
  * @description Defines the hooks scripts for templates
  */
-class LocalTemplateHooks {
+export class LocalTemplateHooks {
   /**
    * Pre Run script
    *
@@ -29,7 +29,7 @@ class LocalTemplateHooks {
 /**
  * @class LocalTemplate
  */
-class LocalTemplate {
+export class LocalTemplate {
   /**
    * Creates a template stored locally
    *
@@ -236,7 +236,7 @@ class LocalTemplate {
  * @class LocalPartialHooks
  * @description Defines the hooks scripts for partials
  */
-class LocalPartialHooks {
+export class LocalPartialHooks {
   /**
    * Pre Run script
    *
@@ -257,7 +257,7 @@ class LocalPartialHooks {
 /**
  * @class LocalPartial
  */
-class LocalPartial {
+export class LocalPartial {
   /**
    * Creates a Partial stored locally
    *
@@ -347,5 +347,3 @@ class LocalPartial {
     );
   }
 }
-
-module.exports = { LocalTemplate, LocalPartial };

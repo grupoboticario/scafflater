@@ -1,8 +1,8 @@
-const { maskParameters } = require("../../util");
-const HandlebarsProcessor = require("../processors/handlebars-processor");
-const path = require("path");
+import { maskParameters } from "../../util";
+import HandlebarsProcessor from "../processors/handlebars-processor";
+import { resolve } from "path";
 
-class Annotator {
+export default class Annotator {
   static async annotate(context, content) {
     const _ctx = { ...context };
     if (context.template) {
@@ -24,7 +24,7 @@ class Annotator {
         const annotationContext = { ..._ctx, content };
         const processor = new HandlebarsProcessor();
         await HandlebarsProcessor.loadHelpersFolder(
-          path.resolve(context.templatePath, context.helpersPath)
+          resolve(context.templatePath, context.helpersPath)
         );
         return Promise.resolve(
           (await processor.process(annotationContext, annotationTemplate))
@@ -35,5 +35,3 @@ class Annotator {
     return Promise.resolve(content);
   }
 }
-
-module.exports = Annotator;

@@ -1,5 +1,5 @@
-module.exports = {
-  CannotGetSourceError: require("./cannot-get-source-error"),
-  NoVersionAvailableError: require("./no-version-available-error"),
-  VersionDoesNotExist: require("./version-does-not-exist-error"),
-};
+import CannotGetSourceError from "./cannot-get-source-error";
+import NoVersionAvailableError from "./no-version-available-error";
+import VersionDoesNotExist from "./version-does-not-exist-error";
+
+export { CannotGetSourceError, NoVersionAvailableError, VersionDoesNotExist };

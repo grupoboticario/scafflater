@@ -1,5 +1,5 @@
-const Handlebars = require("handlebars");
-const ignore = require("ignore");
+import Handlebars from "handlebars";
+import ignore from "ignore";
 
 /**
  * Checks on template or partial parameters which must be masked, and mask it
@@ -8,7 +8,7 @@ const ignore = require("ignore");
  * @param {object[]} templateParameters The parameters of template or partial
  * @returns {object} The an object with masked parameters
  */
-const maskParameters = (parameters, templateParameters) => {
+export function maskParameters(parameters, templateParameters) {
   if (!templateParameters || !parameters) return parameters;
 
   for (const p of templateParameters) {
@@ -18,7 +18,7 @@ const maskParameters = (parameters, templateParameters) => {
   }
 
   return parameters;
-};
+}
 
 /**
  * Builds a line comment based on config.lineCommentTemplate.
@@ -27,11 +27,11 @@ const maskParameters = (parameters, templateParameters) => {
  * @param {string} comment - The comment content
  * @returns {string} The comment
  */
-const buildLineComment = (options, comment) => {
+export function buildLineComment(options, comment) {
   return Handlebars.compile(options.lineCommentTemplate, { noEscape: true })({
     comment,
   });
-};
+}
 
 /**
  *
@@ -40,14 +40,8 @@ const buildLineComment = (options, comment) => {
  * @param {string[]} patterns Patterns to ignore
  * @returns {boolean} True if path must be ignored
  */
-const ignores = (basePath, folderOrFile, patterns) => {
+export function ignores(basePath, folderOrFile, patterns) {
   const pathsToIgnore = ignore().add(patterns);
   const relativePath = folderOrFile.replace(basePath, "").replace(/^\//, "");
   return relativePath !== "" && pathsToIgnore.ignores(relativePath);
-};
-
-module.exports = {
-  maskParameters,
-  buildLineComment,
-  ignores,
-};
+}

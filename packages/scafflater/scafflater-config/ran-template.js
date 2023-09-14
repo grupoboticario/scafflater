@@ -1,12 +1,12 @@
-const Source = require("./source");
-const RanPartial = require("./ran-partial");
-const { PersistedParameter } = require("./persisted-parameter");
+import Source from "./source";
+import RanPartial from "./ran-partial";
+import PersistedParameter from "./persisted-parameter";
 
 /**
  * @class RanTemplate
  * @description Has information about how an template was generated.
  */
-class RanTemplate {
+export default class RanTemplate {
   /**
    * Creates a template
    *
@@ -77,5 +77,3 @@ class RanTemplate {
    */
   templateParameters;
 }
-
-module.exports = RanTemplate;

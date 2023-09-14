@@ -1,4 +1,4 @@
-module.exports = {
-  GitNotInstalledError: require("./git-not-installed"),
-  GitUserNotLoggedError: require("./git-user-not-logged"),
-};
+import GitNotInstalledError from "./git-not-installed";
+import GitUserNotLoggedError from "./git-user-not-logged";
+
+export { GitNotInstalledError, GitUserNotLoggedError };

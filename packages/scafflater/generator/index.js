@@ -1,13 +1,13 @@
-const path = require("path");
-const fsUtil = require("../fs-util");
-const Processors = require("./processors");
-const Appenders = require("./appenders");
-const HandlebarsProcessor = require("./processors/handlebars-processor");
-const prettier = require("prettier");
-const ScafflaterOptions = require("../options");
-const { isBinaryFile } = require("isbinaryfile");
-const { ignores } = require("../util");
-const { glob } = require("glob");
+import path from "path";
+import fsUtil from "../fs-util";
+import Processors from "./processors";
+import Appenders from "./appenders";
+import HandlebarsProcessor from "./processors/handlebars-processor";
+import prettier from "prettier";
+import ScafflaterOptions from "../options";
+import { isBinaryFile } from "isbinaryfile";
+import { ignores } from "../util";
+import { glob } from "glob";
 
 /**
  * @typedef {object} Context
@@ -48,7 +48,7 @@ class PromisesHelper {
   }
 }
 
-class Generator {
+export default class Generator {
   /**
    * Brief description of the function here.
    *
@@ -247,30 +247,34 @@ class Generator {
               originFilePath
             );
 
-            const processors = _ctx.options.processors.map((p) => {
-              if (this.extensions[p]) {
-                return new this.extensions[p]();
+            const processors = [];
+            for (const processor of _ctx.options.processors) {
+              if (this.extensions[processor]) {
+                processors.push(new this.extensions[processor]());
+              } else if (Processors.Processor[processor]) {
+                processors.push(new Processors.Processor[processor]());
+              } else {
+                processors.push(new (await import(processor)).default());
               }
-              if (Processors.Processor[p]) {
-                return new Processors.Processor[p]();
-              }
-              return new (require(p))();
-            });
+            }
+
             const srcContent = await Processors.Processor.runProcessorsPipeline(
               processors,
               _ctx,
               originFileContent
             );
 
-            const appenders = _ctx.options.appenders.map((a) => {
-              if (this.extensions[a]) {
-                return new this.extensions[a]();
+            const appenders = [];
+            for (const appender of _ctx.options.appenders) {
+              if (this.extensions[appender]) {
+                appenders.push(new this.extensions[appender]());
+              } else if (Appenders.Appender[appender]) {
+                appenders.push(new Appenders.Appender[appender]());
+              } else {
+                appenders.push(new (await import(appender)).default());
               }
-              if (Appenders.Appender[a]) {
-                return new Appenders.Appender[a]();
-              }
-              return new (require(a))();
-            });
+            }
+
             let result = targetContent
               ? await Appenders.Appender.runAppendersPipeline(
                   appenders,
@@ -353,7 +357,7 @@ class Generator {
     const targetGlobPattern = /glob<(?<pattern>.*)>/gi;
     const e = targetGlobPattern.exec(targetName);
     if (e?.groups.pattern) {
-      return glob.sync(e.groups.pattern, { cwd: context.targetPath });
+      return glob(e.groups.pattern, { cwd: context.targetPath });
     }
 
     return [
@@ -365,5 +369,3 @@ class Generator {
     ];
   }
 }
-
-module.exports = Generator;

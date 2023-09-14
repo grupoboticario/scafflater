@@ -1,1 +1,3 @@
-module.exports = require("./octokit-template-source");
+import OctokitTemplateSource from "./octokit-template-source";
+
+export default OctokitTemplateSource;

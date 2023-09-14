@@ -1,5 +1,5 @@
-const caseHelper = require("./case");
-const Handlebars = require("handlebars");
+import caseHelper from "./case";
+import Handlebars from "handlebars";
 
 test("Cases", () => {
   expect(caseHelper("camelCase", "test string")).toBe("testString");

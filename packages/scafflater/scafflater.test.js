@@ -1,23 +1,87 @@
-const { Scafflater } = require("./scafflater");
-const { TemplateManager } = require("./template-manager");
-const { ScafflaterOptions } = require("./options");
-const {
+import { jest } from "@jest/globals";
+import {
   LocalTemplate,
   LocalPartial,
-} = require("./scafflater-config/local-template");
-const { Config } = require("./scafflater-config/config");
-const RanTemplate = require("./scafflater-config/ran-template");
-const RanPartial = require("./scafflater-config/ran-partial");
-const { Source } = require("./scafflater-config/source");
-const { TemplateSource } = require("./template-source");
-const { TemplateCache } = require("./template-cache");
-const { createLogger } = require("winston");
+} from "./scafflater-config/local-template";
+import RanTemplate from "./scafflater-config/ran-template";
+import RanPartial from "./scafflater-config/ran-partial";
+import Source from "./scafflater-config/source";
+import winston from "winston";
 
-jest.mock("./scafflater-config/config");
-jest.mock("./template-source");
-jest.mock("./template-cache");
-jest.mock("./fs-util");
-jest.mock("./generator");
+const configMock = {
+  config: jest.fn(),
+};
+jest.unstable_mockModule("./scafflater-config/config", () => {
+  const mock = {};
+  return {
+    default: class {
+      constructor() {
+        return configMock.config();
+      }
+      static fromLocalPath = jest.fn();
+    },
+  };
+});
+
+const templateSourceMock = {
+  getTemplate: jest.fn(),
+  getSource: jest.fn(),
+};
+jest.unstable_mockModule("./template-source", () => {
+  return {
+    default: class {
+      constructor() {
+        return templateSourceMock;
+      }
+      static getTemplateSource = jest.fn();
+    },
+  };
+});
+
+const templateCacheMock = {
+  getTemplate: jest.fn(),
+  storeTemplate: jest.fn(),
+};
+jest.unstable_mockModule("./template-cache", () => {
+  return {
+    default: class {
+      constructor() {
+        return templateCacheMock;
+      }
+      static getTemplateCache = jest.fn();
+    },
+  };
+});
+
+jest.unstable_mockModule("./fs-util", () => {
+  const mock = {
+    getTemplatePath: jest.fn(),
+  };
+  return {
+    default: mock,
+    ...mock,
+  };
+});
+
+jest.unstable_mockModule("./generator", () => {
+  const mock = {
+    generate: jest.fn(),
+  };
+  return {
+    default: class {
+      constructor() {
+        return mock;
+      }
+    },
+  };
+});
+
+const TemplateManager = (await import("./template-manager")).default;
+const TemplateSource = (await import("./template-source")).default;
+const TemplateCache = (await import("./template-cache")).default;
+const Config = (await import("./scafflater-config/config")).default;
+const Scafflater = (await import("./scafflater")).default;
+const ScafflaterOptions = (await import("./options")).default;
 
 describe("Scafflater", () => {
   beforeEach(() => {
@@ -67,7 +131,7 @@ describe("Scafflater", () => {
         },
         setPersistedParameters: jest.fn(),
       };
-      Config.mockReturnValue(mockedConfig);
+      configMock.config.mockReturnValue(mockedConfig);
       Config.fromLocalPath.mockResolvedValue({
         folderPath: "/template/path/",
         localPath: "/template/path/scafflater.jsonc",
@@ -326,7 +390,7 @@ describe("Scafflater", () => {
   describe("Options parameters", () => {
     test("Use logger from context", () => {
       // ARRANGE
-      const logger = createLogger();
+      const logger = winston.createLogger();
       logger.debug = jest.fn();
       const scafflater = new Scafflater({ logger });
 

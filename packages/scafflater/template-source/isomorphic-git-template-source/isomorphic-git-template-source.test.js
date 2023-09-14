@@ -1,14 +1,31 @@
-/* eslint-disable no-undef */
-const IsomorphicGitTemplateSource = require("./isomorphic-git-template-source");
-const fsUtil = require("../../fs-util");
-const { LocalTemplate } = require("../../scafflater-config/local-template");
-const {
+import { jest } from "@jest/globals";
+import { LocalTemplate } from "../../scafflater-config/local-template";
+import {
   ScafflaterFileNotFoundError,
   TemplateDefinitionNotFound,
-} = require("../../errors");
-const git = require("isomorphic-git");
+} from "../../errors";
+import git from "isomorphic-git";
 
 jest.mock("../../fs-util");
+
+jest.unstable_mockModule("../../fs-util", () => {
+  const mock = {
+    pathExists: jest.fn(),
+    getFolder: jest.fn(),
+    getTempFolder: jest.fn(),
+    copy: jest.fn(),
+  };
+
+  return {
+    default: mock,
+    ...mock,
+  };
+});
+
+const fsUtil = await import("../../fs-util");
+const IsomorphicGitTemplateSource = (
+  await import("./isomorphic-git-template-source")
+).default;
 
 describe("getTemplate", () => {
   afterEach(() => {

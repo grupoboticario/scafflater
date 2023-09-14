@@ -1,16 +1,54 @@
-const { ScafflaterOptions } = require("../options");
-const { TemplateCache } = require("../template-cache");
-const { TemplateSource } = require("../template-source");
-const TemplateManager = require("./template-manager");
-const {
+import { jest } from "@jest/globals";
+import ScafflaterOptions from "../options";
+import {
   LocalTemplate,
   LocalPartial,
-} = require("../scafflater-config/local-template");
+} from "../scafflater-config/local-template";
 
-jest.mock("../util");
-jest.mock("../fs-util");
-jest.mock("../template-cache");
-jest.mock("../template-source");
+jest.unstable_mockModule("../fs-util", () => {
+  const mock = {
+    getTemplatePath: jest.fn(),
+  };
+  return {
+    default: mock,
+    ...mock,
+  };
+});
+
+jest.unstable_mockModule("../util", () => {
+  return {
+    getTemplatePath: jest.fn(),
+  };
+});
+
+const templateCacheMock = class {
+  constructor() {
+    this.getTemplate = jest.fn();
+    this.storeTemplate = jest.fn();
+  }
+};
+jest.unstable_mockModule("../template-cache", () => {
+  return {
+    default: templateCacheMock,
+  };
+});
+
+const templateSourceMock = class {
+  constructor() {
+    this.getTemplate = jest.fn();
+  }
+
+  static resolveTemplateSourceFromSourceKey = jest.fn();
+};
+jest.unstable_mockModule("../template-source", () => {
+  return {
+    default: templateSourceMock,
+  };
+});
+
+const TemplateCache = (await import("../template-cache")).default;
+const TemplateSource = (await import("../template-source")).default;
+const TemplateManager = (await import("./template-manager")).default;
 
 describe("Template Manager tests", () => {
   afterEach(() => {

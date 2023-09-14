@@ -1,15 +1,15 @@
-const path = require("path");
-const fsUtil = require("../fs-util");
-const { RegionProvider } = require("../generator/region-provider");
-const { ignores } = require("../util");
-const { logger } = require("../logger");
-const winston = require("winston");
+import { join } from "path";
+import fsUtil from "../fs-util";
+import { RegionProvider } from "../generator/region-provider";
+import { ignores } from "../util";
+import { logger } from "../logger";
+import winston from "winston";
 
 /**
  * @class ScafflaterOptions
  * @classdesc The options to generate files
  */
-class ScafflaterOptions {
+export default class ScafflaterOptions {
   /**
    * @param {?(ScafflaterOptions|object)} options The options that must override defaults
    */
@@ -158,7 +158,7 @@ class ScafflaterOptions {
    */
   async getFolderOptions(folderPath, context) {
     let result = { ...this };
-    const scfFilePath = path.join(folderPath, this.scfFileName);
+    const scfFilePath = join(folderPath, this.scfFileName);
     if (await fsUtil.pathExists(scfFilePath)) {
       const info = await fsUtil.readJSON(scfFilePath);
       if (info.options) {
@@ -251,5 +251,3 @@ class ScafflaterOptions {
     return str.replace(configRegex, "");
   }
 }
-
-module.exports = { ScafflaterOptions };

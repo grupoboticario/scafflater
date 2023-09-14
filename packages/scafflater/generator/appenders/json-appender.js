@@ -1,9 +1,9 @@
-const Appender = require("./appender");
-const merge = require("deepmerge");
-const arrayMerge = require("./utils/array-merger");
-const stripJsonComments = require("strip-json-comments");
+import Appender from "./appender";
+import merge from "deepmerge";
+import arrayMerge from "./utils/array-merger";
+import stripJsonComments from "strip-json-comments";
 
-class JsonAppender extends Appender {
+export default class JsonAppender extends Appender {
   /**
    * Process the input.
    *
@@ -37,5 +37,3 @@ class JsonAppender extends Appender {
     });
   }
 }
-
-module.exports = JsonAppender;

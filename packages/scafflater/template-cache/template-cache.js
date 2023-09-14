@@ -1,5 +1,5 @@
-const { ScafflaterOptions } = require("../options");
-const { LocalTemplate } = require("../scafflater-config/local-template");
+import ScafflaterOptions from "../options";
+import { LocalTemplate } from "../scafflater-config/local-template";
 
 // TODO: include source as part of template key
 
@@ -9,7 +9,7 @@ const { LocalTemplate } = require("../scafflater-config/local-template");
  * @class TemplateCache
  * @abstract
  */
-class TemplateCache {
+export default class TemplateCache {
   /**
    * Template Source constructor should not been called.
    *
@@ -28,14 +28,16 @@ class TemplateCache {
    * @param {?ScafflaterOptions} options - Scafflater configuration. If null, will get the default configuration.
    * @returns {TemplateCache} An specialized instance of TemplateStorage.
    */
-  static getTemplateCache(options = {}) {
+  static async getTemplateCache(options = {}) {
     options = new ScafflaterOptions(options);
 
     if (!options.cacheStorages[options.cacheStorage]) {
       throw new Error(`There's no module for source '${options.cacheStorage}'`);
     }
 
-    return new (require(options.cacheStorages[options.cacheStorage]))(options);
+    return new (
+      await import(options.cacheStorages[options.cacheStorage])
+    ).default(options);
   }
 
   /**
@@ -69,5 +71,3 @@ class TemplateCache {
     throw new Error("Method 'listCachedTemplates()' must be implemented.");
   }
 }
-
-module.exports = TemplateCache;

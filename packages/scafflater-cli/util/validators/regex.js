@@ -5,7 +5,7 @@
  * @param {string} input - The user entry
  * @returns {(boolean|string)} True if the input is valid or if the regex is not informed.
  */
-function validate(question, input) {
+export default function validate(question, input) {
   if (!question.regex) return true;
 
   const re = `^${question.regex}$`;
@@ -13,5 +13,3 @@ function validate(question, input) {
 
   return `${question.message}: The value '${input}' does note match the regex '/${question.regex}/g'`;
 }
-
-module.exports = validate;

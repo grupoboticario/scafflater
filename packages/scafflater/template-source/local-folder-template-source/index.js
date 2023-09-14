@@ -1,1 +1,3 @@
-module.exports = require("./local-folder-template-source");
+import LocalFolderTemplateSource from "./local-folder-template-source";
+
+export default LocalFolderTemplateSource;

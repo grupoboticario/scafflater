@@ -1,10 +1,8 @@
-const { ScafflaterError } = require("../../errors");
+import { ScafflaterError } from "../../errors";
 
-class NoVersionAvailableError extends ScafflaterError {
+export default class NoVersionAvailableError extends ScafflaterError {
   constructor(sourceKey) {
     super(`Theres no version available on template source: ${sourceKey}.`);
     this.sourceKey = sourceKey;
   }
 }
-
-module.exports = NoVersionAvailableError;

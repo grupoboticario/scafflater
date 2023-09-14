@@ -1,10 +1,8 @@
-const ScafflaterError = require("./scafflater-error");
+import ScafflaterError from "./scafflater-error";
 
-class TemplateNotInitializedError extends ScafflaterError {
+export default class TemplateNotInitializedError extends ScafflaterError {
   constructor(templateName) {
     super(`The template is Not initialized: ${templateName}`);
     this.templateName = templateName;
   }
 }
-
-module.exports = TemplateNotInitializedError;

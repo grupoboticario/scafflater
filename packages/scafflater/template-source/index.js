@@ -1,9 +1,15 @@
-module.exports = {
-  ...require("./github-client-template-source/errors"),
-  ...require("./git-template-source/errors"),
-  GitTemplateSource: require("./git-template-source"),
-  GithubClientTemplateSource: require("./github-client-template-source"),
-  IsomorphicGitTemplateSource: require("./isomorphic-git-template-source"),
-  TemplateSource: require("./template-source"),
-  LocalFolderTemplateSource: require("./local-folder-template-source"),
+import TemplateSource from "./template-source";
+import GitTemplateSource from "./git-template-source";
+import GithubClientTemplateSource from "./github-client-template-source";
+import IsomorphicGitTemplateSource from "./isomorphic-git-template-source";
+import LocalFolderTemplateSource from "./local-folder-template-source";
+
+export default TemplateSource;
+export * from "./git-template-source/errors";
+export * from "./github-client-template-source/errors";
+export {
+  GitTemplateSource,
+  GithubClientTemplateSource,
+  IsomorphicGitTemplateSource,
+  LocalFolderTemplateSource,
 };

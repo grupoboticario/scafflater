@@ -1,9 +1,9 @@
-const Appender = require("./appender");
-const TOML = require("@ltd/j-toml");
-const arrayMerge = require("./utils/array-merger");
-const merge = require("lodash.mergewith");
+import Appender from "./appender";
+import TOML from "@ltd/j-toml";
+import arrayMerge from "./utils/array-merger";
+import merge from "lodash.mergewith";
 
-class TomlAppender extends Appender {
+export default class TomlAppender extends Appender {
   /**
    * Combine arrays
    *
@@ -99,5 +99,3 @@ class TomlAppender extends Appender {
     });
   }
 }
-
-module.exports = TomlAppender;

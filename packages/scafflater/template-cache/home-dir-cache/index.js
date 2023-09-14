@@ -1,3 +1,3 @@
-const HomeDirCache = require("./home-dir-cache");
+import HomeDirCache from "./home-dir-cache";
 
-module.exports = HomeDirCache;
+export default HomeDirCache;

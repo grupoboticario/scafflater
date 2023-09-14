@@ -1,16 +1,16 @@
-const { ScafflaterOptions } = require("../options");
-const {
+import ScafflaterOptions from "../options";
+import {
   LocalTemplate,
   LocalPartial,
-} = require("../scafflater-config/local-template");
-const Source = require("../scafflater-config/source");
-const { TemplateCache } = require("../template-cache");
-const { TemplateSource } = require("../template-source");
+} from "../scafflater-config/local-template";
+import Source from "../scafflater-config/source";
+import TemplateCache from "../template-cache";
+import TemplateSource from "../template-source";
 
 /**
  * Template Manager factory
  */
-class TemplateManager {
+export default class TemplateManager {
   /**
    *
    * @param {TemplateCache} cache - The template cache storage
@@ -127,5 +127,3 @@ class TemplateManager {
     return Promise.resolve(template.partials);
   }
 }
-
-module.exports = TemplateManager;

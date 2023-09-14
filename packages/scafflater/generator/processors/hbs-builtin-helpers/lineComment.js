@@ -1,5 +1,5 @@
-const util = require("../../../util");
+import { buildLineComment } from "../../../util";
 
-module.exports = (context, options) => {
-  return util.buildLineComment(options.data.root.options, options.fn(context));
-};
+export default function lineComment(context, options) {
+  return buildLineComment(options.data.root.options, options.fn(context));
+}

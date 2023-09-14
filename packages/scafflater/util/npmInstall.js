@@ -1,4 +1,4 @@
-const { exec } = require("child_process");
+import { exec } from "child_process";
 
 /**
  * Executes npm install in a folder
@@ -6,7 +6,7 @@ const { exec } = require("child_process");
  * @param {string} packagePath - The path where npm install must be run
  * @returns {Promise<void>}
  */
-function npmInstall(packagePath) {
+export default function npmInstall(packagePath) {
   return new Promise((resolve, reject) => {
     try {
       exec("npm install", { cwd: packagePath }, (err) => {
@@ -20,5 +20,3 @@ function npmInstall(packagePath) {
     }
   });
 }
-
-module.exports = npmInstall;

@@ -1,5 +1,6 @@
-const { ScafflaterOptions } = require("../../../options");
-const lineComment = require("./lineComment");
+import { jest } from "@jest/globals";
+import ScafflaterOptions from "../../../options";
+import lineComment from "./lineComment";
 
 test("lineComment handlebars helper", () => {
   // ARRANGE

@@ -1,19 +1,42 @@
-/* eslint-disable no-undef */
-const GithubClientTemplateSource = require("./github-client-template-source");
-const fsUtil = require("../../fs-util");
-const { LocalTemplate } = require("../../scafflater-config/local-template");
-const {
+import { jest } from "@jest/globals";
+import { LocalTemplate } from "../../scafflater-config/local-template";
+import {
   ScafflaterFileNotFoundError,
   TemplateDefinitionNotFound,
-} = require("../../errors");
-const childProcess = require("child_process");
-const {
+} from "../../errors";
+import {
   GithubClientNotInstalledError,
   GithubClientUserNotLoggedError,
-} = require("./errors");
+} from "./errors";
 
-jest.mock("../../fs-util");
-jest.mock("child_process");
+jest.unstable_mockModule("../../fs-util", () => {
+  const mock = {
+    pathExists: jest.fn(),
+    getTempFolder: jest.fn(),
+    getTempFolderSync: jest.fn(),
+    copy: jest.fn(),
+  };
+  return {
+    default: mock,
+    ...mock,
+  };
+});
+
+jest.unstable_mockModule("child_process", () => {
+  const mock = {
+    exec: jest.fn(),
+  };
+  return {
+    default: mock,
+    ...mock,
+  };
+});
+
+const fsUtil = await import("../../fs-util");
+const GithubClientTemplateSource = (
+  await import("./github-client-template-source")
+).default;
+const childProcess = await import("child_process");
 
 describe("getTemplate", () => {
   afterEach(() => {

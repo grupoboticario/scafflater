@@ -1,19 +1,19 @@
-const { TemplateManager } = require("./template-manager");
-const Generator = require("./generator");
-const path = require("path");
-const { ScafflaterOptions } = require("./options");
-const { maskParameters } = require("./util");
-const { Config } = require("./scafflater-config/config");
-const RanTemplate = require("./scafflater-config/ran-template");
-const RanPartial = require("./scafflater-config/ran-partial");
-const { TemplateInitialized } = require("./errors");
-const fs = require("fs-extra");
-const { runCommand } = require("./util/run-command");
+import TemplateManager from "./template-manager";
+import Generator from "./generator";
+import path from "path";
+import ScafflaterOptions from "./options";
+import { maskParameters } from "./util";
+import Config from "./scafflater-config/config";
+import RanTemplate from "./scafflater-config/ran-template";
+import RanPartial from "./scafflater-config/ran-partial";
+import { TemplateInitialized } from "./errors";
+import fs from "fs-extra";
+import runCommand from "./util/run-command";
 
 /**
  * Scafflater class
  */
-class Scafflater {
+export default class Scafflater {
   /**
    * Scafflater constructor.
    *
@@ -330,5 +330,3 @@ class Scafflater {
     await targetConfig.save(targetConfigPath);
   }
 }
-
-module.exports = { Scafflater };

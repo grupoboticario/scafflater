@@ -1,6 +1,13 @@
-const fsUtils = require(".");
-jest.mock("glob");
-const { glob } = require("glob");
+import { jest } from "@jest/globals";
+
+jest.unstable_mockModule("glob", () => {
+  return jest.createMockFromModule("glob");
+});
+
+const { glob } = await import("glob");
+const { listFilesDeeply, listFilesByExtensionDeeply, listFilesByNameDeeply } = (
+  await import("./index")
+).default;
 
 describe("Mock glob", () => {
   beforeEach(() => {
@@ -9,24 +16,22 @@ describe("Mock glob", () => {
 
   test("Glob throws an exception", async () => {
     // ARRANGE
-    glob.mockImplementation((_, __, callback) => {
-      callback(new Error(), null);
+    glob.mockImplementation(() => {
+      throw new Error("Glob throws an exception");
     });
 
     // ACT & ASSERT
     await expect(
-      fsUtils.listFilesDeeply("folderPath", "__...........__")
+      listFilesDeeply("folderPath", "__...........__")
     ).rejects.toThrow();
   });
 
   test("listFilesByExtensionDeeply", async () => {
     // ARRANGE
-    glob.mockImplementation((_, __, callback) => {
-      callback(null, ["some-file"]);
-    });
+    glob.mockResolvedValue(["some-file"]);
 
     // ACT
-    await fsUtils.listFilesByExtensionDeeply("folder/path", "ext");
+    await listFilesByExtensionDeeply("folder/path", "ext");
 
     // ASSERT
     expect(glob.mock.calls[0][0]).toBe("/**/*.ext");
@@ -35,12 +40,10 @@ describe("Mock glob", () => {
 
   test("listFilesByNameDeeply", async () => {
     // ARRANGE
-    glob.mockImplementation((_, __, callback) => {
-      callback(null, ["some-file"]);
-    });
+    glob.mockResolvedValue(["some-file"]);
 
     // ACT
-    await fsUtils.listFilesByNameDeeply("folder/path", "my-file.ext");
+    await listFilesByNameDeeply("folder/path", "my-file.ext");
 
     // ASSERT
     expect(glob.mock.calls[0][0]).toBe("/**/my-file.ext");

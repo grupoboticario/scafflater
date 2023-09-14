@@ -1,6 +1,6 @@
-const { createLogger, format, transports, config } = require("winston");
-const chalk = require("chalk");
-const { combine, timestamp, label, printf } = format;
+import winston from "winston";
+import chalk from "chalk";
+const { combine, timestamp, label, printf } = winston.format;
 const consoleFormat = printf(({ level, message }) => {
   const levelUpper = level.toUpperCase();
   switch (levelUpper) {
@@ -32,20 +32,20 @@ const consoleFormat = printf(({ level, message }) => {
   }
   return `${level} ${message}`;
 });
-const logger = createLogger({
-  levels: config.syslog.levels,
+export const logger = winston.createLogger({
+  levels: winston.config.syslog.levels,
   level: "info",
   format: combine(
     label({ label: "YOUR_LABEL" }),
     timestamp(),
-    format.splat(),
+    winston.format.splat(),
     consoleFormat
   ),
-  transports: [new transports.Console()],
+  transports: [new winston.transports.Console()],
 });
 
 logger.print = (str) => {
   console.log(str);
 };
 
-module.exports = { logger };
+export default { logger };

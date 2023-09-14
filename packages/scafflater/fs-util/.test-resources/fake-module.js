@@ -1,2 +1,1 @@
-
-module.exports = "Fake Module"
+export default "Fake Module";

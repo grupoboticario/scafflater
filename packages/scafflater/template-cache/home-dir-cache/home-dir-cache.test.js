@@ -1,8 +1,17 @@
-/* eslint-disable no-undef */
-const HomeDirCache = require("./home-dir-cache");
-const os = require("os");
+import { jest } from "@jest/globals";
 
-jest.mock("os");
+jest.unstable_mockModule("os", () => {
+  const ret = {
+    homedir: jest.fn(),
+  };
+  return {
+    default: ret,
+    ...ret,
+  };
+});
+
+const os = await import("os");
+const HomeDirCache = (await import("./home-dir-cache")).default;
 
 describe("Home Dir source", () => {
   afterEach(() => {

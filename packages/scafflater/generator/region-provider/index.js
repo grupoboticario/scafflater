@@ -1,12 +1,12 @@
-const ScafflaterOptions = require("../../options");
-const util = require("../../util");
-const RegionTagType = {
+import ScafflaterOptions from "../../options";
+import { buildLineComment } from "../../util";
+export const RegionTagType = {
   Unknown: 0,
   Start: 1,
   End: 2,
 };
 
-class RegionTag {
+export class RegionTag {
   constructor(name, start, end, type) {
     this.name = name;
     this.regionTagType = type;
@@ -19,7 +19,7 @@ class RegionTag {
   }
 }
 
-class Region {
+export class Region {
   get contentStart() {
     return this.startRegionTag.endPosition + 1;
   }
@@ -50,7 +50,7 @@ class Region {
   }
 }
 
-class RegionProvider {
+export class RegionProvider {
   /**
    * Constructor
    *
@@ -146,13 +146,13 @@ class RegionProvider {
    */
   async appendRegion(region, content) {
     let regionStr =
-      util.buildLineComment(
+      buildLineComment(
         this.options,
         `${this.options.startRegionMarker} ${region.name}`
       ) +
       `\n` +
       `${region.content}\n` +
-      util.buildLineComment(this.options, this.options.endRegionMarker) +
+      buildLineComment(this.options, this.options.endRegionMarker) +
       `\n`;
 
     if (region.parentRegion) {
@@ -170,10 +170,3 @@ class RegionProvider {
     );
   }
 }
-
-module.exports = {
-  RegionProvider,
-  RegionTag,
-  Region,
-  RegionTagType,
-};

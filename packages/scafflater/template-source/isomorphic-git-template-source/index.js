@@ -1,1 +1,3 @@
-module.exports = require("./isomorphic-git-template-source");
+import IsomorphicGitTemplateSource from "./isomorphic-git-template-source";
+
+export default IsomorphicGitTemplateSource;

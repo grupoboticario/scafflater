@@ -1,11 +1,11 @@
-const {
+import {
   getProperty,
   setProperty,
   hasProperty,
   deleteProperty,
   escapePath,
   deepKeys,
-} = require("./dot-prop");
+} from "./dot-prop";
 
 test("getProperty", () => {
   const fixture1 = { foo: { bar: 1 } };
