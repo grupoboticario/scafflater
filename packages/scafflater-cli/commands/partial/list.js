@@ -1,4 +1,4 @@
-import { Command, flags } from "@oclif/command";
+import { Command, Flags } from "@oclif/core";
 import chalk from "chalk";
 import {
   Scafflater,
@@ -10,9 +10,40 @@ import cliui from "cliui";
 import path from "path";
 
 export default class ListPartialCommand extends Command {
+  static description = `Lists available partials in template
+...
+`;
+
+  static caches = ["homeDir", "tempDir"];
+  static templatesSource = [
+    "git",
+    "githubClient",
+    "isomorphicGit",
+    "localFolder",
+  ];
+  static flags = {
+    output: Flags.string({
+      char: "o",
+      description: "The output folder",
+      default: "./",
+    }),
+    cache: Flags.string({
+      char: "c",
+      description: "The cache strategy",
+      default: "homeDir",
+      options: this.caches,
+    }),
+    templateSource: Flags.string({
+      char: "s",
+      description: "Template source indicating how the template is fetched",
+      default: "git",
+      options: this.templatesSource,
+    }),
+  };
+
   async run() {
     try {
-      const { flags: listFlags } = this.parse(ListPartialCommand);
+      const { flags: listFlags } = await this.parse(ListPartialCommand);
 
       const options = new ScafflaterOptions({
         cacheStorage: listFlags.cache,
@@ -39,7 +70,8 @@ export default class ListPartialCommand extends Command {
       const ui = cliui({ wrap: true });
 
       for (const template of outputConfig.templates) {
-        const localTemplate = await scafflater.templateManager.getTemplate(
+        const templateManager = await scafflater.getTemplateManager();
+        const localTemplate = await templateManager.getTemplate(
           template.name,
           template.version,
           template.source
@@ -79,29 +111,3 @@ export default class ListPartialCommand extends Command {
     }
   }
 }
-
-ListPartialCommand.description = `Lists available partials in template
-...
-`;
-
-const caches = ["homeDir", "tempDir"];
-const templatesSource = ["git", "githubClient", "isomorphicGit", "localFolder"];
-ListPartialCommand.flags = {
-  output: flags.string({
-    char: "o",
-    description: "The output folder",
-    default: "./",
-  }),
-  cache: flags.string({
-    char: "c",
-    description: "The cache strategy",
-    default: "homeDir",
-    options: caches,
-  }),
-  templateSource: flags.string({
-    char: "s",
-    description: "Template source indicating how the template is fetched",
-    default: "git",
-    options: templatesSource,
-  }),
-};

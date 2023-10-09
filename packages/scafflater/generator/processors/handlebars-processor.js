@@ -1,10 +1,10 @@
-import Processor from "./processor";
+import Processor from "./processor.js";
 import Handlebars from "handlebars";
-import fsUtil from "../../fs-util";
+import fsUtil from "../../fs-util/index.js";
 import path from "path";
-import Case from "./hbs-builtin-helpers/case";
-import lineComment from "./hbs-builtin-helpers/lineComment";
-import echo from "./hbs-builtin-helpers/echo";
+import Case from "./hbs-builtin-helpers/case.js";
+import lineComment from "./hbs-builtin-helpers/lineComment.js";
+import echo from "./hbs-builtin-helpers/echo.js";
 
 /**
  * Compile and apply the handlebar js on input

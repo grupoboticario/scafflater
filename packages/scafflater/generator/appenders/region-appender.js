@@ -1,5 +1,5 @@
-import { RegionProvider } from "../region-provider";
-import Appender from "./appender";
+import { RegionProvider } from "../region-provider/index.js";
+import Appender from "./appender.js";
 
 export default class RegionAppender extends Appender {
   /**

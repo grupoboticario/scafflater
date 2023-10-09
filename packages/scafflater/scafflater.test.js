@@ -34,6 +34,7 @@ jest.unstable_mockModule("./template-source", () => {
         return templateSourceMock;
       }
       static getTemplateSource = jest.fn();
+      static resolveTemplateSourceFromSourceKey = jest.fn();
     },
   };
 });

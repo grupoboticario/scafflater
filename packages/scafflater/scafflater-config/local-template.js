@@ -1,8 +1,8 @@
-import ScafflaterOptions from "../options";
-import Config from "./config";
+import ScafflaterOptions from "../options/index.js";
+import Config from "./config.js";
 import path from "path";
-import ParameterConfig from "./parameter-config";
-import PartialNotFoundError from "../errors/partial-not-found-error";
+import ParameterConfig from "./parameter-config.js";
+import PartialNotFoundError from "../errors/partial-not-found-error.js";
 
 /**
  * @class LocalTemplateHooks

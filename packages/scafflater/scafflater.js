@@ -1,19 +1,21 @@
-import TemplateManager from "./template-manager";
-import Generator from "./generator";
+import TemplateManager from "./template-manager/index.js";
+import Generator from "./generator/index.js";
 import path from "path";
-import ScafflaterOptions from "./options";
-import { maskParameters } from "./util";
-import Config from "./scafflater-config/config";
-import RanTemplate from "./scafflater-config/ran-template";
-import RanPartial from "./scafflater-config/ran-partial";
-import { TemplateInitialized } from "./errors";
+import ScafflaterOptions from "./options/index.js";
+import { maskParameters } from "./util/index.js";
+import Config from "./scafflater-config/config.js";
+import RanTemplate from "./scafflater-config/ran-template.js";
+import RanPartial from "./scafflater-config/ran-partial.js";
+import { TemplateInitialized } from "./errors/index.js";
 import fs from "fs-extra";
-import runCommand from "./util/run-command";
+import runCommand from "./util/run-command.js";
 
 /**
  * Scafflater class
  */
 export default class Scafflater {
+  #templateManager = null;
+
   /**
    * Scafflater constructor.
    *
@@ -22,8 +24,30 @@ export default class Scafflater {
    */
   constructor(options = {}, templateManager = null) {
     this.options = new ScafflaterOptions(options);
-    this.templateManager =
-      templateManager ?? TemplateManager.fromOptions(options);
+    this.#templateManager = templateManager;
+
+    this.initializationPromise = this.initialize(options);
+
+  }
+
+  /**
+   * Initializes the Scafflater instance
+   * 
+   * @param {?(ScafflaterOptions|object)} options - Scafflater configuration. If null, will get the default configuration.
+   */
+  async initialize(options){
+    if(!this.#templateManager){
+      this.#templateManager = await TemplateManager.fromOptions(options);
+    }
+  }
+
+  /**
+   * Gets the template manager
+   * @returns {Promise<TemplateManager>} The template manager
+   */
+  async getTemplateManager(){
+    await this.initializationPromise;
+    return this.#templateManager;
   }
 
   /**
@@ -37,6 +61,8 @@ export default class Scafflater {
    * @returns {Promise<void>}
    */
   async run(originPath, parameters, templatePath, targetPath = "./", ctx = {}) {
+    await this.initializationPromise;
+    
     const options = new ScafflaterOptions({ ...this.options, ...ctx.options });
 
     const helpersPath = path.resolve(
@@ -92,7 +118,9 @@ export default class Scafflater {
     templateVersion = "last",
     targetPath = "./"
   ) {
-    const localTemplate = await this.templateManager.getTemplateFromSource(
+    await this.initializationPromise;
+
+    const localTemplate = await this.#templateManager.getTemplateFromSource(
       sourceKey,
       templateVersion
     );
@@ -193,7 +221,7 @@ export default class Scafflater {
       new RanTemplate(
         localTemplate.name,
         templateVersion === "last" ? localTemplate.version : templateVersion,
-        this.templateManager.templateSource.getSource(sourceKey),
+        this.#templateManager.templateSource.getSource(sourceKey),
         maskedParameters
       )
     );
@@ -213,6 +241,8 @@ export default class Scafflater {
    * @returns {Promise<string>} Brief description of the returning value here.
    */
   async runPartial(templateName, partialName, parameters, targetPath = "./") {
+    await this.initializationPromise;
+    
     const targetConfigPath = path.resolve(
       targetPath,
       ".scafflater",
@@ -236,7 +266,7 @@ export default class Scafflater {
       );
     }
 
-    let localTemplate = await this.templateManager.getTemplate(
+    let localTemplate = await this.#templateManager.getTemplate(
       ranTemplate.name,
       ranTemplate.version,
       ranTemplate.source
@@ -254,7 +284,7 @@ export default class Scafflater {
       (p) => p.name === partialName
     );
     if (!localPartial) {
-      localTemplate = await this.templateManager.getTemplateFromSource(
+      localTemplate = await this.#templateManager.getTemplateFromSource(
         ranTemplate.source.key
       );
       localPartial = localTemplate.partials.find((p) => p.name === partialName);

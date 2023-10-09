@@ -48,4 +48,4 @@ logger.print = (str) => {
   console.log(str);
 };
 
-export default { logger };
+export default logger;

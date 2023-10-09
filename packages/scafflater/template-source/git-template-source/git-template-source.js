@@ -1,8 +1,8 @@
-import LocalFolderTemplateSource from "../local-folder-template-source/local-folder-template-source";
-import fsUtil from "../../fs-util";
-import ScafflaterOptions from "../../options";
-import { LocalTemplate } from "../../scafflater-config/local-template";
-import Source from "../../scafflater-config/source";
+import LocalFolderTemplateSource from "../local-folder-template-source/local-folder-template-source.js";
+import fsUtil from "../../fs-util/index.js";
+import ScafflaterOptions from "../../options/index.js";
+import { LocalTemplate } from "../../scafflater-config/local-template.js";
+import Source from "../../scafflater-config/source.js";
 import util from "util";
 import { EOL } from "os";
 import semver from "semver";
@@ -10,9 +10,9 @@ import {
   ScafflaterFileNotFoundError,
   TemplateDefinitionNotFound,
   InvalidArgumentError,
-} from "../../errors";
-import { NoVersionAvailableError, VersionDoesNotExist } from "../errors";
-import { GitNotInstalledError, GitUserNotLoggedError } from "./errors";
+} from "../../errors/index.js";
+import { NoVersionAvailableError, VersionDoesNotExist } from "../errors/index.js";
+import { GitNotInstalledError, GitUserNotLoggedError } from "./errors/index.js";
 import { exec } from "child_process";
 
 export default class GitTemplateSource extends LocalFolderTemplateSource {

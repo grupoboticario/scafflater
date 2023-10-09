@@ -1,5 +1,5 @@
-import { maskParameters } from "../../util";
-import HandlebarsProcessor from "../processors/handlebars-processor";
+import { maskParameters } from "../../util/index.js";
+import HandlebarsProcessor from "../processors/handlebars-processor.js";
 import { resolve } from "path";
 
 export default class Annotator {

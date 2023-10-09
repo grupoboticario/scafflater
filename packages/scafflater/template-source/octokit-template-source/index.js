@@ -1,3 +1,3 @@
-import OctokitTemplateSource from "./octokit-template-source";
+import OctokitTemplateSource from "./octokit-template-source.js";
 
 export default OctokitTemplateSource;

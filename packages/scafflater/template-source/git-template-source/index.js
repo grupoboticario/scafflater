@@ -1,4 +1,4 @@
-import GitTemplateSource from "./git-template-source";
+import GitTemplateSource from "./git-template-source.js";
 
-export * from "./errors";
+export * from "./errors/index.js";
 export default GitTemplateSource;

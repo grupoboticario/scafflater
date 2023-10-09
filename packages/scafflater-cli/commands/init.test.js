@@ -41,7 +41,7 @@ const scafflater = await import("@scafflater/scafflater");
 
 const templateManager = new scafflater.TemplateManager();
 const mockedScafflater = {
-  templateManager,
+  getTemplateManager: async () => templateManager,
   init: jest.fn(),
 };
 
@@ -56,7 +56,7 @@ describe("InitCommand", () => {
 
     jest
       .spyOn(scafflater.TemplateSource, "resolveTemplateSourceFromSourceKey")
-      .mockReturnValue(new scafflater.LocalFolderTemplateSource({}));
+      .mockResolvedValue(new scafflater.LocalFolderTemplateSource({}));
 
     jest.spyOn(scafflater, "Scafflater").mockImplementation(() => {
       return mockedScafflater;
@@ -110,18 +110,6 @@ describe("InitCommand", () => {
     expect(scafflater.logger.log).toHaveBeenCalledWith(
       "notice",
       "Template initialized. Fell free to run partials. 🥳"
-    );
-  });
-
-  test("Template source not set, should log error", async () => {
-    const initCommand = new InitCommand([], {});
-
-    // ACT
-    await initCommand.run();
-
-    // ASSERT
-    expect(scafflater.logger.error).toHaveBeenCalledWith(
-      "The parameter 'source' is required."
     );
   });
 

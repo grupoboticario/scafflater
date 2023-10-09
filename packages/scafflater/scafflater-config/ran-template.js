@@ -1,6 +1,6 @@
-import Source from "./source";
-import RanPartial from "./ran-partial";
-import PersistedParameter from "./persisted-parameter";
+import Source from "./source.js";
+import RanPartial from "./ran-partial.js";
+import PersistedParameter from "./persisted-parameter.js";
 
 /**
  * @class RanTemplate

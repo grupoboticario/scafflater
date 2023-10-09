@@ -1,12 +1,13 @@
-import Config from "./config";
-import PartialConfig from "./partial-config";
-import RanPartial from "./ran-partial";
-import RanTemplate from "./ran-template";
-import Source from "./source";
-import TemplateConfig from "./template-config";
-import PersistedParameter from "./persisted-parameter";
+import Config from "./config.js";
+import PartialConfig from "./partial-config.js";
+import RanPartial from "./ran-partial.js";
+import RanTemplate from "./ran-template.js";
+import Source from "./source.js";
+import TemplateConfig from "./template-config.js";
+import PersistedParameter from "./persisted-parameter.js";
+import ParameterConfig from "./parameter-config.js";
 
-export * from "./local-template";
+export * from "./local-template.js";
 
 export {
   Config,
@@ -16,4 +17,5 @@ export {
   Source,
   TemplateConfig,
   PersistedParameter,
+  ParameterConfig
 };

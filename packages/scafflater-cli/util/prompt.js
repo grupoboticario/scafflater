@@ -1,5 +1,5 @@
 import inquirer from "inquirer";
-import regexValidate from "./validators/regex";
+import regexValidate from "./validators/regex.js";
 
 /**
  * Class to prompt user

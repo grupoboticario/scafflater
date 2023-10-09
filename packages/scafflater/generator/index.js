@@ -1,12 +1,12 @@
 import path from "path";
-import fsUtil from "../fs-util";
-import Processors from "./processors";
-import Appenders from "./appenders";
-import HandlebarsProcessor from "./processors/handlebars-processor";
+import fsUtil from "../fs-util/index.js";
+import Processors from "./processors/index.js";
+import Appenders from "./appenders/index.js";
+import HandlebarsProcessor from "./processors/handlebars-processor.js";
 import prettier from "prettier";
-import ScafflaterOptions from "../options";
+import ScafflaterOptions from "../options/index.js";
 import { isBinaryFile } from "isbinaryfile";
-import { ignores } from "../util";
+import { ignores } from "../util/index.js";
 import { glob } from "glob";
 
 /**
@@ -254,7 +254,12 @@ export default class Generator {
               } else if (Processors.Processor[processor]) {
                 processors.push(new Processors.Processor[processor]());
               } else {
-                processors.push(new (await import(processor)).default());
+                try {
+                  processors.push(new (await import(processor)).default());                  
+                } catch {
+                  // Trying to concat '.js' to compatibility with versions before pure esm migration
+                  processors.push(new (await import(processor+'.js')).default());
+                }
               }
             }
 
@@ -271,7 +276,12 @@ export default class Generator {
               } else if (Appenders.Appender[appender]) {
                 appenders.push(new Appenders.Appender[appender]());
               } else {
+               try {
                 appenders.push(new (await import(appender)).default());
+               } catch (error) {
+                // Trying to concat '.js' to compatibility with versions before pure esm migration
+                appenders.push(new (await import(appender+'.js')).default());
+               }
               }
             }
 

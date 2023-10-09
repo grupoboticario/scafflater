@@ -1,8 +1,8 @@
-import Appender from "./appender";
-import JsonAppender from "./json-appender";
-import RegionAppender from "./region-appender";
-import YamlAppender from "./yaml-appender";
-import TomlAppender from "./toml-appender";
+import Appender from "./appender.js";
+import JsonAppender from "./json-appender.js";
+import RegionAppender from "./region-appender.js";
+import YamlAppender from "./yaml-appender.js";
+import TomlAppender from "./toml-appender.js";
 
 export default {
   Appender,

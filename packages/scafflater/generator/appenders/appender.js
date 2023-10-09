@@ -1,4 +1,4 @@
-import Annotator from "../annotator/annotator";
+import Annotator from "../annotator/annotator.js";
 import { EOL } from "os";
 
 export default class Appender {

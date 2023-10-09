@@ -1,4 +1,4 @@
-import ScafflaterError from "./scafflater-error";
+import ScafflaterError from "./scafflater-error.js";
 
 export default class ScafflaterFileNotFoundError extends ScafflaterError {
   constructor(filePath) {

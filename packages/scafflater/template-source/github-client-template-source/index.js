@@ -1,4 +1,4 @@
-import GithubClientTemplateSource from "./github-client-template-source";
+import GithubClientTemplateSource from "./github-client-template-source.js";
 
-export * from "./errors";
+export * from "./errors/index.js";
 export default GithubClientTemplateSource;

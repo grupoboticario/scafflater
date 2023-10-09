@@ -1,5 +1,5 @@
-import Processor from "./processor";
-import HandlebarsProcessor from "./handlebars-processor";
+import Processor from "./processor.js";
+import HandlebarsProcessor from "./handlebars-processor.js";
 
 export default {
   Processor,

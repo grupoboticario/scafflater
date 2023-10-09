@@ -1,13 +1,13 @@
-import TemplateSource from "../template-source";
-import fsUtil from "../../fs-util";
+import TemplateSource from "../template-source.js";
+import fsUtil from "../../fs-util/index.js";
 import path from "path";
-import { LocalTemplate } from "../../scafflater-config/local-template";
-import ScafflaterOptions from "../../options";
-import Source from "../../scafflater-config/source";
+import { LocalTemplate } from "../../scafflater-config/local-template.js";
+import ScafflaterOptions from "../../options/index.js";
+import Source from "../../scafflater-config/source.js";
 import {
   ScafflaterFileNotFoundError,
   TemplateDefinitionNotFound,
-} from "../../errors";
+} from "../../errors/index.js";
 
 export default class LocalFolderTemplateSource extends TemplateSource {
   /**

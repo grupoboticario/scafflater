@@ -1,4 +1,4 @@
-import { Command, flags } from "@oclif/command";
+import { Command, Flags, Args } from "@oclif/core";
 import {
   Scafflater,
   TemplateSource,
@@ -12,26 +12,74 @@ import {
   promptMissingParameters,
   parseParametersNames,
   spinner,
-} from "../util";
+} from "../util/index.js";
 import chalk from "chalk";
 import path from "path";
 
 export default class InitCommand extends Command {
+  static description = `Initializes the template in a output folder
+...
+`;
+
+  static args = {
+    source: Args.string({
+      description: "The template source",
+      required: true,
+    }),
+  };
+
+  static caches = ["homeDir", "tempDir"];
+  static templatesSource = [
+    "git",
+    "githubClient",
+    "isomorphicGit",
+    "localFolder",
+  ];
+  static flags = {
+    output: Flags.string({
+      char: "o",
+      description: "The output folder",
+      default: "./",
+    }),
+    cache: Flags.string({
+      char: "c",
+      description: "The cache strategy",
+      default: "homeDir",
+      options: this.caches,
+    }),
+    templateSource: Flags.string({
+      char: "s",
+      description: "Template source indicating how the template is fetched",
+      default: "git",
+      options: this.templatesSource,
+    }),
+    parameters: Flags.string({
+      char: "p",
+      description: "The parameters to init template",
+      default: [],
+      multiple: true,
+    }),
+    version: Flags.string({
+      char: "v",
+      description: "The template version",
+      default: "last",
+    }),
+    debug: Flags.boolean({
+      char: "d",
+      description: "Debug mode execution",
+      default: false,
+    }),
+  };
+
   async run() {
     try {
-      const { args: iniArgs, flags: initFlags } = this.parse(InitCommand);
-
-      if (!iniArgs.source) {
-        logger.error("The parameter 'source' is required.");
-        logger.error("Use '--help' to details.");
-        return;
-      }
+      const { args: iniArgs, flags: initFlags } = await this.parse(InitCommand);
 
       const config = new ScafflaterOptions({
         cacheStorage: initFlags.cache,
         source: initFlags.templateSource,
       });
-      const source = TemplateSource.resolveTemplateSourceFromSourceKey(
+      const source = await TemplateSource.resolveTemplateSourceFromSourceKey(
         config,
         iniArgs.source
       );
@@ -41,7 +89,8 @@ export default class InitCommand extends Command {
 
       let localTemplate;
       await spinner(`Getting template from ${iniArgs.source}`, async () => {
-        localTemplate = await scafflater.templateManager.getTemplateFromSource(
+        const templateManager = await scafflater.getTemplateManager();
+        localTemplate = await templateManager.getTemplateFromSource(
           iniArgs.source,
           initFlags.version
         );
@@ -99,47 +148,3 @@ export default class InitCommand extends Command {
     }
   }
 }
-
-InitCommand.description = `Initializes the template in a output folder
-...
-`;
-
-InitCommand.args = [{ name: "source", require: true }];
-
-const caches = ["homeDir", "tempDir"];
-const templatesSource = ["git", "githubClient", "isomorphicGit", "localFolder"];
-InitCommand.flags = {
-  output: flags.string({
-    char: "o",
-    description: "The output folder",
-    default: "./",
-  }),
-  cache: flags.string({
-    char: "c",
-    description: "The cache strategy",
-    default: "homeDir",
-    options: caches,
-  }),
-  templateSource: flags.string({
-    char: "s",
-    description: "Template source indicating how the template is fetched",
-    default: "git",
-    options: templatesSource,
-  }),
-  parameters: flags.string({
-    char: "p",
-    description: "The parameters to init template",
-    default: [],
-    multiple: true,
-  }),
-  version: flags.string({
-    char: "v",
-    description: "The template version",
-    default: "last",
-  }),
-  debug: flags.boolean({
-    char: "d",
-    description: "Debug mode execution",
-    default: false,
-  }),
-};

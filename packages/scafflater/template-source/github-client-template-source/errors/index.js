@@ -1,4 +1,4 @@
-import GithubClientNotInstalledError from "./github-client-not-installed";
-import GithubClientUserNotLoggedError from "./github-client-user-not-logged";
+import GithubClientNotInstalledError from "./github-client-not-installed.js";
+import GithubClientUserNotLoggedError from "./github-client-user-not-logged.js";
 
 export { GithubClientNotInstalledError, GithubClientUserNotLoggedError };

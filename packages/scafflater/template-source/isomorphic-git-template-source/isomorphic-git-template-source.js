@@ -1,15 +1,15 @@
-import fsUtil from "../../fs-util";
+import fsUtil from "../../fs-util/index.js";
 import git from "isomorphic-git";
-import http from "isomorphic-git/http/node";
+import http from "isomorphic-git/http/node/index.js";
 import fs from "fs-extra";
-import LocalFolderTemplateSource from "../local-folder-template-source/local-folder-template-source";
-import ScafflaterOptions from "../../options";
-import { LocalTemplate } from "../../scafflater-config/local-template";
-import Source from "../../scafflater-config/source";
+import LocalFolderTemplateSource from "../local-folder-template-source/local-folder-template-source.js";
+import ScafflaterOptions from "../../options/index.js";
+import { LocalTemplate } from "../../scafflater-config/local-template.js";
+import Source from "../../scafflater-config/source.js";
 import {
   TemplateDefinitionNotFound,
   ScafflaterFileNotFoundError,
-} from "../../errors";
+} from "../../errors/index.js";
 
 /**
  * Clones a repo to a local path.

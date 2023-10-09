@@ -1,9 +1,9 @@
-import LocalFolderTemplateSource from "../local-folder-template-source";
+import LocalFolderTemplateSource from "../local-folder-template-source/index.js";
 import util from "util";
-import ScafflaterFileNotFoundError from "../../errors/scafflater-file-not-found-error";
-import { TemplateDefinitionNotFound } from "../../errors";
+import ScafflaterFileNotFoundError from "../../errors/scafflater-file-not-found-error.js";
+import { TemplateDefinitionNotFound } from "../../errors/index.js";
 import logger from "winston";
-import fsUtil from "../../fs-util";
+import fsUtil from "../../fs-util/index.js";
 import { exec as execSync } from "child_process";
 
 /**
@@ -57,13 +57,14 @@ export default class PackageTemplateSource extends LocalFolderTemplateSource {
 
   static async isValidSourceKey(sourceKey) {
     try {
-      const exec = util.promisify(require("child_process").exec);
-      await exec(`npm view ${sourceKey}`, {
+      const child_process = await import("child_process")
+      const exec = util.promisify(child_process.exec);
+      const r = await exec(`npm view ${sourceKey}`, {
         timeout: 30000,
       });
       return true;
     } catch (error) {
-      if (error.message.includes("404")) {
+      if (error.message.includes("404") || error.message.includes("ENOENT")) {
         return false;
       }
       logger.error(error.message);

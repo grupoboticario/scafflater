@@ -1,4 +1,4 @@
-import { Command, flags } from "@oclif/command";
+import { Command, Flags, Args } from "@oclif/core";
 import {
   Scafflater,
   ScafflaterOptions,
@@ -11,7 +11,7 @@ import {
   promptMissingParameters,
   parseParametersNames,
   spinner,
-} from "../../util";
+} from "../../util/index.js";
 import chalk from "chalk";
 import path from "path";
 import inquirer from "inquirer";
@@ -34,13 +34,13 @@ const loadTemplates = async (outputConfig, scafflater) => {
       spinnerControl.text = `Getting ${chalk.bold(
         ranTemplate.name
       )} from ${chalk.underline(ranTemplate.source.key)}`;
-      let localTemplate =
-        await scafflater.templateManager.templateCache.getTemplate(
-          ranTemplate.name,
-          ranTemplate.version
-        );
+      const templateManager = await scafflater.getTemplateManager();
+      let localTemplate = await templateManager.templateCache.getTemplate(
+        ranTemplate.name,
+        ranTemplate.version
+      );
       if (!localTemplate) {
-        localTemplate = await scafflater.templateManager.getTemplateFromSource(
+        localTemplate = await templateManager.getTemplateFromSource(
           ranTemplate.source.key
         );
       }
@@ -78,9 +78,62 @@ class LocalPartialTemplate extends LocalPartial {
 }
 
 export default class RunPartialCommand extends Command {
+  static description = `Runs a partial and append the result to the output folder
+...
+`;
+
+  static args = {
+    PARTIAL_NAME: Args.string({
+      description: "The partial name",
+      default: null,
+      require: false,})
+  };
+
+  static caches = ["homeDir", "tempDir"];
+  static templatesSource = [
+    "git",
+    "githubClient",
+    "isomorphicGit",
+    "localFolder",
+  ];
+  static flags = {
+    template: Flags.string({
+      char: "t",
+      description: "The template which contains the partial to be run",
+    }),
+    output: Flags.string({
+      char: "o",
+      description: "The output folder",
+      default: "./",
+    }),
+    cache: Flags.string({
+      char: "c",
+      description: "The cache strategy",
+      default: "homeDir",
+      options: this.caches,
+    }),
+    parameters: Flags.string({
+      char: "p",
+      description: "The parameters to init template",
+      default: [],
+      multiple: true,
+    }),
+    templateSource: Flags.string({
+      char: "s",
+      description: "Template source indicating how the template is fetched",
+      default: "git",
+      options: this.templatesSource,
+    }),
+    debug: Flags.boolean({
+      char: "d",
+      description: "Debug mode execution",
+      default: false,
+    }),
+  };
+
   async run() {
     try {
-      const { args: runArgs, flags: runFlags } = this.parse(RunPartialCommand);
+      const { args: runArgs, flags: runFlags } = await this.parse(RunPartialCommand);
 
       const options = new ScafflaterOptions({
         cacheStorage: runFlags.cache,
@@ -208,53 +261,3 @@ export default class RunPartialCommand extends Command {
     }
   }
 }
-
-RunPartialCommand.description = `Runs a partial and append the result to the output folder
-...
-`;
-
-RunPartialCommand.args = [
-  {
-    name: "PARTIAL_NAME",
-    description: "The partial name",
-    default: null,
-    require: false,
-  },
-];
-
-const caches = ["homeDir", "tempDir"];
-const templatesSource = ["git", "githubClient", "isomorphicGit", "localFolder"];
-RunPartialCommand.flags = {
-  template: flags.string({
-    char: "t",
-    description: "The template which contains the partial to be run",
-  }),
-  output: flags.string({
-    char: "o",
-    description: "The output folder",
-    default: "./",
-  }),
-  cache: flags.string({
-    char: "c",
-    description: "The cache strategy",
-    default: "homeDir",
-    options: caches,
-  }),
-  parameters: flags.string({
-    char: "p",
-    description: "The parameters to init template",
-    default: [],
-    multiple: true,
-  }),
-  templateSource: flags.string({
-    char: "s",
-    description: "Template source indicating how the template is fetched",
-    default: "git",
-    options: templatesSource,
-  }),
-  debug: flags.boolean({
-    char: "d",
-    description: "Debug mode execution",
-    default: false,
-  }),
-};

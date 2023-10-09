@@ -1,4 +1,4 @@
-import { ScafflaterError } from "../../../errors";
+import { ScafflaterError } from "../../../errors/index.js";
 
 export default class GitUserNotLoggedError extends ScafflaterError {
   constructor() {

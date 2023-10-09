@@ -1,7 +1,7 @@
-import Appender from "./appender";
+import Appender from "./appender.js";
 import yaml from "js-yaml";
 import merge from "deepmerge";
-import arrayMerge from "./utils/array-merger";
+import arrayMerge from "./utils/array-merger.js";
 
 export default class YamlAppender extends Appender {
   /**

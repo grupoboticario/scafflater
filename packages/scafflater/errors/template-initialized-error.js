@@ -1,4 +1,4 @@
-import ScafflaterError from "./scafflater-error";
+import ScafflaterError from "./scafflater-error.js";
 
 export default class TemplateInitializedError extends ScafflaterError {
   constructor(templateName) {

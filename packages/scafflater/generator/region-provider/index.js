@@ -1,5 +1,5 @@
-import ScafflaterOptions from "../../options";
-import { buildLineComment } from "../../util";
+import ScafflaterOptions from "../../options/index.js";
+import { buildLineComment } from "../../util/index.js";
 export const RegionTagType = {
   Unknown: 0,
   Start: 1,

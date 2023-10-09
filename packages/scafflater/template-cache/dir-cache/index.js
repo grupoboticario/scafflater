@@ -1,3 +1,3 @@
-import DirCache from "./dir-cache";
+import DirCache from "./dir-cache.js";
 
 export default DirCache;

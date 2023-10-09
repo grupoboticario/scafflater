@@ -1,1 +1,1 @@
-module.exports = require("./package-template-source");
+export { default } from "./package-template-source.js";

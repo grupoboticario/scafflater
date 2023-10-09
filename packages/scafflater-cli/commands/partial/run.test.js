@@ -79,14 +79,14 @@ describe("ListCommand", () => {
     expect(logger.info).toHaveBeenCalledWith("No initialized template found!");
   });
 
-  test("Has initializes Templates, but the templates are not in cache. Should get template from source and error if it could not be loaded.", async () => {
+  test("Has initialized Templates, but the templates are not in cache. Should get template from source and error if it could not be loaded.", async () => {
     // ARRANGE
     const templateCache = new TemplateCache();
     const templateManager = new TemplateManager();
     templateManager.templateCache = templateCache;
     const mockedScafflater = {
-      templateManager,
       templateCache,
+      getTemplateManager: jest.fn().mockResolvedValue(templateManager),
       init: jest.fn(),
     };
     Scafflater.mockImplementation(() => {
@@ -212,7 +212,7 @@ describe("ListCommand", () => {
     const templateManager = new TemplateManager();
     templateManager.templateCache = templateCache;
     const mockedScafflater = {
-      templateManager,
+      getTemplateManager: jest.fn().mockResolvedValue(templateManager),
       templateCache,
       init: jest.fn(),
     };
@@ -292,7 +292,7 @@ describe("ListCommand", () => {
     const templateManager = new TemplateManager();
     templateManager.templateCache = templateCache;
     const mockedScafflater = {
-      templateManager,
+      getTemplateManager: jest.fn().mockResolvedValue(templateManager),
       templateCache,
       init: jest.fn(),
     };

@@ -1,5 +1,5 @@
-import ScafflaterOptions from "../options";
-import ParameterConfig from "./parameter-config";
+import ScafflaterOptions from "../options/index.js";
+import ParameterConfig from "./parameter-config.js";
 
 /**
  * @class PartialHooks

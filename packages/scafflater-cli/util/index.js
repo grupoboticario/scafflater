@@ -1,7 +1,7 @@
 import ora from "ora";
 import chalk from "chalk";
-import Prompt from "./prompt";
-import { setProperty } from "./dot-prop";
+import Prompt from "./prompt.js";
+import { setProperty } from "./dot-prop.js";
 import { ParameterConfig, PersistedParameter } from "@scafflater/scafflater";
 
 export function parseParametersFlags(parameters) {

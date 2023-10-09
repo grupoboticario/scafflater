@@ -1,8 +1,8 @@
-import TemplateCache from "../template-cache";
+import TemplateCache from "../template-cache.js";
 import path from "path";
-import fsUtil from "../../fs-util";
+import fsUtil from "../../fs-util/index.js";
 import sort from "version-sort";
-import { LocalTemplate } from "../../scafflater-config/local-template";
+import { LocalTemplate } from "../../scafflater-config/local-template.js";
 
 /**
  * Stores templates in the local file system

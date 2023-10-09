@@ -1,11 +1,11 @@
-import ScafflaterOptions from "../options";
+import ScafflaterOptions from "../options/index.js";
 import {
   LocalTemplate,
   LocalPartial,
-} from "../scafflater-config/local-template";
-import Source from "../scafflater-config/source";
-import TemplateCache from "../template-cache";
-import TemplateSource from "../template-source";
+} from "../scafflater-config/local-template.js";
+import Source from "../scafflater-config/source.js";
+import TemplateCache from "../template-cache/index.js";
+import TemplateSource from "../template-source/index.js";
 
 /**
  * Template Manager factory
@@ -32,11 +32,11 @@ export default class TemplateManager {
    * Gets a TemplateManager from scafflater options
    *
    * @param {ScafflaterOptions} options The Scafflater Options
-   * @returns {TemplateManager} A template manager constructed based on options
+   * @returns {Promise<TemplateManager>} A template manager constructed based on options
    */
-  static fromOptions(options) {
-    const templateSource = TemplateSource.getTemplateSource(options);
-    const templateCache = TemplateCache.getTemplateCache(options);
+  static async fromOptions(options) {
+    const templateSource = await TemplateSource.getTemplateSource(options);
+    const templateCache = await TemplateCache.getTemplateCache(options);
 
     return new TemplateManager(templateCache, templateSource, options);
   }
@@ -49,7 +49,7 @@ export default class TemplateManager {
    * @returns {Promise<LocalTemplate>} An object containing template config
    */
   async getTemplateFromSource(sourceKey, version = "last") {
-    const templateSource = TemplateSource.resolveTemplateSourceFromSourceKey(
+    const templateSource = await TemplateSource.resolveTemplateSourceFromSourceKey(
       this.options,
       sourceKey
     );

@@ -1,17 +1,17 @@
-import LocalFolderTemplateSource from "../local-folder-template-source/local-folder-template-source";
-import fsUtil from "../../fs-util";
-import ScafflaterOptions from "../../options";
-import { LocalTemplate } from "../../scafflater-config/local-template";
-import Source from "../../scafflater-config/source";
+import LocalFolderTemplateSource from "../local-folder-template-source/local-folder-template-source.js";
+import fsUtil from "../../fs-util/index.js";
+import ScafflaterOptions from "../../options/index.js";
+import { LocalTemplate } from "../../scafflater-config/local-template.js";
+import Source from "../../scafflater-config/source.js";
 import {
   TemplateDefinitionNotFound,
   ScafflaterFileNotFoundError,
-} from "../../errors";
+} from "../../errors/index.js";
 import { promisify } from "util";
 import {
   GithubClientNotInstalledError,
   GithubClientUserNotLoggedError,
-} from "./errors";
+} from "./errors/index.js";
 import { exec } from "child_process";
 
 const execAsync = promisify(exec);

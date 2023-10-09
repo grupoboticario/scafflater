@@ -1,6 +1,6 @@
-import Appender from "./appender";
+import Appender from "./appender.js";
 import TOML from "@ltd/j-toml";
-import arrayMerge from "./utils/array-merger";
+import arrayMerge from "./utils/array-merger.js";
 import merge from "lodash.mergewith";
 
 export default class TomlAppender extends Appender {

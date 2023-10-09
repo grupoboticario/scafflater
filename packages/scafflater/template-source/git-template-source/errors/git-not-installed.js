@@ -1,4 +1,4 @@
-import { ScafflaterError } from "../../../errors";
+import { ScafflaterError } from "../../../errors/index.js";
 
 export default class GitNotInstalledError extends ScafflaterError {
   constructor() {

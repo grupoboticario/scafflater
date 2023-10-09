@@ -4,7 +4,7 @@ import dirTree from "directory-tree";
 import { glob } from "glob";
 import path from "path";
 import stripJsonComments from "strip-json-comments";
-import npmInstallExec from "../util/npmInstall";
+import npmInstallExec from "../util/npmInstall.js";
 import { Extract } from "unzipper";
 import { createRequire } from "node:module";
 

@@ -1,8 +1,8 @@
 import { join } from "path";
-import fsUtil from "../fs-util";
-import { RegionProvider } from "../generator/region-provider";
-import { ignores } from "../util";
-import { logger } from "../logger";
+import fsUtil from "../fs-util/index.js";
+import { RegionProvider } from "../generator/region-provider/index.js";
+import { ignores } from "../util/index.js";
+import { logger } from "../logger/index.js";
 import winston from "winston";
 
 /**
@@ -115,18 +115,18 @@ export default class ScafflaterOptions {
 
   cacheStorage = "tempDir";
   cacheStorages = {
-    tempDir: "./temp-dir-cache",
-    homeDir: "./home-dir-cache",
+    tempDir: "./temp-dir-cache/index.js",
+    homeDir: "./home-dir-cache/index.js",
   };
 
   source = "isomorphicGit";
   sources = {
-    octokit: "./octokit-template-source",
-    git: "./git-template-source",
-    githubClient: "./github-client-template-source",
-    isomorphicGit: "./isomorphic-git-template-source",
-    localFolder: "./local-folder-template-source",
-    package: "./package-template-source",
+    octokit: "./octokit-template-source/index.js",
+    git: "./git-template-source/index.js",
+    githubClient: "./github-client-template-source/index.js",
+    isomorphicGit: "./isomorphic-git-template-source/index.js",
+    localFolder: "./local-folder-template-source/index.js",
+    package: "./package-template-source/index.js",
   };
 
   githubBaseUrlApi = "https://api.github.com";

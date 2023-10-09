@@ -1,6 +1,6 @@
-import Appender from "./appender";
+import Appender from "./appender.js";
 import merge from "deepmerge";
-import arrayMerge from "./utils/array-merger";
+import arrayMerge from "./utils/array-merger.js";
 import stripJsonComments from "strip-json-comments";
 
 export default class JsonAppender extends Appender {

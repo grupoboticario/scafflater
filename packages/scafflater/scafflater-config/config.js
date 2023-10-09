@@ -1,15 +1,15 @@
-import PartialConfig from "./partial-config";
-import PersistedParameter from "./persisted-parameter";
-import RanTemplate from "./ran-template";
-import TemplateConfig from "./template-config";
-import fs from "../fs-util";
+import PartialConfig from "./partial-config.js";
+import PersistedParameter from "./persisted-parameter.js";
+import RanTemplate from "./ran-template.js";
+import TemplateConfig from "./template-config.js";
+import fs from "../fs-util/index.js";
 import path from "path";
 import { glob } from "glob";
 import stripJsonComments from "strip-json-comments";
-import Source from "./source";
-import ScafflaterOptions from "../options";
-import ScafflaterFileNotFoundError from "../errors/scafflater-file-not-found-error";
-import TemplateNotInitializedError from "../errors/template-not-initialized-error";
+import Source from "./source.js";
+import ScafflaterOptions from "../options/index.js";
+import ScafflaterFileNotFoundError from "../errors/scafflater-file-not-found-error.js";
+import TemplateNotInitializedError from "../errors/template-not-initialized-error.js";
 
 /**
  * @typedef ConfigLoadResult

@@ -1,7 +1,7 @@
-import ScafflaterOptions from "../options";
-import { LocalTemplate } from "../scafflater-config/local-template";
-import Source from "../scafflater-config/source";
-import { CannotGetSourceError } from "./errors";
+import ScafflaterOptions from "../options/index.js";
+import { LocalTemplate } from "../scafflater-config/local-template.js";
+import Source from "../scafflater-config/source.js";
+import { CannotGetSourceError } from "./errors/index.js";
 
 /**
  * TemplateSource factory.
@@ -38,7 +38,7 @@ export default class TemplateSource {
     const validSources = [];
     for (const source in options.sources) {
       const s = (await import(options.sources[source])).default;
-      if (s.isValidSourceKey(sourceKey)) {
+      if (await s.isValidSourceKey(sourceKey)) {
         validSources.push(source);
       }
     }

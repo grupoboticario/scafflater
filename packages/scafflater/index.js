@@ -1,10 +1,8 @@
-import ScafflaterOptions from "./options";
-import logger from "./logger";
-import Scafflater from "./scafflater";
-import TemplateManager from "./template-manager";
-import TemplateSource from "./template-source";
-
-export * from "./scafflater-config";
+import ScafflaterOptions from "./options/index.js";
+import logger from "./logger/index.js";
+import Scafflater from "./scafflater.js";
+import TemplateManager from "./template-manager/index.js";
+import TemplateSource from "./template-source/index.js";
 
 export {
   logger,
@@ -13,11 +11,10 @@ export {
   TemplateManager,
   TemplateSource,
 };
-export * from "./errors";
-export * from "./scafflater-config";
-export * from "./options";
-export * from "./template-cache";
-export * from "./generator/appenders";
-export * from "./generator/processors";
-export * from "./generator";
-export * from "./scafflater-config";
+export * from "./errors/index.js";
+export * from "./options/index.js";
+export * from "./template-cache/index.js";
+export * from "./generator/appenders/index.js";
+export * from "./generator/processors/index.js";
+export * from "./generator/index.js";
+export * from "./scafflater-config/index.js";

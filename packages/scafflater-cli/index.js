@@ -1,1 +1,1 @@
-module.exports = require("@oclif/command");
+export { run } from '@oclif/core';

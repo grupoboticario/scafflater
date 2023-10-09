@@ -61,7 +61,7 @@ describe("Template Manager tests", () => {
 
   test("getTemplateFromSource", async () => {
     // ARRANGE
-    TemplateSource.resolveTemplateSourceFromSourceKey.mockReturnValue(
+    TemplateSource.resolveTemplateSourceFromSourceKey.mockResolvedValue(
       templateSource
     );
     const templateManager = new TemplateManager(templateCache, templateSource);

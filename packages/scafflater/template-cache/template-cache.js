@@ -1,5 +1,5 @@
-import ScafflaterOptions from "../options";
-import { LocalTemplate } from "../scafflater-config/local-template";
+import ScafflaterOptions from "../options/index.js";
+import { LocalTemplate } from "../scafflater-config/local-template.js";
 
 // TODO: include source as part of template key
 
@@ -26,7 +26,7 @@ export default class TemplateCache {
    * Returns the template source instance to be used to get templates.
    *
    * @param {?ScafflaterOptions} options - Scafflater configuration. If null, will get the default configuration.
-   * @returns {TemplateCache} An specialized instance of TemplateStorage.
+   * @returns {Promise<TemplateCache>} An specialized instance of TemplateStorage.
    */
   static async getTemplateCache(options = {}) {
     options = new ScafflaterOptions(options);

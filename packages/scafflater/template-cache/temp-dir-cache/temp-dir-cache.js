@@ -1,6 +1,6 @@
-import ScafflaterOptions from "../../options";
-import FileSystemUtils from "../../fs-util";
-import DirCache from "../dir-cache/dir-cache";
+import ScafflaterOptions from "../../options/index.js";
+import FileSystemUtils from "../../fs-util/index.js";
+import DirCache from "../dir-cache/dir-cache.js";
 
 /**
  * Stores templates in the local file system

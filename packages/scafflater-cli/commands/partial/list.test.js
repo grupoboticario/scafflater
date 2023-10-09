@@ -13,6 +13,7 @@ jest.unstable_mockModule("@scafflater/scafflater", () => {
     logger: {
       info: jest.fn(),
       print: jest.fn(),
+      error: jest.fn(),
     },
     Config: {
       fromLocalPath: jest.fn(),
@@ -33,7 +34,7 @@ describe("ListCommand", () => {
 
   const templateManager = new TemplateManager();
   const mockedScafflater = {
-    templateManager: templateManager,
+    getTemplateManager: jest.fn().mockResolvedValue(templateManager),
     init: jest.fn(),
   };
   Scafflater.mockImplementation(() => {
