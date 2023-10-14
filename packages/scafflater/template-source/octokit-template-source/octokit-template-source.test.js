@@ -1,3 +1,4 @@
+import { createRequire } from "node:module";
 import { jest } from "@jest/globals";
 import { NoVersionAvailableError } from "../errors";
 import path from "path";
@@ -17,6 +18,7 @@ jest.unstable_mockModule("os", () => {
       tmpdir: () => {
         // If is a Github Action process, use the temp directory created for the runner
         if (process.env.GITHUB_ACTION) {
+          const require = createRequire(import.meta.url);
           return require("path").resolve(process.env.RUNNER_TEMP);
         }
         return originalOs.tmpdir();
