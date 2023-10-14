@@ -57,9 +57,9 @@ export default class PackageTemplateSource extends LocalFolderTemplateSource {
 
   static async isValidSourceKey(sourceKey) {
     try {
-      const child_process = await import("child_process")
-      const exec = util.promisify(child_process.exec);
-      const r = await exec(`npm view ${sourceKey}`, {
+      const childProcess = await import("child_process");
+      const exec = util.promisify(childProcess.exec);
+      await exec(`npm view ${sourceKey}`, {
         timeout: 30000,
       });
       return true;

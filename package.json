@@ -32,7 +32,6 @@
     "eslint-plugin-import": "2.25.3",
     "eslint-plugin-jest": "24.5.0",
     "eslint-plugin-jsdoc": "36.1.0",
-    "eslint-plugin-node": "11.1.0",
     "eslint-plugin-prettier": "3.4.0",
     "fs-extra": "10.0.0",
     "globby": "11.0.4",

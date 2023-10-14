@@ -12,12 +12,12 @@ const configMock = {
   config: jest.fn(),
 };
 jest.unstable_mockModule("./scafflater-config/config", () => {
-  const mock = {};
   return {
     default: class {
       constructor() {
         return configMock.config();
       }
+
       static fromLocalPath = jest.fn();
     },
   };
@@ -33,6 +33,7 @@ jest.unstable_mockModule("./template-source", () => {
       constructor() {
         return templateSourceMock;
       }
+
       static getTemplateSource = jest.fn();
       static resolveTemplateSourceFromSourceKey = jest.fn();
     },
@@ -49,6 +50,7 @@ jest.unstable_mockModule("./template-cache", () => {
       constructor() {
         return templateCacheMock;
       }
+
       static getTemplateCache = jest.fn();
     },
   };

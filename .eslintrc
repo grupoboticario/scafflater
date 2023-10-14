@@ -1,7 +1,6 @@
 {
   "env": {
-    "commonjs": true,
-    "es2021": true,
+    "commonjs": false,
     "node": true,
     "jest/globals": true
   },
@@ -10,7 +9,6 @@
     "plugin:import/errors",
     "plugin:import/warnings",
     "plugin:jest/recommended",
-    "plugin:node/recommended",
     "plugin:prettier/recommended",
     "plugin:promise/recommended",
     "plugin:jsdoc/recommended"
@@ -18,7 +16,7 @@
   "plugins": ["jest", "prettier", "@babel", "jsdoc"],
   "parser": "@babel/eslint-parser",
   "parserOptions": {
-    "ecmaVersion": 12,
+    "ecmaVersion": 2022,
     "requireConfigFile": false
   },
   "rules": {

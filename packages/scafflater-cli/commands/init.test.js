@@ -30,6 +30,7 @@ jest.unstable_mockModule("@scafflater/scafflater", () => {
       constructor() {
         this.options = {};
       }
+
       static isValidSourceKey = jest.fn();
       getTemplate = jest.fn();
     },

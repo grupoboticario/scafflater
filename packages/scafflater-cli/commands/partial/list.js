@@ -21,6 +21,7 @@ export default class ListPartialCommand extends Command {
     "isomorphicGit",
     "localFolder",
   ];
+
   static flags = {
     output: Flags.string({
       char: "o",

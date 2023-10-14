@@ -86,7 +86,8 @@ export default class RunPartialCommand extends Command {
     PARTIAL_NAME: Args.string({
       description: "The partial name",
       default: null,
-      require: false,})
+      require: false,
+    }),
   };
 
   static caches = ["homeDir", "tempDir"];
@@ -96,6 +97,7 @@ export default class RunPartialCommand extends Command {
     "isomorphicGit",
     "localFolder",
   ];
+
   static flags = {
     template: Flags.string({
       char: "t",
@@ -133,7 +135,9 @@ export default class RunPartialCommand extends Command {
 
   async run() {
     try {
-      const { args: runArgs, flags: runFlags } = await this.parse(RunPartialCommand);
+      const { args: runArgs, flags: runFlags } = await this.parse(
+        RunPartialCommand
+      );
 
       const options = new ScafflaterOptions({
         cacheStorage: runFlags.cache,

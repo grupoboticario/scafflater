@@ -35,9 +35,10 @@ export default class TemplateCache {
       throw new Error(`There's no module for source '${options.cacheStorage}'`);
     }
 
-    return new (
+    const CacheStorage = (
       await import(options.cacheStorages[options.cacheStorage])
-    ).default(options);
+    ).default;
+    return new CacheStorage(options);
   }
 
   /**

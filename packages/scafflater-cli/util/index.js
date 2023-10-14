@@ -4,6 +4,9 @@ import Prompt from "./prompt.js";
 import { setProperty } from "./dot-prop.js";
 import { ParameterConfig, PersistedParameter } from "@scafflater/scafflater";
 
+/**
+ * @param parameters
+ */
 export function parseParametersFlags(parameters) {
   const result = {};
 
@@ -57,6 +60,9 @@ export async function promptMissingParameters(
     ...prompt,
   };
 }
+/**
+ * @param parameters
+ */
 export function parseParametersNames(parameters) {
   const result = {};
   for (const parameter in parameters) {
@@ -65,6 +71,10 @@ export function parseParametersNames(parameters) {
 
   return result;
 }
+/**
+ * @param message
+ * @param f
+ */
 export async function spinner(message, f) {
   const spinnerControl = ora(message).start();
   try {

@@ -27,25 +27,25 @@ export default class Scafflater {
     this.#templateManager = templateManager;
 
     this.initializationPromise = this.initialize(options);
-
   }
 
   /**
    * Initializes the Scafflater instance
-   * 
+   *
    * @param {?(ScafflaterOptions|object)} options - Scafflater configuration. If null, will get the default configuration.
    */
-  async initialize(options){
-    if(!this.#templateManager){
+  async initialize(options) {
+    if (!this.#templateManager) {
       this.#templateManager = await TemplateManager.fromOptions(options);
     }
   }
 
   /**
    * Gets the template manager
+   *
    * @returns {Promise<TemplateManager>} The template manager
    */
-  async getTemplateManager(){
+  async getTemplateManager() {
     await this.initializationPromise;
     return this.#templateManager;
   }
@@ -62,7 +62,7 @@ export default class Scafflater {
    */
   async run(originPath, parameters, templatePath, targetPath = "./", ctx = {}) {
     await this.initializationPromise;
-    
+
     const options = new ScafflaterOptions({ ...this.options, ...ctx.options });
 
     const helpersPath = path.resolve(
@@ -242,7 +242,7 @@ export default class Scafflater {
    */
   async runPartial(templateName, partialName, parameters, targetPath = "./") {
     await this.initializationPromise;
-    
+
     const targetConfigPath = path.resolve(
       targetPath,
       ".scafflater",

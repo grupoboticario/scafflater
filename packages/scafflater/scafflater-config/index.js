@@ -17,5 +17,5 @@ export {
   Source,
   TemplateConfig,
   PersistedParameter,
-  ParameterConfig
+  ParameterConfig,
 };

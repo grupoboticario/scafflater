@@ -1,7 +1,7 @@
 import path from "path";
 import fsUtil from "../fs-util/index.js";
-import Processors from "./processors/index.js";
-import Appenders from "./appenders/index.js";
+import * as Processors from "./processors/index.js";
+import * as Appenders from "./appenders/index.js";
 import HandlebarsProcessor from "./processors/handlebars-processor.js";
 import prettier from "prettier";
 import ScafflaterOptions from "../options/index.js";
@@ -255,10 +255,12 @@ export default class Generator {
                 processors.push(new Processors.Processor[processor]());
               } else {
                 try {
-                  processors.push(new (await import(processor)).default());                  
+                  const Processor = (await import(processor)).default;
+                  processors.push(new Processor());
                 } catch {
                   // Trying to concat '.js' to compatibility with versions before pure esm migration
-                  processors.push(new (await import(processor+'.js')).default());
+                  const Processor = (await import(processor + ".js")).default;
+                  processors.push(new Processor());
                 }
               }
             }
@@ -276,12 +278,14 @@ export default class Generator {
               } else if (Appenders.Appender[appender]) {
                 appenders.push(new Appenders.Appender[appender]());
               } else {
-               try {
-                appenders.push(new (await import(appender)).default());
-               } catch (error) {
-                // Trying to concat '.js' to compatibility with versions before pure esm migration
-                appenders.push(new (await import(appender+'.js')).default());
-               }
+                try {
+                  const Appender = (await import(appender)).default;
+                  appenders.push(new Appender());
+                } catch (error) {
+                  // Trying to concat '.js' to compatibility with versions before pure esm migration
+                  const Appender = (await import(appender + ".js")).default;
+                  appenders.push(new Appender());
+                }
               }
             }
 

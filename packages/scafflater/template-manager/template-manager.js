@@ -49,10 +49,11 @@ export default class TemplateManager {
    * @returns {Promise<LocalTemplate>} An object containing template config
    */
   async getTemplateFromSource(sourceKey, version = "last") {
-    const templateSource = await TemplateSource.resolveTemplateSourceFromSourceKey(
-      this.options,
-      sourceKey
-    );
+    const templateSource =
+      await TemplateSource.resolveTemplateSourceFromSourceKey(
+        this.options,
+        sourceKey
+      );
     const tempTemplateFolder = await templateSource.getTemplate(
       sourceKey,
       version

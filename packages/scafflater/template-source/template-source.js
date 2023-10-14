@@ -44,14 +44,13 @@ export default class TemplateSource {
     }
     const sourceIndex = validSources.indexOf(options.source);
     if (sourceIndex >= 0) {
-      return new (
-        await import(options.sources[validSources[sourceIndex]])
-      ).default(options);
+      const Source = (await import(options.sources[validSources[sourceIndex]]))
+        .default;
+      return new Source(options);
     }
     if (validSources.length > 0) {
-      return new (await import(options.sources[validSources[0]])).default(
-        options
-      );
+      const Source = (await import(options.sources[validSources[0]])).default;
+      return new Source(options);
     }
 
     throw new CannotGetSourceError(sourceKey);
@@ -70,7 +69,8 @@ export default class TemplateSource {
       throw new Error(`There's no module for source '${config.source}'`);
     }
 
-    return new (await import(config.sources[config.source])).default(config);
+    const Source = (await import(config.sources[config.source])).default;
+    return new Source(config);
   }
 
   /**

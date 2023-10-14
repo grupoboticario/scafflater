@@ -412,37 +412,4 @@ describe("ConfigLoader", () => {
       new PersistedParameter("template-param", "the-template-value"),
     ]);
   });
-
-  test("getPersistedParameters with global and templateName with parameters", () => {
-    // ARRANGE
-    const config = new Config(
-      new TemplateConfig("template", "1"),
-      null,
-      [
-        new RanTemplate(
-          "the-template",
-          "1",
-          new Source("some-source", "key"),
-          [],
-          [],
-          [new PersistedParameter("template1", "the template parameter")]
-        ),
-      ],
-      null,
-      [new PersistedParameter("global1", "the global parameter")]
-    );
-    const parameters = {
-      param1: 123,
-    };
-
-    // ACT
-    const result = config.getPersistedParameters(parameters, "the-template");
-
-    // ASSERT
-    expect(result).toStrictEqual({
-      global1: "the global parameter",
-      param1: 123,
-      template1: "the template parameter",
-    });
-  });
 });

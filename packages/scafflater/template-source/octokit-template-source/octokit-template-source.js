@@ -7,7 +7,10 @@ import {
   TemplateDefinitionNotFound,
   ScafflaterFileNotFoundError,
 } from "../../errors/index.js";
-import { NoVersionAvailableError, VersionDoesNotExist } from "../errors/index.js";
+import {
+  NoVersionAvailableError,
+  VersionDoesNotExist,
+} from "../errors/index.js";
 import GitUrlParse from "git-url-parse";
 import { Octokit } from "@octokit/rest";
 import path from "path";

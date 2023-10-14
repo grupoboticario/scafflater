@@ -1,7 +1,7 @@
 import { jest } from "@jest/globals";
 
 jest.unstable_mockModule("../../fs-util", () => {
-  var ret = {
+  const ret = {
     pathExists: jest.fn(),
     listFilesByExtensionDeeply: jest.fn(),
     require: jest.fn(),
@@ -14,7 +14,7 @@ jest.unstable_mockModule("../../fs-util", () => {
 });
 
 jest.unstable_mockModule("handlebars", () => {
-  var ret = jest.createMockFromModule("handlebars");
+  const ret = jest.createMockFromModule("handlebars");
 
   return {
     ...ret,

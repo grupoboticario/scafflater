@@ -3,6 +3,8 @@ import logger from "./logger/index.js";
 import Scafflater from "./scafflater.js";
 import TemplateManager from "./template-manager/index.js";
 import TemplateSource from "./template-source/index.js";
+import TemplateCache from "./template-cache/template-cache.js";
+import Generator from "./generator/index.js";
 
 export {
   logger,
@@ -10,11 +12,10 @@ export {
   Scafflater,
   TemplateManager,
   TemplateSource,
+  TemplateCache,
+  Generator,
 };
 export * from "./errors/index.js";
-export * from "./options/index.js";
-export * from "./template-cache/index.js";
 export * from "./generator/appenders/index.js";
 export * from "./generator/processors/index.js";
-export * from "./generator/index.js";
 export * from "./scafflater-config/index.js";

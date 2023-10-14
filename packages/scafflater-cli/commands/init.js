@@ -35,6 +35,7 @@ export default class InitCommand extends Command {
     "isomorphicGit",
     "localFolder",
   ];
+
   static flags = {
     output: Flags.string({
       char: "o",
