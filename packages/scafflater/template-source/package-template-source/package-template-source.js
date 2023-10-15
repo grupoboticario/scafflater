@@ -5,6 +5,7 @@ import { TemplateDefinitionNotFound } from "../../errors/index.js";
 import logger from "winston";
 import fsUtil from "../../fs-util/index.js";
 import { exec as execSync } from "child_process";
+import validate from "validate-npm-package-name";
 
 /**
  * Gets the template and copies it in a local folder.
@@ -56,6 +57,10 @@ export default class PackageTemplateSource extends LocalFolderTemplateSource {
 
   static async isValidSourceKey(sourceKey) {
     try {
+      if (!validate(sourceKey).validForNewPackages) {
+        return false;
+      }
+
       const childProcess = await import("child_process");
       const exec = util.promisify(childProcess.exec);
       await exec(`npm view ${sourceKey}`, {

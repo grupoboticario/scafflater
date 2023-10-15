@@ -52,6 +52,7 @@
     "title-case": "4.0.1",
     "typescript": "5.2.2",
     "unzipper": "0.10.14",
+    "validate-npm-package-name": "5.0.0",
     "version-sort": "0.1.1",
     "winston": "3.11.0"
   },
