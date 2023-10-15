@@ -8,7 +8,12 @@
     "**/Thumbs.db": true,
     "**/node_modules": true
   },
-  "cSpell.words": ["Appender", "appenders", "deepmerge"],
+  "cSpell.words": [
+    "Appender",
+    "appenders",
+    "deepmerge",
+    "isbinaryfile"
+  ],
   "sonarlint.connectedMode.project": {
     "projectKey": "scafflater"
   },

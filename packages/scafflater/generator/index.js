@@ -298,11 +298,14 @@ export default class Generator {
             result = _ctx.options.stripConfig(result);
 
             try {
-              result = prettier.format(result, {
+              const options = {
                 ...this.context.prettierConfig,
                 filepath: targetFilePath,
-                // plugins: ["@prettier/plugin-xml"],
-              });
+              };
+              if (targetFilePath.endsWith(".xml")) {
+                options.plugins = ["@prettier/plugin-xml"];
+              }
+              result = await prettier.format(result, options);
             } catch (error) {
               _ctx.options.logger.debug(`\tPrettier error: \n${error.message}`);
             }
