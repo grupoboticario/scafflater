@@ -1,5 +1,6 @@
 /* eslint import/namespace: ['error', { allowComputed: true }] */
 import * as changeCase from "change-case";
+// eslint-disable-next-line import/no-unresolved
 import { titleCase } from "title-case";
 import { lowerCase } from "lower-case";
 
