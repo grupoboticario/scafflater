@@ -66,7 +66,7 @@ boolean = false
   const result = await yamlAppender.append(
     { options: new ScafflaterOptions() },
     srcYaml,
-    destYaml
+    destYaml,
   );
 
   // ASSERT
@@ -129,7 +129,7 @@ test("Empty Source Toml", async () => {
     { options: new ScafflaterOptions() },
     `# @scf-option { "appenders": ["./appenders/toml-appender"] }
 # some comment`,
-    destYaml
+    destYaml,
   );
 
   // ASSERT
@@ -196,7 +196,7 @@ name = 'Other'`;
     { options: new ScafflaterOptions() },
     srcYaml,
     `# @scf-option { "appenders": ["./appenders/toml-appender"] }
-# some comment`
+# some comment`,
   );
 
   // ASSERT
@@ -222,7 +222,7 @@ target-version = [ 'py38' ]`;
   const result = await yamlAppender.append(
     { options: new ScafflaterOptions() },
     srcYaml,
-    destYaml
+    destYaml,
   );
 
   // ASSERT

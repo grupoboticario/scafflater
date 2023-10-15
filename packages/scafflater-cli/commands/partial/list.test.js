@@ -79,11 +79,11 @@ describe("ListCommand", () => {
           new LocalPartial(
             "/some/partial/path",
             "the-partial",
-            "This is an partial"
+            "This is an partial",
           ),
           new LocalPartial("/some/partial/path", "the-partial"),
-        ]
-      )
+        ],
+      ),
     );
     const listCommand = new ListCommand([], {});
 
@@ -92,7 +92,7 @@ describe("ListCommand", () => {
 
     // ASSERT
     expect(logger.print).toHaveBeenCalledWith(
-      expect.stringMatching(/.*the-partial.*This is an partial.*/gm)
+      expect.stringMatching(/.*the-partial.*This is an partial.*/gm),
     );
   });
 
@@ -117,8 +117,8 @@ describe("ListCommand", () => {
         "some-template",
         "The template",
         "0.0.1",
-        []
-      )
+        [],
+      ),
     );
     const listCommand = new ListCommand([], {});
 
@@ -127,7 +127,7 @@ describe("ListCommand", () => {
 
     // ASSERT
     expect(logger.print).toHaveBeenCalledWith(
-      expect.stringMatching(/No partials available/)
+      expect.stringMatching(/No partials available/),
     );
   });
 });

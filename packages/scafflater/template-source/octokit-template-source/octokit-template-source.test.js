@@ -80,7 +80,7 @@ describe("getTemplate", () => {
     // ACT
     await octokitTemplateSource.getTemplate(
       "https://github.com/gbsandbox/pdd-template-javascript-fastify",
-      "head"
+      "head",
     );
 
     // ASSERT
@@ -92,18 +92,18 @@ describe("getTemplate", () => {
     const octokitTemplateSource = new OctokitTemplateSource();
     new Octokit().request.mockResolvedValueOnce({
       data: getByteArray(
-        path.resolve(__dirname, "__mocks__/test-missing-scf-folder.zip")
+        path.resolve(__dirname, "__mocks__/test-missing-scf-folder.zip"),
       ),
     });
 
     // ACT
     const promise = octokitTemplateSource.getTemplate(
       "https://github.com/gbsandbox/pdd-template-javascript-fastify",
-      "head"
+      "head",
     );
 
     // ASSERT
-    await expect(promise).rejects.toThrowError(ScafflaterFileNotFoundError);
+    await expect(promise).rejects.toThrow(ScafflaterFileNotFoundError);
   });
 
   test("Missing template definition on .scafflater file", async () => {
@@ -111,18 +111,18 @@ describe("getTemplate", () => {
     const octokitTemplateSource = new OctokitTemplateSource();
     new Octokit().request.mockResolvedValueOnce({
       data: getByteArray(
-        path.resolve(__dirname, "__mocks__/test-missing-template-notation.zip")
+        path.resolve(__dirname, "__mocks__/test-missing-template-notation.zip"),
       ),
     });
 
     // ACT
     const promise = octokitTemplateSource.getTemplate(
       "https://github.com/gbsandbox/pdd-template-javascript-fastify",
-      "head"
+      "head",
     );
 
     // ASSERT
-    await expect(promise).rejects.toThrowError(TemplateDefinitionNotFound);
+    await expect(promise).rejects.toThrow(TemplateDefinitionNotFound);
   });
 
   test("Get tag", async () => {
@@ -147,7 +147,7 @@ describe("getTemplate", () => {
     // ACT
     await octokitTemplateSource.getTemplate(
       "https://github.com/gbsandbox/pdd-template-javascript-fastify",
-      "some-tag"
+      "some-tag",
     );
 
     // ASSERT
@@ -171,11 +171,11 @@ describe("getLastVersion", () => {
 
     // ACT
     const promise = octokitTemplateSource.getLastVersion(
-      "https://github.com/gbsandbox/pdd-template-crossplane-aws"
+      "https://github.com/gbsandbox/pdd-template-crossplane-aws",
     );
 
     // ASSERT
-    await expect(promise).rejects.toThrowError(NoVersionAvailableError);
+    await expect(promise).rejects.toThrow(NoVersionAvailableError);
   });
 
   test("A valid release is returned, should return this as last release", async () => {
@@ -188,7 +188,7 @@ describe("getLastVersion", () => {
 
     // ACT
     const lastVersion = await octokitTemplateSource.getLastVersion(
-      "https://github.com/some/template"
+      "https://github.com/some/template",
     );
 
     // ASSERT
@@ -222,19 +222,19 @@ describe("getAvailableRef", () => {
     // ACT
     const result = await octokitTemplateSource.getAvailableRef(
       "https://github.com/some-org/some-repo",
-      "some-version"
+      "some-version",
     );
 
     // ASSERT
     expect(result).toStrictEqual({ refType: "tag", version: "some-version" });
-    expect(new Octokit().request).toBeCalledTimes(1);
-    expect(new Octokit().request).toBeCalledWith(
+    expect(new Octokit().request).toHaveBeenCalledTimes(1);
+    expect(new Octokit().request).toHaveBeenCalledWith(
       "GET /repos/{owner}/{repo}/git/ref/tags/{tag_name}",
       expect.objectContaining({
         owner: "some-org",
         repo: "some-repo",
         tag_name: "some-version",
-      })
+      }),
     );
   });
 
@@ -256,7 +256,7 @@ describe("getAvailableRef", () => {
     // ACT
     const result = await octokitTemplateSource.getAvailableRef(
       "https://github.com/some-org/some-repo",
-      "some-version"
+      "some-version",
     );
 
     // ASSERT
@@ -264,22 +264,22 @@ describe("getAvailableRef", () => {
       refType: "branch",
       version: "some-version",
     });
-    expect(new Octokit().request).toBeCalledTimes(2);
-    expect(new Octokit().request).toBeCalledWith(
+    expect(new Octokit().request).toHaveBeenCalledTimes(2);
+    expect(new Octokit().request).toHaveBeenCalledWith(
       "GET /repos/{owner}/{repo}/git/ref/tags/{tag_name}",
       expect.objectContaining({
         owner: "some-org",
         repo: "some-repo",
         tag_name: "some-version",
-      })
+      }),
     );
-    expect(new Octokit().request).toBeCalledWith(
+    expect(new Octokit().request).toHaveBeenCalledWith(
       "GET /repos/{owner}/{repo}/branches/{branch}",
       expect.objectContaining({
         owner: "some-org",
         repo: "some-repo",
         branch: "some-version",
-      })
+      }),
     );
   });
 
@@ -313,7 +313,7 @@ describe("getAvailableRef", () => {
     // ACT
     const result = await octokitTemplateSource.getAvailableRef(
       "https://github.com/some-org/some-repo",
-      "some-version"
+      "some-version",
     );
 
     // ASSERT
@@ -321,22 +321,22 @@ describe("getAvailableRef", () => {
       refType: "tag",
       version: "some-tag",
     });
-    expect(new Octokit().request).toBeCalledTimes(4);
-    expect(new Octokit().request).toBeCalledWith(
+    expect(new Octokit().request).toHaveBeenCalledTimes(4);
+    expect(new Octokit().request).toHaveBeenCalledWith(
       "GET /repos/{owner}/{repo}/git/ref/tags/{tag_name}",
       expect.objectContaining({
         owner: "some-org",
         repo: "some-repo",
         tag_name: "some-version",
-      })
+      }),
     );
-    expect(new Octokit().request).toBeCalledWith(
+    expect(new Octokit().request).toHaveBeenCalledWith(
       "GET /repos/{owner}/{repo}/branches/{branch}",
       expect.objectContaining({
         owner: "some-org",
         repo: "some-repo",
         branch: "some-version",
-      })
+      }),
     );
   });
 
@@ -364,7 +364,7 @@ describe("getAvailableRef", () => {
     // ACT
     const result = await octokitTemplateSource.getAvailableRef(
       "https://github.com/some-org/some-repo",
-      "some-version"
+      "some-version",
     );
 
     // ASSERT

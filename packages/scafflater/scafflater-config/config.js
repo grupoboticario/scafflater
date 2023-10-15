@@ -20,7 +20,6 @@ import TemplateNotInitializedError from "../errors/template-not-initialized-erro
 
 /**
  * List .scafflater files in directory tree
- *
  * @param {string} folderPath - Path to look for files
  * @returns {Promise<string[]>} List of file names
  */
@@ -30,7 +29,6 @@ const listScafflaterFiles = async (folderPath) => {
 
 /**
  * Checks if an object is empty
- *
  * @param {object} obj The object to be tested
  * @returns {boolean} True if the object is null
  */
@@ -56,7 +54,7 @@ export default class Config {
     partial = null,
     templates = [],
     options = {},
-    globalParameters = []
+    globalParameters = [],
   ) {
     this.template = template;
     this.partial = partial;
@@ -68,7 +66,6 @@ export default class Config {
   /**
    * Template Config.
    * If the folder contains a Template, this property describes it.
-   *
    * @type {TemplateConfig}
    */
   template;
@@ -76,35 +73,30 @@ export default class Config {
   /**
    * Template Config.
    * If the folder contains a Template, this property describes it.
-   *
    * @type {PartialConfig}
    */
   partial;
 
   /**
    * The templates used to generated code in ths folder
-   *
    * @type {RanTemplate[]}
    */
   templates;
 
   /**
    * Options for the folder where the scafflater file is present
-   *
    * @type {ScafflaterOptions}
    */
   options;
 
   /**
    * The stored global parameters values
-   *
    * @type {PersistedParameter[]}
    */
   globalParameters;
 
   /**
    * Saves the the config to a scafflater.jsonc file
-   *
    * @param {string} filePath The file path where file must be saved
    */
   async save(filePath) {
@@ -119,14 +111,13 @@ export default class Config {
           }
           return value;
         },
-        2
-      )
+        2,
+      ),
     );
   }
 
   /**
    * Checks if the template is initialized
-   *
    * @param {string} templateName Template name to check
    * @returns {boolean} True if is initialized
    */
@@ -136,14 +127,13 @@ export default class Config {
 
   /**
    * Merges the persisted parameters, either globals or templates parameters, with an object of existing parameters
-   *
    * @param {?object} parameters Parameters to merge to
    * @param {?string} templateName The template name to get persisted parameters from. Null if it must not be loaded.
    * @returns {object} Object with the merged globals, templates and received parameters
    */
   getPersistedParameters(parameters = {}, templateName = undefined) {
     let persistedParameters = PersistedParameter.reduceParameters(
-      this.globalParameters
+      this.globalParameters,
     );
 
     if (templateName) {
@@ -152,7 +142,7 @@ export default class Config {
         persistedParameters = {
           ...persistedParameters,
           ...PersistedParameter.reduceParameters(
-            ranTemplate.templateParameters
+            ranTemplate.templateParameters,
           ),
         };
       }
@@ -165,7 +155,6 @@ export default class Config {
 
   /**
    * Check the scopes of template and partial parameters and stores in the appropriate parameter on config
-   *
    * @param {import("./local-template").LocalTemplate} template The template with the parameters to be analyzed
    * @param {object} parameters The object with the values to be persisted
    * @param {import("./local-template").LocalPartial} partial The partial with the parameters to be analyzed
@@ -173,11 +162,11 @@ export default class Config {
   setPersistedParameters(template, parameters = {}, partial = null) {
     const globalParameters = template.getParameterConfigsByScope(
       "global",
-      partial
+      partial,
     );
     const templateParameters = template.getParameterConfigsByScope(
       "template",
-      partial
+      partial,
     );
 
     for (const p of globalParameters) {
@@ -186,12 +175,12 @@ export default class Config {
       if (p.mask) continue;
       PersistedParameter.updateParameters(
         this.globalParameters,
-        new PersistedParameter(p.name, parameters[p.name])
+        new PersistedParameter(p.name, parameters[p.name]),
       );
     }
 
     const templateIndex = this.templates.findIndex(
-      (t) => t.name === template.name
+      (t) => t.name === template.name,
     );
     if (templateIndex < 0) {
       throw new TemplateNotInitializedError(template.name);
@@ -203,14 +192,13 @@ export default class Config {
       if (p.mask) continue;
       PersistedParameter.updateParameters(
         this.templates[templateIndex].templateParameters,
-        new PersistedParameter(p.name, parameters[p.name])
+        new PersistedParameter(p.name, parameters[p.name]),
       );
     }
   }
 
   /**
    * Load an single file from a path
-   *
    * @param {string} localPath Folder or scafflater.jsonc file path of partial
    * @param {boolean} createIfNotExists If true, will create the file if if
    * @returns {Promise<ConfigLoadResult>} The loaded config result. Null if not found.
@@ -226,7 +214,7 @@ export default class Config {
       }
 
       throw new ScafflaterFileNotFoundError(
-        `'${localPath}': the path does not exist.`
+        `'${localPath}': the path does not exist.`,
       );
     }
 
@@ -256,7 +244,7 @@ export default class Config {
         json.template.options,
         json.template.parameters,
         json.template.persistedParameters,
-        json.template.hooks
+        json.template.hooks,
       );
     }
     let partial = null;
@@ -271,7 +259,7 @@ export default class Config {
         rt.source = Object.assign(new Source(), ranTemplate.source);
         if (ranTemplate.partials) {
           rt.partials = ranTemplate.partials.map((rp) =>
-            Object.assign(new PartialConfig(), rp)
+            Object.assign(new PartialConfig(), rp),
           );
         }
         templates.push(rt);
@@ -280,7 +268,7 @@ export default class Config {
 
     const globalParameters = json.globalParameters
       ? json.globalParameters.map((g) =>
-          Object.assign(new PersistedParameter(), g)
+          Object.assign(new PersistedParameter(), g),
         )
       : [];
 
@@ -292,14 +280,13 @@ export default class Config {
         partial,
         templates,
         json.options ?? {},
-        globalParameters
+        globalParameters,
       ),
     });
   }
 
   /**
    * Scans a directory tree indicated by localPath and returns all .scafflater configurations.
-   *
    * @param {string} localPath Local path to scan
    * @returns {Promise<ConfigLoadResult[]>} The loaded config result
    */

@@ -7,7 +7,6 @@
 export default class Processor {
   /**
    * Process the input.
-   *
    * @param {object} context The context of generation
    * @param {string} input The string to be processed
    * @returns {Promise<ProcessResult>} The process result
@@ -21,7 +20,6 @@ export default class Processor {
 
   /**
    * Applies a processors pipeline to a content, given an specific context.
-   *
    * @param {Array<Processor>} processors - Processors to be executed
    * @param {object} context The context of generation
    * @param {string} input The string to be processed

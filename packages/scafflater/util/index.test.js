@@ -85,41 +85,41 @@ describe("util", () => {
       ignores(
         "path/to/template/dir",
         "path/to/template/dir/.scafflater",
-        patterns
-      )
+        patterns,
+      ),
     ).toBeTruthy();
     expect(
       ignores(
         "path/to/template/dir",
         "path/to/template/dir/scf-partials",
-        patterns
-      )
+        patterns,
+      ),
     ).toBeTruthy();
     expect(
-      ignores("path/to/template/dir", "path/to/template/dir/.git", patterns)
+      ignores("path/to/template/dir", "path/to/template/dir/.git", patterns),
     ).toBeTruthy();
     expect(
       ignores(
         "path/to/template/dir",
         "path/to/template/dir/.git/subfolder",
-        patterns
-      )
+        patterns,
+      ),
     ).toBeTruthy();
 
     expect(
       ignores(
         "path/to/template/dir",
         "path/to/template/dir/node_modules/subfolder",
-        patterns
-      )
+        patterns,
+      ),
     ).toBeTruthy();
 
     expect(
       ignores(
         "path/to/template/dir",
         "path/to/template/dir/subfolder/node_modules",
-        patterns
-      )
+        patterns,
+      ),
     ).toBeTruthy();
   });
 });

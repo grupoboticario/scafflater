@@ -21,7 +21,6 @@ const repoRegex =
 export default class GithubClientTemplateSource extends LocalFolderTemplateSource {
   /**
    * Checks if the sourceKey is valid for this TemplateSource
-   *
    * @param {string} sourceKey - The source key to be validated.
    * @returns {boolean} Returns true if the key is valid
    */
@@ -31,7 +30,6 @@ export default class GithubClientTemplateSource extends LocalFolderTemplateSourc
 
   /**
    * Template Source constructor.
-   *
    * @param {?ScafflaterOptions} options - Scafflater options. If null, will get the default configuration.
    */
   constructor(options = {}) {
@@ -40,7 +38,6 @@ export default class GithubClientTemplateSource extends LocalFolderTemplateSourc
 
   /**
    * Parse the github address to get repo and org names
-   *
    * @param {string} repo Template repository address
    * @returns {object} An object containing the org and repo names
    */
@@ -55,7 +52,6 @@ export default class GithubClientTemplateSource extends LocalFolderTemplateSourc
 
   /**
    * Checks if the GH client is installed and authenticated
-   *
    * @returns {Promise<boolean>} True if the authentication is ok.
    */
   static async checkGhClient() {
@@ -75,7 +71,6 @@ export default class GithubClientTemplateSource extends LocalFolderTemplateSourc
 
   /**
    * Gets the template and copies it in a local folder.
-   *
    * @param {string} sourceKey - The source key (<OWNER>/<REPOSITORY>) of template.
    * @param {string} version - The template version
    * @param {?string} outputDir - Folder where template must be copied. If null, a temp folder will be used.
@@ -95,12 +90,12 @@ export default class GithubClientTemplateSource extends LocalFolderTemplateSourc
     } catch (error) {
       if (error instanceof ScafflaterFileNotFoundError) {
         throw new ScafflaterFileNotFoundError(
-          `${sourceKey}/.scafflater/scafflater.jsonc`
+          `${sourceKey}/.scafflater/scafflater.jsonc`,
         );
       }
       if (error instanceof TemplateDefinitionNotFound) {
         throw new TemplateDefinitionNotFound(
-          `${sourceKey}/.scafflater/scafflater.jsonc`
+          `${sourceKey}/.scafflater/scafflater.jsonc`,
         );
       }
       throw error;
@@ -109,7 +104,6 @@ export default class GithubClientTemplateSource extends LocalFolderTemplateSourc
 
   /**
    * Gets an Source object for this source
-   *
    * @param {string} key The source key
    * @returns {Source} An Source object
    */

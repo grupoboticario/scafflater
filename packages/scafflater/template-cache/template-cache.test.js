@@ -9,9 +9,7 @@ describe("TemplateCache", () => {
     const ret = TemplateCache.getTemplateCache({ cacheStorage: "bla" });
 
     // and ASSERT
-    await expect(ret).rejects.toThrowError(
-      "There's no module for source 'bla'"
-    );
+    await expect(ret).rejects.toThrow("There's no module for source 'bla'");
   });
 
   test("Gets the template storage in config", async () => {

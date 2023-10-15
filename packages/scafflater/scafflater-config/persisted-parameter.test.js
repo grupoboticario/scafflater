@@ -28,7 +28,7 @@ test("updateParameters", () => {
   const newParameter = new PersistedParameter("new-param-3", "new-value-3");
   const updateParameter = new PersistedParameter(
     "existing-param-1",
-    "new-value-4"
+    "new-value-4",
   );
 
   // ACT

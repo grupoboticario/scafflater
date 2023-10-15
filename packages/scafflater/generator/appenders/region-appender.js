@@ -4,7 +4,6 @@ import Appender from "./appender.js";
 export default class RegionAppender extends Appender {
   /**
    * Process the input.
-   *
    * @param {object} context The context of generation
    * @param {string} srcStr The string to be appended
    * @param {string} destStr The string where srcStr must be appended

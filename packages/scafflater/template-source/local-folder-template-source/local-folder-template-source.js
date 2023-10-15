@@ -12,7 +12,6 @@ import {
 export default class LocalFolderTemplateSource extends TemplateSource {
   /**
    * Checks if the sourceKey is valid for this TemplateSource
-   *
    * @param {string} sourceKey - The source key to be validated.
    * @returns {boolean} Returns true if the key is valid
    */
@@ -22,7 +21,6 @@ export default class LocalFolderTemplateSource extends TemplateSource {
 
   /**
    * Template Source constructor.
-   *
    * @param {ScafflaterOptions} options - Scafflater configuration. If null, will get the default configuration.
    */
   constructor(options = {}) {
@@ -32,7 +30,6 @@ export default class LocalFolderTemplateSource extends TemplateSource {
 
   /**
    * Gets the template and copies it in a local folder.
-   *
    * @param {string} sourceKey - The source key (<OWNER>/<REPOSITORY>) of template.
    * @param {string} version - The template version. This parameter is ignored for local template sources.
    * @param {?string} outputDir - Folder where template must be copied. If null, a temp folder will be used.
@@ -52,16 +49,15 @@ export default class LocalFolderTemplateSource extends TemplateSource {
     const outConfigPath = path.resolve(out, ".scafflater", "scafflater.jsonc");
     if (!(await fsUtil.pathExists(outConfigPath))) {
       throw new ScafflaterFileNotFoundError(
-        `${sourceKey}/.scafflater/scafflater.jsonc`
+        `${sourceKey}/.scafflater/scafflater.jsonc`,
       );
     }
 
-    const availableTemplates = await LocalTemplate.loadFromPath(
-      outConfigFolder
-    );
+    const availableTemplates =
+      await LocalTemplate.loadFromPath(outConfigFolder);
     if (!availableTemplates || availableTemplates.length <= 0) {
       throw new TemplateDefinitionNotFound(
-        `${sourceKey}/.scafflater/scafflater.jsonc`
+        `${sourceKey}/.scafflater/scafflater.jsonc`,
       );
     }
 
@@ -70,7 +66,6 @@ export default class LocalFolderTemplateSource extends TemplateSource {
 
   /**
    * Gets an Source object for this source
-   *
    * @param {string} key The source key
    * @returns {Source} An Source object
    */

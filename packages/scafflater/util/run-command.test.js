@@ -68,7 +68,7 @@ describe("runCommand", () => {
 
     // ASSERT
     await expect(premise).rejects.toThrow(
-      "Error: Command ls failed, exit code 1: ERROR MESSAGE"
+      "Error: Command ls failed, exit code 1: ERROR MESSAGE",
     );
   });
 
@@ -129,7 +129,7 @@ describe("runCommand", () => {
     // ASSERT
     expect(exec).toHaveBeenCalledWith(
       expect.anything(),
-      expect.objectContaining({ cwd: "some-path" })
+      expect.objectContaining({ cwd: "some-path" }),
     );
   });
 });

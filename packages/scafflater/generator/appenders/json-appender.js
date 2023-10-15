@@ -6,7 +6,6 @@ import stripJsonComments from "strip-json-comments";
 export default class JsonAppender extends Appender {
   /**
    * Process the input.
-   *
    * @param {object} context The context of generation
    * @param {string} srcStr The string to be appended
    * @param {string} destStr The string where srcStr must be appended

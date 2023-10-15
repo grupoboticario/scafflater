@@ -2,7 +2,6 @@ import merge from "deepmerge";
 
 /**
  * Combine arrays. Combine the array item by item.
- *
  * @param {object[]} target The target array
  * @param {object[]} source Source array
  * @param {object} options options
@@ -33,8 +32,6 @@ const replaceMerge = (target, source, options) => {
 
 /**
  * Replace arrays
- *
- *
  * @param {object[]} target The target array
  * @param {object[]} source Source array
  * @param {object} options options
@@ -76,7 +73,6 @@ const keyMerge = (target, source, options) => {
 
 /**
  * Merge Arrays
- *
  * @param {object[]} target Target Array
  * @param {object[]} source Source Array
  * @param {object} options options.strategy: Action to include generated code on target:

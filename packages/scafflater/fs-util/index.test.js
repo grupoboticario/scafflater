@@ -94,18 +94,18 @@ describe("fs-utils", () => {
       __dirname,
       ".test-resources",
       "template-sample",
-      ".scafflater"
+      ".scafflater",
     );
     const noExistingFolderPath = join(
       __dirname,
       ".test-resources",
       "template-sample",
-      ".scafflater2"
+      ".scafflater2",
     );
     const invalidFolderPath = join(
       __dirname,
       ".test-resources",
-      "sample-file.txt"
+      "sample-file.txt",
     );
 
     // ACT
@@ -128,7 +128,7 @@ describe("fs-utils", () => {
       ".test-resources",
       "template-sample",
       "hooks",
-      "onHook.js"
+      "onHook.js",
     );
 
     // ACT
@@ -136,10 +136,10 @@ describe("fs-utils", () => {
 
     // ASSERT
     expect(result).toBe(
-      resolve(__dirname, ".test-resources", "sample-file.txt")
+      resolve(__dirname, ".test-resources", "sample-file.txt"),
     );
     await expect(
-      fs.findFileUp(filePath, "does-not-exists-file.txt")
+      fs.findFileUp(filePath, "does-not-exists-file.txt"),
     ).rejects.toThrow(/File not found/);
   });
 
@@ -149,19 +149,19 @@ describe("fs-utils", () => {
       __dirname,
       ".test-resources",
       "template-sample",
-      "hooks"
+      "hooks",
     );
     const filePathDoesNotExists = resolve(
       __dirname,
       ".test-resources",
       "template-sample",
-      "_does-not-exists"
+      "_does-not-exists",
     );
     const filePathEmptyFolder = resolve(
       __dirname,
       ".test-resources",
       "template-sample",
-      "_empty_folder"
+      "_empty_folder",
     );
 
     // ACT
@@ -182,7 +182,7 @@ describe("fs-utils", () => {
       __dirname,
       ".test-resources",
       "template-sample",
-      "hooks"
+      "hooks",
     );
 
     // ACT

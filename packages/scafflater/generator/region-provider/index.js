@@ -41,7 +41,7 @@ export class Region {
     parentRegion,
     startRegionTag,
     endRegionTag = RegionTag.unknown(),
-    content = null
+    content = null,
   ) {
     this.parentRegion = parentRegion;
     this.startRegionTag = startRegionTag;
@@ -53,7 +53,6 @@ export class Region {
 export class RegionProvider {
   /**
    * Constructor
-   *
    * @param {ScafflaterOptions} options - Scafflater Options
    */
   constructor(options) {
@@ -62,7 +61,6 @@ export class RegionProvider {
 
   /**
    * Get regions from a string
-   *
    * @param {string} str - String to be analyzed
    * @returns {Region[]} A list of regions
    */
@@ -70,7 +68,7 @@ export class RegionProvider {
     const completedRegions = [];
     const regionRegex = new RegExp(
       `(?<start>.*${this.options.startRegionMarker}) *(?<startName>[^\\s]*)?.*$|(?<end>.*${this.options.endRegionMarker}.*$)`,
-      "gim"
+      "gim",
     );
     const regionMarkers = str.matchAll(regionRegex);
     const startedRegions = [];
@@ -81,7 +79,7 @@ export class RegionProvider {
           rm.groups.startName,
           rm.index,
           rm.index + rm[0].length,
-          RegionTagType.Start
+          RegionTagType.Start,
         );
         let parentRegion = null;
         if (startedRegions.length > 0) {
@@ -92,32 +90,32 @@ export class RegionProvider {
       } else if (rm.groups.end) {
         if (startedRegions.length === 0) {
           throw new Error(
-            `Found an end region with no matching start tag at position ${rm.index}`
+            `Found an end region with no matching start tag at position ${rm.index}`,
           );
         }
         const endTag = new RegionTag(
           null,
           rm.index,
           rm.index + rm[0].length,
-          RegionTagType.end
+          RegionTagType.end,
         );
 
         const lastStartedRegion = startedRegions[startedRegions.length - 1];
         const content = str.substring(
           lastStartedRegion.startRegionTag.endPosition,
-          endTag.startPosition
+          endTag.startPosition,
         );
         const finishedRegion = new Region(
           lastStartedRegion.parentRegion,
           lastStartedRegion.startRegionTag,
           endTag,
-          content
+          content,
         );
 
         completedRegions
           .filter(
             (cr) =>
-              cr.parentRegion && cr.parentRegion.name === finishedRegion.name
+              cr.parentRegion && cr.parentRegion.name === finishedRegion.name,
           )
           .forEach((cr) => (cr.parentRegion = finishedRegion));
 
@@ -139,7 +137,6 @@ export class RegionProvider {
 
   /**
    * Appends region to a content
-   *
    * @param {Region} region - The Region
    * @param {string} content - The Region Content
    * @returns {Promise<string>} The content with the region appended
@@ -148,7 +145,7 @@ export class RegionProvider {
     let regionStr =
       buildLineComment(
         this.options,
-        `${this.options.startRegionMarker} ${region.name}`
+        `${this.options.startRegionMarker} ${region.name}`,
       ) +
       `\n` +
       `${region.content}\n` +
@@ -160,13 +157,13 @@ export class RegionProvider {
         region.parentRegion.parentRegion,
         region.parentRegion.startRegionTag,
         region.parentRegion.endRegionTag,
-        regionStr
+        regionStr,
       );
       regionStr = await this.appendRegion(p, null);
     }
 
     return Promise.resolve(
-      content && content.length > 0 ? `${content}\n${regionStr}` : regionStr
+      content && content.length > 0 ? `${content}\n${regionStr}` : regionStr,
     );
   }
 }

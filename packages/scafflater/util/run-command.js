@@ -62,8 +62,8 @@ export default function runCommand(command, options = {}) {
         if (code !== 0) {
           return reject(
             new Error(
-              `Error: Command ${command} failed, exit code ${code}: ${scriptOutput}`
-            )
+              `Error: Command ${command} failed, exit code ${code}: ${scriptOutput}`,
+            ),
           );
         }
         return resolve(scriptOutput);

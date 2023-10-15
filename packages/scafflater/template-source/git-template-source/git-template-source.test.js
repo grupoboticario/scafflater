@@ -35,12 +35,12 @@ describe("getTemplate", () => {
   test("Git is not installed, should throw.", async () => {
     jest.spyOn(util, "promisify").mockReturnValue(() => {
       throw new Error(
-        "Command failed: asdasd\n/bin/sh: asdasd: command not found\n"
+        "Command failed: asdasd\n/bin/sh: asdasd: command not found\n",
       );
     });
 
     await expect(GitTemplateSource.checkGitClient()).rejects.toThrow(
-      GitNotInstalledError
+      GitNotInstalledError,
     );
   });
 
@@ -50,7 +50,7 @@ describe("getTemplate", () => {
     });
 
     await expect(GitTemplateSource.checkGitClient()).rejects.toThrow(
-      GitUserNotLoggedError
+      GitUserNotLoggedError,
     );
   });
 
@@ -77,8 +77,8 @@ describe("getTemplate", () => {
       gitTemplateSource.getTemplate(
         "https://github.com/github/path",
         "last",
-        "/some/virtual/folder"
-      )
+        "/some/virtual/folder",
+      ),
     ).rejects.toBeInstanceOf(ScafflaterFileNotFoundError);
   });
 
@@ -95,29 +95,31 @@ describe("getTemplate", () => {
       new GitTemplateSource().getTemplate(
         "https://github.com/github/path",
         "last",
-        "/some/virtual/folder"
-      )
+        "/some/virtual/folder",
+      ),
     ).rejects.toThrow(TemplateDefinitionNotFound);
   });
 
   test("Valid source key", () => {
     expect(
       GitTemplateSource.isValidSourceKey(
-        "https://github.com/some-org/some-repo"
-      )
-    ).toBeTruthy();
-    expect(
-      GitTemplateSource.isValidSourceKey("http://github.com/some-org/some-repo")
+        "https://github.com/some-org/some-repo",
+      ),
     ).toBeTruthy();
     expect(
       GitTemplateSource.isValidSourceKey(
-        "git@github.com:some-org/some-repo.git"
-      )
+        "http://github.com/some-org/some-repo",
+      ),
     ).toBeTruthy();
     expect(
       GitTemplateSource.isValidSourceKey(
-        "https://dev.azure.com/some-org/some-repo"
-      )
+        "git@github.com:some-org/some-repo.git",
+      ),
+    ).toBeTruthy();
+    expect(
+      GitTemplateSource.isValidSourceKey(
+        "https://dev.azure.com/some-org/some-repo",
+      ),
     ).toBeFalsy();
   });
 
@@ -155,7 +157,7 @@ describe("getTemplate", () => {
           "0.0.0",
           [],
           {},
-          [{ name: "some-parameter" }]
+          [{ name: "some-parameter" }],
         ),
       ]);
     let cmd = "";
@@ -168,7 +170,7 @@ describe("getTemplate", () => {
     const out = await gitTemplateSource.getTemplate(
       repo,
       "last",
-      virtualFolder
+      virtualFolder,
     );
 
     // ASSERT
@@ -179,12 +181,12 @@ describe("getTemplate", () => {
       "0.0.0",
       [],
       {},
-      [{ name: "some-parameter" }]
+      [{ name: "some-parameter" }],
     );
     expect(out).toBeInstanceOf(LocalTemplate);
     expect(out).toStrictEqual(expected);
     expect(cmd).toBe(
-      "git clone some/repo temp/folder -c core.protectNTFS=false"
+      "git clone some/repo temp/folder -c core.protectNTFS=false",
     );
   });
 
@@ -205,7 +207,7 @@ describe("getTemplate", () => {
           "0.0.0",
           [],
           {},
-          [{ name: "some-parameter" }]
+          [{ name: "some-parameter" }],
         ),
       ]);
     let cmd = "";
@@ -232,7 +234,7 @@ describe("getTemplate", () => {
     const out = await gitTemplateSource.getTemplate(
       repo,
       "last",
-      virtualFolder
+      virtualFolder,
     );
 
     // ASSERT
@@ -243,12 +245,12 @@ describe("getTemplate", () => {
       "0.0.0",
       [],
       {},
-      [{ name: "some-parameter" }]
+      [{ name: "some-parameter" }],
     );
     expect(out).toBeInstanceOf(LocalTemplate);
     expect(out).toStrictEqual(expected);
     expect(cmd).toBe(
-      "git clone -b v0.0.64 some/repo temp/folder -c core.protectNTFS=false"
+      "git clone -b v0.0.64 some/repo temp/folder -c core.protectNTFS=false",
     );
   });
 
@@ -269,7 +271,7 @@ describe("getTemplate", () => {
           "0.0.0",
           [],
           {},
-          [{ name: "some-parameter" }]
+          [{ name: "some-parameter" }],
         ),
       ]);
     let cmd = "";
@@ -296,7 +298,7 @@ describe("getTemplate", () => {
     const out = await gitTemplateSource.getTemplate(
       repo,
       "v0.0.62",
-      virtualFolder
+      virtualFolder,
     );
 
     // ASSERT
@@ -307,12 +309,12 @@ describe("getTemplate", () => {
       "0.0.0",
       [],
       {},
-      [{ name: "some-parameter" }]
+      [{ name: "some-parameter" }],
     );
     expect(out).toBeInstanceOf(LocalTemplate);
     expect(out).toStrictEqual(expected);
     expect(cmd).toBe(
-      "git clone -b v0.0.62 some/repo temp/folder -c core.protectNTFS=false"
+      "git clone -b v0.0.62 some/repo temp/folder -c core.protectNTFS=false",
     );
   });
 
@@ -333,7 +335,7 @@ describe("getTemplate", () => {
           "0.0.0",
           [],
           {},
-          [{ name: "some-parameter" }]
+          [{ name: "some-parameter" }],
         ),
       ]);
     jest.spyOn(util, "promisify").mockReturnValue((command) => {
@@ -353,7 +355,7 @@ describe("getTemplate", () => {
 
     // ACT && ASSERT
     await expect(
-      gitTemplateSource.getTemplate(repo, "v0.0.61", virtualFolder)
+      gitTemplateSource.getTemplate(repo, "v0.0.61", virtualFolder),
     ).rejects.toThrow(VersionDoesNotExist);
   });
 
@@ -372,7 +374,7 @@ describe("getTemplate", () => {
           "0.0.0",
           [],
           {},
-          [{ name: "some-parameter" }]
+          [{ name: "some-parameter" }],
         ),
       ]);
     let cmd = "";
@@ -394,11 +396,11 @@ describe("getTemplate", () => {
         "0.0.0",
         [],
         {},
-        [{ name: "some-parameter" }]
-      )
+        [{ name: "some-parameter" }],
+      ),
     );
     expect(cmd).toBe(
-      "git clone some/repo temp/folder -c core.protectNTFS=false"
+      "git clone some/repo temp/folder -c core.protectNTFS=false",
     );
   });
 
@@ -414,36 +416,36 @@ describe("getTemplate", () => {
     await expect(
       new GitTemplateSource().isVersionAvailable(
         "https://github.com/some/repo",
-        "new-version"
-      )
+        "new-version",
+      ),
     ).rejects.toThrow(InvalidArgumentError);
 
     await expect(
       new GitTemplateSource().isVersionAvailable(
         "https://github.com/some/repo",
-        "v0.0.65"
-      )
+        "v0.0.65",
+      ),
     ).resolves.toBe(false);
 
     await expect(
       new GitTemplateSource().isVersionAvailable(
         "https://github.com/some/repo",
-        "v0.0.63"
-      )
+        "v0.0.63",
+      ),
     ).resolves.toBe(false);
 
     await expect(
       new GitTemplateSource().isVersionAvailable(
         "https://github.com/some/repo",
-        "v0.0.64"
-      )
+        "v0.0.64",
+      ),
     ).resolves.toBe(true);
 
     await expect(
       new GitTemplateSource().isVersionAvailable(
         "https://github.com/some/repo",
-        "0.0.64"
-      )
+        "0.0.64",
+      ),
     ).resolves.toBe(true);
   });
 
@@ -478,22 +480,22 @@ describe("getTemplate", () => {
 
     expect(
       await new GitTemplateSource().getLastVersion(
-        "https://github.com/some/repo"
-      )
+        "https://github.com/some/repo",
+      ),
     ).toBe("v0.0.64");
 
     expect(
       await new GitTemplateSource().getLastVersion(
-        "https://github.com/some/repo"
-      )
+        "https://github.com/some/repo",
+      ),
     ).toBe("0.0.64");
 
     await expect(
-      new GitTemplateSource().getLastVersion("https://github.com/some/repo")
+      new GitTemplateSource().getLastVersion("https://github.com/some/repo"),
     ).rejects.toThrow(NoVersionAvailableError);
 
     await expect(
-      new GitTemplateSource().getLastVersion("https://github.com/some/repo")
+      new GitTemplateSource().getLastVersion("https://github.com/some/repo"),
     ).rejects.toThrow(NoVersionAvailableError);
   });
 });

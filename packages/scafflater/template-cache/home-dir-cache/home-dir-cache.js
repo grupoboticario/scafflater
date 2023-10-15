@@ -5,7 +5,6 @@ import DirCache from "../dir-cache/dir-cache.js";
 
 /**
  * Stores templates in the local file system.
- *
  * @augments DirCache
  */
 export default class HomeDirCache extends DirCache {

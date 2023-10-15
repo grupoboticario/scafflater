@@ -8,13 +8,13 @@ export default class Annotator {
     if (context.template) {
       _ctx.parameters = maskParameters(
         _ctx.parameters,
-        context.template.parameters
+        context.template.parameters,
       );
     }
     if (context.partial) {
       _ctx.parameters = maskParameters(
         _ctx.parameters,
-        context.partial.parameters
+        context.partial.parameters,
       );
     }
 
@@ -24,11 +24,11 @@ export default class Annotator {
         const annotationContext = { ..._ctx, content };
         const processor = new HandlebarsProcessor();
         await HandlebarsProcessor.loadHelpersFolder(
-          resolve(context.templatePath, context.helpersPath)
+          resolve(context.templatePath, context.helpersPath),
         );
         return Promise.resolve(
           (await processor.process(annotationContext, annotationTemplate))
-            .result
+            .result,
         );
       }
     }

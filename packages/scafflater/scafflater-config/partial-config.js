@@ -8,7 +8,6 @@ import ParameterConfig from "./parameter-config.js";
 export class PartialHooks {
   /**
    * Pre Run script
-   *
    * @description Script to be run before partial run
    * @type {string}
    */
@@ -16,7 +15,6 @@ export class PartialHooks {
 
   /**
    * Pot Run script
-   *
    * @description Script to be run after partial run
    * @type {string}
    */
@@ -30,7 +28,6 @@ export class PartialHooks {
 export default class PartialConfig {
   /**
    * Creates a Partial
-   *
    * @param {string} name - Partial name
    * @param {?string} description - Partial description
    * @param {?(ScafflaterOptions|object)} options - Partial options
@@ -44,7 +41,7 @@ export default class PartialConfig {
     options = {},
     parameters = [],
     persistentParameters = [],
-    hooks = {}
+    hooks = {},
   ) {
     this.name = name;
     this.description = description;
@@ -56,7 +53,6 @@ export default class PartialConfig {
 
   /**
    * Partial name
-   *
    * @description The Partial name must follow the pattern [a-z-]{3,}
    * @type {string}
    */
@@ -64,21 +60,18 @@ export default class PartialConfig {
 
   /**
    * Partial description
-   *
    * @type {string}
    */
   description;
 
   /**
    * Scafflater Options to generate partial
-   *
    * @type {ScafflaterOptions}
    */
   options;
 
   /**
    * Parameters to generate partial.
-   *
    * @description Scafflater uses Inquirer to get the parameters through scafflater-cli. The objects in this list must be assigned to inquirer question object(https://github.com/SBoudrias/Inquirer.js#questions).
    * @type {ParameterConfig[]}
    */
@@ -86,7 +79,6 @@ export default class PartialConfig {
 
   /**
    * Partial hooks
-   *
    * @description Partial hooks scripts
    * @type {PartialHooks}
    */

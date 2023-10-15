@@ -39,7 +39,7 @@ export const logger = winston.createLogger({
     label({ label: "YOUR_LABEL" }),
     timestamp(),
     winston.format.splat(),
-    consoleFormat
+    consoleFormat,
   ),
   transports: [new winston.transports.Console()],
 });

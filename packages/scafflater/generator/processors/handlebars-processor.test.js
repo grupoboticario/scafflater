@@ -60,11 +60,11 @@ describe("HandlebarsProcessor", () => {
     expect(Handlebars.registerHelper).toHaveBeenCalledTimes(2);
     expect(Handlebars.registerHelper).toHaveBeenCalledWith(
       "helper1",
-      "function1"
+      "function1",
     );
     expect(Handlebars.registerHelper).toHaveBeenCalledWith(
       "helper2",
-      "function2"
+      "function2",
     );
   });
 });

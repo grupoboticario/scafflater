@@ -5,14 +5,12 @@ import { LocalTemplate } from "../scafflater-config/local-template.js";
 
 /**
  * TemplateCache.
- *
  * @class TemplateCache
  * @abstract
  */
 export default class TemplateCache {
   /**
    * Template Source constructor should not been called.
-   *
    * @param {ScafflaterOptions} options The Scafflater Options
    */
   constructor(options) {
@@ -24,7 +22,6 @@ export default class TemplateCache {
 
   /**
    * Returns the template source instance to be used to get templates.
-   *
    * @param {?ScafflaterOptions} options - Scafflater configuration. If null, will get the default configuration.
    * @returns {Promise<TemplateCache>} An specialized instance of TemplateStorage.
    */
@@ -43,7 +40,6 @@ export default class TemplateCache {
 
   /**
    * Gets an template in cache
-   *
    * @param {string} templateName The template name
    * @param {string} templateVersion The template version. If null, gets the latest available version.
    * @returns {Promise<LocalTemplate>} The local template
@@ -54,7 +50,6 @@ export default class TemplateCache {
 
   /**
    * Stores the template.
-   *
    * @param {string} path - Path of template
    * @param {string} version - Template version
    * @returns {Promise<LocalTemplate>} The cache template path
@@ -65,7 +60,6 @@ export default class TemplateCache {
 
   /**
    * List stored templates and their versions.
-   *
    * @returns {LocalTemplate[]} All cached templates
    */
   async listCachedTemplates() {

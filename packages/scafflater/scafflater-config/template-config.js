@@ -8,7 +8,6 @@ import ParameterConfig from "./parameter-config.js";
 export class TemplateHooks {
   /**
    * Pre Run script
-   *
    * @description Script to be run before template init
    * @type {string}
    */
@@ -16,7 +15,6 @@ export class TemplateHooks {
 
   /**
    * Pot Run script
-   *
    * @description Script to be run before template init
    * @type {string}
    */
@@ -30,7 +28,6 @@ export class TemplateHooks {
 export default class TemplateConfig {
   /**
    * Creates a template
-   *
    * @param {string} name - Template name
    * @param {string} version - Template version
    * @param {?string} description - Template description
@@ -46,7 +43,7 @@ export default class TemplateConfig {
     options = {},
     parameters = [],
     persistentParameters = [],
-    hooks = {}
+    hooks = {},
   ) {
     this.name = name;
     this.description = description;
@@ -59,7 +56,6 @@ export default class TemplateConfig {
 
   /**
    * Template name
-   *
    * @description The template name must follow the pattern [a-z-]{3,}
    * @type {string}
    */
@@ -67,14 +63,12 @@ export default class TemplateConfig {
 
   /**
    * Template description
-   *
    * @type {string}
    */
   description;
 
   /**
    * Template version
-   *
    * @description Should follow the semver patterns (https://semver.org/)
    * @type {string}
    */
@@ -82,14 +76,12 @@ export default class TemplateConfig {
 
   /**
    * Scafflater Options to generate template
-   *
    * @type {ScafflaterOptions}
    */
   options;
 
   /**
    * Parameters to generate template.
-   *
    * @description Scafflater uses Inquirer to get the parameters through scafflater-cli. The objects in this list must be assigned to inquirer question object(https://github.com/SBoudrias/Inquirer.js#questions).
    * @type {ParameterConfig[]}
    */
@@ -97,7 +89,6 @@ export default class TemplateConfig {
 
   /**
    * Template hooks
-   *
    * @description Template hooks scripts
    * @type {TemplateHooks}
    */

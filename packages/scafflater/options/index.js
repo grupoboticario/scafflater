@@ -30,7 +30,6 @@ export default class ScafflaterOptions {
 
   /**
    * Target name.
-   *
    * @description Name or path when generated text must be appended. Possible values are:
    *  - text: simple text of the target
    *  - handlebars: handlebars expressions can be used to build targets based on context
@@ -40,7 +39,6 @@ export default class ScafflaterOptions {
 
   /**
    * Ignore files or folders
-   *
    * @description If boolean, indicates if a file or folder must be ignored. If array of strings, indicates patterns (same patterns of gitignore) to ignore.
    * @type {(boolean|string[])} ignore
    */
@@ -62,7 +60,6 @@ export default class ScafflaterOptions {
 
   /**
    * Append Strategy
-   *
    * @description Action to include generated code on target:
    *  - append: The content will be appended to the destination (Default)
    *  - appendIfExists: The content will be appended only if destination already exists
@@ -76,7 +73,6 @@ export default class ScafflaterOptions {
 
   /**
    * Mode to run scafflater. Util for debug files generations.
-   *
    * @description Action to include generated code on target:
    *  - prod: Normal Execution (Default)
    *  - debug: Will disable async execution. Useful to debug generator.
@@ -88,7 +84,6 @@ export default class ScafflaterOptions {
   appenders = ["./appenders/region-appender", "./appenders/appender"];
   /**
    * Array Append Strategy. Available for yaml and json appenders.
-   *
    * @description Action to include generated code on target:
    *  - combine: The array will be combine item per item (Default)
    *  - concat: The arrays will be concatenated
@@ -150,7 +145,6 @@ export default class ScafflaterOptions {
 
   /**
    * Loads Folder Options
-   *
    * @description Looks for .scafflater file in folder, loads it if exists and returns an ScaffolderOptions object with the actual parameters with the loaded from file.
    * @param {string} folderPath Folder to load the Options
    * @param {import("../generator").Context} context Context
@@ -166,7 +160,7 @@ export default class ScafflaterOptions {
           context.options.logger
             .debug(`Folder Config Loaded for '${folderPath.replace(
             context.templatePath,
-            ""
+            "",
           )}' \n${JSON.stringify(info.options, null, 2)}
         `);
         }
@@ -178,7 +172,6 @@ export default class ScafflaterOptions {
 
   /**
    * Loads File Options
-   *
    * @description Looks for @scf-option in file content, loads it if exists and returns an ScaffolderOptions object with the actual parameters with the loaded options from file.
    * @param {string} filePath File to load the Options
    * @param {import("../generator").Context} context Context
@@ -190,7 +183,7 @@ export default class ScafflaterOptions {
     if (result && Object.keys(result).length > 0) {
       context.options.logger.debug(`File Config Loaded for '${filePath.replace(
         context.templatePath,
-        ""
+        "",
       )}'\n${JSON.stringify({ ...result, logger: null }, null, 2)}
       `);
     }
@@ -199,7 +192,6 @@ export default class ScafflaterOptions {
 
   /**
    * Loads @scf-option from strong
-   *
    * @description Looks for @scf-option in string, loads it if exists and returns an ScaffolderOptions object with the actual parameters with the loaded options.
    * @param {string} str String with @scf-option
    * @returns {Promise<ScafflaterOptions>} The merged Options
@@ -207,7 +199,7 @@ export default class ScafflaterOptions {
   getConfigFromString(str) {
     const configRegex = new RegExp(
       `.*${this.optionMarker}\\s*(?<json>{.*:({.*}|".*"|[^}])*?}).*`,
-      "gi"
+      "gi",
     );
     const configs = str.matchAll(configRegex);
 
@@ -221,7 +213,7 @@ export default class ScafflaterOptions {
         // Ignore configuration in regions
         if (
           regions.findIndex(
-            (r) => r.contentStart <= c.index && r.contentEnd >= c.index
+            (r) => r.contentStart <= c.index && r.contentEnd >= c.index,
           ) >= 0
         ) {
           continue;
@@ -238,7 +230,6 @@ export default class ScafflaterOptions {
 
   /**
    * Strips all @scf-option from strong
-   *
    * @description Looks for @scf-option in string, and removes the line with the config
    * @param {string} str String with @scf-option
    * @returns {Promise<string>} The striped string
@@ -246,7 +237,7 @@ export default class ScafflaterOptions {
   stripConfig(str) {
     const configRegex = new RegExp(
       `.*${this.optionMarker}\\s*(?<json>{.*}).*\\n?`,
-      "gi"
+      "gi",
     );
     return str.replace(configRegex, "");
   }

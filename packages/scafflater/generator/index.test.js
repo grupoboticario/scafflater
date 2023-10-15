@@ -451,7 +451,7 @@ a sample test
     // ASSERT
     expect(fsUtil.saveFile.mock.calls.length).toBe(1);
     expect(fsUtil.saveFile.mock.calls[0][0]).toBe(
-      "/target/path/other-name.txt"
+      "/target/path/other-name.txt",
     );
   });
 
@@ -516,7 +516,7 @@ a sample test
     // ASSERT
     expect(fsUtil.saveFile.mock.calls.length).toBe(1);
     expect(fsUtil.saveFile.mock.calls[0][0]).toBe(
-      "/target/path/folder-name/file-name.txt"
+      "/target/path/folder-name/file-name.txt",
     );
     expect(fsUtil.saveFile.mock.calls[0][1]).toBe("a sample test");
   });
@@ -602,7 +602,7 @@ a sample test
     // ASSERT
     expect(fsUtil.saveFile.mock.calls.length).toBe(1);
     expect(fsUtil.saveFile.mock.calls[0][0]).toBe(
-      "/target/path/folder-name/file-name.txt"
+      "/target/path/folder-name/file-name.txt",
     );
     expect(fsUtil.saveFile.mock.calls[0][1]).toBe("a sample test");
   });
@@ -639,7 +639,7 @@ test("Strip config", async () => {
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <test>
     <prop>{{parameters.test}}</prop>
-</test>`
+</test>`,
   );
   const ctx = {
     mode: "debug",
@@ -677,14 +677,13 @@ test("Strip config", async () => {
   // ASSERT
   expect(fsUtil.saveFile.mock.calls.length).toBe(1);
   expect(fsUtil.saveFile.mock.calls[0][0]).toBe(
-    "/target/path/folder-name/file-name.xml"
+    "/target/path/folder-name/file-name.xml",
   );
   expect(fsUtil.saveFile.mock.calls[0][1])
-    .toBe(`<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+    .toBe(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <test>
     <prop>a sample test</prop>
-</test>
-`);
+</test>`);
 });
 
 describe("Resolve Target Name", () => {
@@ -706,6 +705,6 @@ describe("Resolve Target Name", () => {
     await generator.resolveTargetNames("glob</some/glob/pattern>", {});
 
     // ASSERT
-    expect(glob).toBeCalledWith("/some/glob/pattern", expect.anything());
+    expect(glob).toHaveBeenCalledWith("/some/glob/pattern", expect.anything());
   });
 });

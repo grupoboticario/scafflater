@@ -21,6 +21,6 @@ test("Handlebars call", () => {
   expect(
     Handlebars.compile('{{case "camelCase" "test string" }}', {
       noEscape: true,
-    })({})
+    })({}),
   ).toBe("testString");
 });

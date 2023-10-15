@@ -18,7 +18,6 @@ import { Parse } from "unzipper";
 
 /**
  * A custom unzip do extract a zip downloaded from Github
- *
  * @description The zip downloaded from Github has a file on top of the archive that contains the repository content. This functions moves this first level from path.
  * @param {string} zipfile Zip file path
  * @param {string} dir Directory path where zip must be extracted
@@ -49,31 +48,28 @@ const unzip = (zipfile, dir) => {
 export default class OctokitTemplateSource extends LocalFolderTemplateSource {
   /**
    * Checks if the sourceKey is valid for this TemplateSource
-   *
    * @param {string} sourceKey - The source key to be validated.
    * @returns {boolean} Returns true if the key is valid
    */
   static isValidSourceKey(sourceKey) {
     return /((https?:\/\/(www.)?github.com\/)|(git@github.com:))([^/]+)\/([^/]+)/.test(
-      sourceKey
+      sourceKey,
     );
   }
 
   /**
    * Template Source constructor.
-   *
    * @param {?ScafflaterOptions} options - Scafflater options. If null, will get the default configuration.
    */
   constructor(options = {}) {
     super(options);
     this.octokit = new Octokit(
-      this.options.githubPassword || this.options.githubToken
+      this.options.githubPassword || this.options.githubToken,
     );
   }
 
   /**
    * Gets the template and copies it in a local folder.
-   *
    * @param {string} sourceKey - The source key of template. Will vary, depending on template source
    * @param {string} version - The template version.
    * @param {?string} outputDir - Folder where template must be copied. If null, a temp folder will be used.
@@ -93,7 +89,7 @@ export default class OctokitTemplateSource extends LocalFolderTemplateSource {
           {
             owner: ghUrl.owner,
             repo: ghUrl.name,
-          }
+          },
         );
         fsUtil.appendFileSync(zipballPath, Buffer.from(response.data));
       } else if (resolvedVersion.refType === "tag") {
@@ -103,7 +99,7 @@ export default class OctokitTemplateSource extends LocalFolderTemplateSource {
             owner: ghUrl.owner,
             repo: ghUrl.name,
             ref: resolvedVersion.version,
-          }
+          },
         );
         fsUtil.appendFileSync(zipballPath, Buffer.from(response.data));
       }
@@ -114,12 +110,12 @@ export default class OctokitTemplateSource extends LocalFolderTemplateSource {
       console.log(error.stack);
       if (error instanceof ScafflaterFileNotFoundError) {
         throw new ScafflaterFileNotFoundError(
-          `${sourceKey}/.scafflater/scafflater.jsonc`
+          `${sourceKey}/.scafflater/scafflater.jsonc`,
         );
       }
       if (error instanceof TemplateDefinitionNotFound) {
         throw new TemplateDefinitionNotFound(
-          `${sourceKey}/.scafflater/scafflater.jsonc`
+          `${sourceKey}/.scafflater/scafflater.jsonc`,
         );
       }
       throw error;
@@ -134,7 +130,6 @@ export default class OctokitTemplateSource extends LocalFolderTemplateSource {
 
   /**
    * Resolves the template version to be fetched.
-   *
    * @param {string} sourceKey - The source key of template. Will vary, depending on template source
    * @param {string} version - The template version
    * @returns {Promise<GithubVersionRef>} The string to be fetched
@@ -169,7 +164,6 @@ export default class OctokitTemplateSource extends LocalFolderTemplateSource {
 
   /**
    * Gets the last version.
-   *
    * @param {string} sourceKey - The source key of template. Will vary, depending on template source
    * @returns {Promise<string>} Returns the string with the last version
    * @throws {NoVersionAvailableError} Theres no version available for this sourceKey
@@ -183,7 +177,7 @@ export default class OctokitTemplateSource extends LocalFolderTemplateSource {
         {
           owner: ghUrl.owner,
           repo: ghUrl.name,
-        }
+        },
       );
 
       return latest.data.name;
@@ -197,7 +191,6 @@ export default class OctokitTemplateSource extends LocalFolderTemplateSource {
 
   /**
    * Checks if version is available.
-   *
    * @param {string} sourceKey - The source key of template. Will vary, depending on template source
    * @param {string} version - The template version
    * @returns {Promise<boolean>} true if the version is available
@@ -208,7 +201,6 @@ export default class OctokitTemplateSource extends LocalFolderTemplateSource {
 
   /**
    * Gets the reference of a version.
-   *
    * @description Try to identify if there is a tag, branch or release, respecting this order, with de same name of the version.
    * @param {string} sourceKey - The source key of template. Will vary, depending on template source
    * @param {string} version - A tag, brach or release name
@@ -225,7 +217,7 @@ export default class OctokitTemplateSource extends LocalFolderTemplateSource {
           owner: ghUrl.owner,
           repo: ghUrl.name,
           tag_name: version,
-        }
+        },
       );
 
       return { refType: "tag", version };
@@ -243,7 +235,7 @@ export default class OctokitTemplateSource extends LocalFolderTemplateSource {
           owner: ghUrl.owner,
           repo: ghUrl.name,
           branch: version,
-        }
+        },
       );
 
       return { refType: "branch", version };
@@ -266,7 +258,7 @@ export default class OctokitTemplateSource extends LocalFolderTemplateSource {
             repo: ghUrl.name,
             per_page: 100,
             page,
-          }
+          },
         );
 
         const releaseIndex = releases.data.findIndex((r) => r.name === version);
@@ -289,7 +281,6 @@ export default class OctokitTemplateSource extends LocalFolderTemplateSource {
 
   /**
    * Gets an Source object for this source
-   *
    * @param {string} key The source key
    * @returns {Source} An Source object
    */

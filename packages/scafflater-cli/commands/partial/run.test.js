@@ -124,11 +124,11 @@ describe("ListCommand", () => {
           new LocalPartial(
             "/some/partial/path",
             "the-partial",
-            "This is an partial"
+            "This is an partial",
           ),
           new LocalPartial("/some/partial/path", "the-partial"),
-        ]
-      )
+        ],
+      ),
     );
     const listCommand = new RunPartialCommand(["some-partial"], {});
 
@@ -138,15 +138,15 @@ describe("ListCommand", () => {
     // ASSERT
     expect(templateManager.getTemplateFromSource).toHaveBeenNthCalledWith(
       1,
-      "http://some/url/to/template"
+      "http://some/url/to/template",
     );
     expect(templateManager.getTemplateFromSource).toHaveBeenNthCalledWith(
       2,
-      "http://some/url/to/other-template"
+      "http://some/url/to/other-template",
     );
     expect(logger.error).toHaveBeenNthCalledWith(
       1,
-      expect.stringMatching(/Could not get template/)
+      expect.stringMatching(/Could not get template/),
     );
   });
 
@@ -187,10 +187,10 @@ describe("ListCommand", () => {
           new LocalPartial(
             "/some/partial/path",
             "the-partial",
-            "This is an partial"
+            "This is an partial",
           ),
-        ]
-      )
+        ],
+      ),
     );
     templateCache.getTemplate.mockResolvedValueOnce(null);
     const listCommand = new RunPartialCommand(["some-invalid-partial"], {});
@@ -201,8 +201,8 @@ describe("ListCommand", () => {
     // ASSERT
     expect(logger.error).toHaveBeenCalledWith(
       expect.stringMatching(
-        /The partial '.*' is not available on any initialized template/
-      )
+        /The partial '.*' is not available on any initialized template/,
+      ),
     );
   });
 
@@ -251,10 +251,10 @@ describe("ListCommand", () => {
           new LocalPartial(
             "/some/partial/path",
             "the-partial",
-            "This is an partial"
+            "This is an partial",
           ),
-        ]
-      )
+        ],
+      ),
     );
     templateCache.getTemplate.mockResolvedValueOnce(
       new LocalTemplate(
@@ -267,16 +267,16 @@ describe("ListCommand", () => {
           new LocalPartial(
             "/some/partial/path",
             "the-partial",
-            "This is an partial in another template"
+            "This is an partial in another template",
           ),
-        ]
-      )
+        ],
+      ),
     );
     prompt.mockResolvedValue({
       localPartial: new LocalPartial(
         "/some/partial/path",
         "the-partial",
-        "This is an partial in another template"
+        "This is an partial in another template",
       ),
     });
     const listCommand = new RunPartialCommand(["the-partial"], {});
@@ -331,10 +331,10 @@ describe("ListCommand", () => {
           new LocalPartial(
             "/some/partial/path",
             "the-partial",
-            "This is an partial"
+            "This is an partial",
           ),
-        ]
-      )
+        ],
+      ),
     );
     templateCache.getTemplate.mockResolvedValueOnce(
       new LocalTemplate(
@@ -347,16 +347,16 @@ describe("ListCommand", () => {
           new LocalPartial(
             "/some/partial/path",
             "the-partial",
-            "This is an partial in another template"
+            "This is an partial in another template",
           ),
-        ]
-      )
+        ],
+      ),
     );
     prompt.mockResolvedValue({
       localPartial: new LocalPartial(
         "/some/partial/path",
         "the-partial",
-        "This is an partial in another template"
+        "This is an partial in another template",
       ),
     });
     const listCommand = new RunPartialCommand([], {});
@@ -411,10 +411,10 @@ describe("ListCommand", () => {
           new LocalPartial(
             "/some/partial/path",
             "the-partial",
-            "This is an partial"
+            "This is an partial",
           ),
-        ]
-      )
+        ],
+      ),
     );
     templateCache.getTemplate.mockResolvedValueOnce(
       new LocalTemplate(
@@ -426,10 +426,10 @@ describe("ListCommand", () => {
           new LocalPartial(
             "/some/partial/path",
             "the-partial",
-            "This is an partial in another template"
+            "This is an partial in another template",
           ),
-        ]
-      )
+        ],
+      ),
     );
     prompt.mockResolvedValue({
       availablePartial: {
@@ -437,7 +437,7 @@ describe("ListCommand", () => {
         ...new LocalPartial(
           "/some/partial/path",
           "the-partial",
-          "This is an partial in another template"
+          "This is an partial in another template",
         ),
       },
     });
@@ -448,7 +448,7 @@ describe("ListCommand", () => {
     expect(prompt).toHaveBeenCalledTimes(1);
     expect(logger.log).toHaveBeenCalledWith(
       "notice",
-      expect.stringMatching(/Partial results appended to output!/)
+      expect.stringMatching(/Partial results appended to output!/),
     );
   });
 });

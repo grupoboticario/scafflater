@@ -32,6 +32,6 @@ test("The input is invalid, should the message", () => {
 
   // ASSERT
   expect(result).toBe(
-    `Domain/VS Name: The value 'some invalid input' does note match the regex '/[a-z-]{4,}/g'`
+    `Domain/VS Name: The value 'some invalid input' does note match the regex '/[a-z-]{4,}/g'`,
   );
 });

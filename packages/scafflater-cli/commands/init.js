@@ -82,7 +82,7 @@ export default class InitCommand extends Command {
       });
       const source = await TemplateSource.resolveTemplateSourceFromSourceKey(
         config,
-        iniArgs.source
+        iniArgs.source,
       );
       config.source = source.source;
       config.mode = initFlags.debug ? "debug" : "prod";
@@ -93,7 +93,7 @@ export default class InitCommand extends Command {
         const templateManager = await scafflater.getTemplateManager();
         localTemplate = await templateManager.getTemplateFromSource(
           iniArgs.source,
-          initFlags.version
+          initFlags.version,
         );
       });
 
@@ -113,8 +113,8 @@ export default class InitCommand extends Command {
         logger.info(`The template is already initialized!`);
         logger.info(
           `Run ${chalk.bgBlack.yellowBright(
-            "scafflater-cli partial:list"
-          )} to see available partials`
+            "scafflater-cli partial:list",
+          )} to see available partials`,
         );
         return;
       }
@@ -123,8 +123,8 @@ export default class InitCommand extends Command {
         await promptMissingParameters(
           initFlags.parameters,
           localTemplate.parameters,
-          outputConfig.globalParameters
-        )
+          outputConfig.globalParameters,
+        ),
       );
 
       logger.info("Running template initialization");
@@ -133,12 +133,12 @@ export default class InitCommand extends Command {
         iniArgs.source,
         parameters,
         initFlags.version,
-        initFlags.output
+        initFlags.output,
       );
 
       logger.log(
         "notice",
-        "Template initialized. Fell free to run partials. 🥳"
+        "Template initialized. Fell free to run partials. 🥳",
       );
     } catch (error) {
       if (error instanceof ScafflaterError) {

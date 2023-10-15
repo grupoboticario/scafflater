@@ -6,6 +6,6 @@ test("Handlebars call", () => {
   expect(
     Handlebars.compile('{{echo "testing" }}', {
       noEscape: true,
-    })({})
+    })({}),
   ).toBe("testing");
 });

@@ -120,8 +120,8 @@ describe("Scafflater", () => {
               name: "password",
               mask: true,
             },
-          ]
-        )
+          ],
+        ),
       );
       const mockedConfig = {
         templates: [],
@@ -147,13 +147,13 @@ describe("Scafflater", () => {
         "some/template/source/key",
         parameters,
         "last",
-        "/some/target"
+        "/some/target",
       );
 
       // ASSERT
       expect(mockedConfig.templates.length).toBe(1);
-      expect(mockedConfig.save).toBeCalledWith(
-        "/some/target/.scafflater/scafflater.jsonc"
+      expect(mockedConfig.save).toHaveBeenCalledWith(
+        "/some/target/.scafflater/scafflater.jsonc",
       );
     });
 
@@ -179,8 +179,8 @@ describe("Scafflater", () => {
               name: "password",
               mask: true,
             },
-          ]
-        )
+          ],
+        ),
       );
       const mockedConfig = {
         config: {
@@ -212,13 +212,13 @@ describe("Scafflater", () => {
         "some/template/source/key",
         parameters,
         "last",
-        "/some/target"
+        "/some/target",
       );
 
       // ASSERT
       expect(mockedConfig.config.templates.length).toBe(2);
-      expect(mockedConfig.config.save).toBeCalledWith(
-        "/some/target/.scafflater/scafflater.jsonc"
+      expect(mockedConfig.config.save).toHaveBeenCalledWith(
+        "/some/target/.scafflater/scafflater.jsonc",
       );
     });
   });
@@ -245,8 +245,8 @@ describe("Scafflater", () => {
             name: "password",
             mask: true,
           },
-        ]
-      )
+        ],
+      ),
     );
     const mockedConfig = {
       config: {
@@ -271,8 +271,8 @@ describe("Scafflater", () => {
     // ACT & ASSERT
     const scafflater = new Scafflater({ annotate: false }, templateManager);
     await expect(
-      scafflater.init("some/template/source/key", parameters, "/some/target")
-    ).rejects.toThrowError(/The template is already initialized/);
+      scafflater.init("some/template/source/key", parameters, "/some/target"),
+    ).rejects.toThrow(/The template is already initialized/);
   });
 
   describe("Run Partial", () => {
@@ -284,7 +284,7 @@ describe("Scafflater", () => {
             "0.0.1",
             new Source("some-source", "existing-template-source-key"),
             [],
-            [new RanPartial("some-ran-partial", "This partial was ran")]
+            [new RanPartial("some-ran-partial", "This partial was ran")],
           ),
         ],
         save: jest.fn(),
@@ -309,9 +309,9 @@ describe("Scafflater", () => {
               name: "password",
               mask: true,
             },
-          ]
+          ],
         ),
-      ]
+      ],
     );
 
     test("The template is not initialized yet. Should throw", async () => {
@@ -321,9 +321,9 @@ describe("Scafflater", () => {
 
       // ACT & ASSERT
       await expect(
-        scafflater.runPartial("some-not-init-template", "the-partial")
+        scafflater.runPartial("some-not-init-template", "the-partial"),
       ).rejects.toThrow(
-        "some-not-init-template: no initialized template found. You must init it before using."
+        "some-not-init-template: no initialized template found. You must init it before using.",
       );
     });
 
@@ -335,9 +335,9 @@ describe("Scafflater", () => {
 
       // ACT & ASSERT
       await expect(
-        scafflater.runPartial("template", "the-partial")
+        scafflater.runPartial("template", "the-partial"),
       ).rejects.toThrow(
-        "template: cannot load template from source ('some-source': 'existing-template-source-key')."
+        "template: cannot load template from source ('some-source': 'existing-template-source-key').",
       );
     });
 
@@ -354,9 +354,9 @@ describe("Scafflater", () => {
 
       // ACT & ASSERT
       await expect(
-        scafflater.runPartial("template", "this-partial-doesn't-exist")
+        scafflater.runPartial("template", "this-partial-doesn't-exist"),
       ).rejects.toThrow(
-        "this-partial-doesn't-exist: cannot load partial from template 'template' ('some-source': 'existing-template-source-key')."
+        "this-partial-doesn't-exist: cannot load partial from template 'template' ('some-source': 'existing-template-source-key').",
       );
     });
 
@@ -379,13 +379,13 @@ describe("Scafflater", () => {
         "template",
         "some-partial",
         parameters,
-        "/some/target"
+        "/some/target",
       );
 
       // ASSERT
       expect(mockedConfig.config.templates[0].partials.length).toBe(2);
-      expect(mockedConfig.config.save).toBeCalledWith(
-        "/some/target/.scafflater/scafflater.jsonc"
+      expect(mockedConfig.config.save).toHaveBeenCalledWith(
+        "/some/target/.scafflater/scafflater.jsonc",
       );
     });
   });
@@ -401,7 +401,7 @@ describe("Scafflater", () => {
       scafflater.options.logger.debug("testing");
 
       // ASSERT
-      expect(logger.debug).toBeCalledWith("testing");
+      expect(logger.debug).toHaveBeenCalledWith("testing");
     });
   });
 });

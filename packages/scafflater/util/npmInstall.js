@@ -2,7 +2,6 @@ import { exec } from "child_process";
 
 /**
  * Executes npm install in a folder
- *
  * @param {string} packagePath - The path where npm install must be run
  * @returns {Promise<void>}
  */

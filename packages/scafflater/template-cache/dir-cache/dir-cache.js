@@ -6,7 +6,6 @@ import { LocalTemplate } from "../../scafflater-config/local-template.js";
 
 /**
  * Stores templates in the local file system
- *
  * @augments TemplateCache
  */
 export default class DirCache extends TemplateCache {
@@ -17,7 +16,6 @@ export default class DirCache extends TemplateCache {
 
   /**
    * Gets an template in cache
-   *
    * @param {string} templateName The template name
    * @param {string} templateVersion The template version. If null, gets the latest available version.
    * @returns {Promise<LocalTemplate>} The local template
@@ -34,7 +32,7 @@ export default class DirCache extends TemplateCache {
     if (templateVersion) {
       return (
         templates?.find(
-          (t) => t.name === templateName && t.version === templateVersion
+          (t) => t.name === templateName && t.version === templateVersion,
         ) ?? null
       );
     }
@@ -44,14 +42,13 @@ export default class DirCache extends TemplateCache {
     ];
     return (
       templates.find(
-        (t) => t.name === templateName && t.version === mostRecentVersion
+        (t) => t.name === templateName && t.version === mostRecentVersion,
       ) ?? null
     );
   }
 
   /**
    * Stores the template in the local file system.
-   *
    * @param {string} templatePath - Path of template
    * @param {string} templateVersion - Template version
    * @returns {Promise<string>} The path where template was cached.
@@ -61,7 +58,7 @@ export default class DirCache extends TemplateCache {
     const cachePath = path.join(
       this.storagePath,
       templateConfig.name,
-      templateVersion || templateConfig.version
+      templateVersion || templateConfig.version,
     );
     await fsUtil.ensureDir(cachePath);
     await fsUtil.copy(templatePath, cachePath);
@@ -70,7 +67,6 @@ export default class DirCache extends TemplateCache {
 
   /**
    * List stored templates and their versions.
-   *
    * @returns {Promise<LocalTemplate[]>} All the templates in cache
    */
   async listCachedTemplates() {

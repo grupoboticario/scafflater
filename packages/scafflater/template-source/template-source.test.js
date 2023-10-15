@@ -16,7 +16,7 @@ test("Resolve template source", async () => {
   // ACT
   const out = await TemplateSource.resolveTemplateSourceFromSourceKey(
     config,
-    "https://github.com/scafflater/scafflater-template"
+    "https://github.com/scafflater/scafflater-template",
   );
 
   // ASSERT
@@ -30,9 +30,7 @@ test("Throws an exception when the source does not exists", async () => {
   const source = TemplateSource.getTemplateSource({ source: "bla" });
 
   // ASSERT
-  await expect(source).rejects.toThrowError(
-    "There's no module for source 'bla'"
-  );
+  await expect(source).rejects.toThrow("There's no module for source 'bla'");
 });
 
 test("Gets the template source in config", async () => {

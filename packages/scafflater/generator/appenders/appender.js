@@ -10,7 +10,6 @@ export default class Appender {
    */
   /**
    * Process the input.
-   *
    * @param {object} context The context of generation
    * @param {string} srcStr The string to be appended
    * @param {string} destStr The string where srcStr must be appended
@@ -36,7 +35,6 @@ export default class Appender {
 
   /**
    * Applies a processors pipeline to a content, given an specific context.
-   *
    * @param {Array<object>} appenders - Processors to be executed
    * @param {object} context The context of generation. The processor can change context output to next processors.
    * @param {string} srcStr The string to be appended
@@ -50,7 +48,7 @@ export default class Appender {
       const appenderResult = await appender.append(
         appendContext,
         srcStr,
-        destStr
+        destStr,
       );
       appendContext = appenderResult.context;
       srcStr = appenderResult.notAppended;

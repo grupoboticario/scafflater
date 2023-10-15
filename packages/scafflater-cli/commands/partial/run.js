@@ -18,7 +18,6 @@ import inquirer from "inquirer";
 
 /**
  * Try to load cached templates and load from source if it is not available
- *
  * @param {Config} outputConfig The output config
  * @param {Scafflater} scafflater The scafflater instance
  * @returns {Promise<LocalTemplate[]>} A list of local template
@@ -32,23 +31,23 @@ const loadTemplates = async (outputConfig, scafflater) => {
   await spinner(`Getting templates`, async (spinnerControl) => {
     for (const ranTemplate of outputConfig.templates) {
       spinnerControl.text = `Getting ${chalk.bold(
-        ranTemplate.name
+        ranTemplate.name,
       )} from ${chalk.underline(ranTemplate.source.key)}`;
       const templateManager = await scafflater.getTemplateManager();
       let localTemplate = await templateManager.templateCache.getTemplate(
         ranTemplate.name,
-        ranTemplate.version
+        ranTemplate.version,
       );
       if (!localTemplate) {
         localTemplate = await templateManager.getTemplateFromSource(
-          ranTemplate.source.key
+          ranTemplate.source.key,
         );
       }
       if (!localTemplate) {
         throw new Error(
           `Could not get template '${chalk.bold(
-            ranTemplate.name
-          )}' from ${chalk.underline(ranTemplate.key)}`
+            ranTemplate.name,
+          )}' from ${chalk.underline(ranTemplate.key)}`,
         );
       }
 
@@ -61,7 +60,6 @@ const loadTemplates = async (outputConfig, scafflater) => {
 
 /**
  * A class to relate partial with templates.
- *
  * @class LocalPartialTemplate
  * @augments LocalPartial
  */
@@ -135,9 +133,8 @@ export default class RunPartialCommand extends Command {
 
   async run() {
     try {
-      const { args: runArgs, flags: runFlags } = await this.parse(
-        RunPartialCommand
-      );
+      const { args: runArgs, flags: runFlags } =
+        await this.parse(RunPartialCommand);
 
       const options = new ScafflaterOptions({
         cacheStorage: runFlags.cache,
@@ -154,8 +151,8 @@ export default class RunPartialCommand extends Command {
         logger.info(`No initialized template found!`);
         logger.info(
           `Run ${chalk.bgBlack.yellowBright(
-            "scafflater-cli init [TEMPLATE_ADDRESS]"
-          )} to initialize one template.`
+            "scafflater-cli init [TEMPLATE_ADDRESS]",
+          )} to initialize one template.`,
         );
         return;
       }
@@ -173,19 +170,19 @@ export default class RunPartialCommand extends Command {
 
       // Create a list of all available template, related with theirs templates
       let availablePartials = localTemplates.flatMap((lt) =>
-        lt.partials.map((lp) => new LocalPartialTemplate(lt.name, lp))
+        lt.partials.map((lp) => new LocalPartialTemplate(lt.name, lp)),
       );
 
       // Filtering by partial name, if is an argument
       if (runArgs.PARTIAL_NAME) {
         availablePartials = availablePartials.filter(
-          (ap) => ap.name === runArgs.PARTIAL_NAME
+          (ap) => ap.name === runArgs.PARTIAL_NAME,
         );
       }
 
       if (runFlags.template) {
         availablePartials = availablePartials.filter(
-          (ap) => ap.templateName === runFlags.template
+          (ap) => ap.templateName === runFlags.template,
         );
       }
 
@@ -197,8 +194,8 @@ export default class RunPartialCommand extends Command {
           // Just print additional message to guide the user
           logger.print(
             `There are many available ${chalk.bold(
-              runArgs.PARTIAL_NAME
-            )} on initialized templates`
+              runArgs.PARTIAL_NAME,
+            )} on initialized templates`,
           );
         }
 
@@ -212,8 +209,8 @@ export default class RunPartialCommand extends Command {
                   short: ap.name,
                   value: ap,
                 };
-              })
-          )
+              }),
+          ),
         );
 
         const prompt = await inquirer.prompt([
@@ -221,7 +218,7 @@ export default class RunPartialCommand extends Command {
             type: "rawlist",
             name: "availablePartial",
             message: "Which partial do you want to run?",
-            choices: choices,
+            choices,
           },
         ]);
 
@@ -231,8 +228,8 @@ export default class RunPartialCommand extends Command {
       if (availablePartials.length !== 1) {
         logger.error(
           `The partial '${chalk.bold(
-            runArgs.PARTIAL_NAME
-          )}' is not available on any initialized template`
+            runArgs.PARTIAL_NAME,
+          )}' is not available on any initialized template`,
         );
         return;
       }
@@ -245,9 +242,9 @@ export default class RunPartialCommand extends Command {
           localPartial.parameters,
           outputConfig.globalParameters,
           outputConfig.templates.find(
-            (rt) => rt.name === localPartial.templateName
-          ).templateParameters
-        )
+            (rt) => rt.name === localPartial.templateName,
+          ).templateParameters,
+        ),
       );
 
       logger.info("Running partial template");
@@ -256,7 +253,7 @@ export default class RunPartialCommand extends Command {
         localPartial.templateName,
         localPartial.name,
         parameters,
-        runFlags.output
+        runFlags.output,
       );
 
       logger.log("notice", "Partial results appended to output!");

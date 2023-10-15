@@ -18,7 +18,6 @@ export default class Scafflater {
 
   /**
    * Scafflater constructor.
-   *
    * @param {?(ScafflaterOptions|object)} options - Scafflater configuration. If null, will get the default configuration.
    * @param {?TemplateManager} templateManager The template manager
    */
@@ -31,7 +30,6 @@ export default class Scafflater {
 
   /**
    * Initializes the Scafflater instance
-   *
    * @param {?(ScafflaterOptions|object)} options - Scafflater configuration. If null, will get the default configuration.
    */
   async initialize(options) {
@@ -42,7 +40,6 @@ export default class Scafflater {
 
   /**
    * Gets the template manager
-   *
    * @returns {Promise<TemplateManager>} The template manager
    */
   async getTemplateManager() {
@@ -52,7 +49,6 @@ export default class Scafflater {
 
   /**
    * Run scafflater
-   *
    * @param {string} originPath The path where the template or partial is stored
    * @param {object} parameters Parameters for the generation process
    * @param {string} templatePath The template path
@@ -68,19 +64,19 @@ export default class Scafflater {
     const helpersPath = path.resolve(
       templatePath,
       options.scfFolderName,
-      options.helpersFolderName
+      options.helpersFolderName,
     );
     options.logger.debug(`Helpers Path: ${helpersPath}`);
     const hooksPath = path.resolve(
       templatePath,
       options.scfFolderName,
-      options.hooksFolderName
+      options.hooksFolderName,
     );
     options.logger.debug(`Hooks Path: ${hooksPath}`);
     const extensionPath = path.resolve(
       templatePath,
       options.scfFolderName,
-      options.extensionFolderName
+      options.extensionFolderName,
     );
     options.logger.debug(`Extensions Path: ${extensionPath}`);
 
@@ -105,7 +101,6 @@ export default class Scafflater {
 
   /**
    * Initializes the basic structure for scafflater template.
-   *
    * @param {string} sourceKey - Source Template key
    * @param {object} parameters - Parameters used to generate the template
    * @param {string} templateVersion - Template version
@@ -116,22 +111,22 @@ export default class Scafflater {
     sourceKey,
     parameters,
     templateVersion = "last",
-    targetPath = "./"
+    targetPath = "./",
   ) {
     await this.initializationPromise;
 
     const localTemplate = await this.#templateManager.getTemplateFromSource(
       sourceKey,
-      templateVersion
+      templateVersion,
     );
     this.options.logger.debug(
-      `Local Template Source: ${localTemplate.folderPath}`
+      `Local Template Source: ${localTemplate.folderPath}`,
     );
 
     const targetConfigPath = path.resolve(
       targetPath,
       ".scafflater",
-      "scafflater.jsonc"
+      "scafflater.jsonc",
     );
 
     let targetConfig = (await Config.fromLocalPath(targetConfigPath, true))
@@ -140,8 +135,8 @@ export default class Scafflater {
       `== TARGET CONFIG == \n ${JSON.stringify(
         targetConfig,
         null,
-        2
-      )} =================== \n`
+        2,
+      )} =================== \n`,
     );
 
     if (targetConfig.isInitialized(localTemplate.name)) {
@@ -153,13 +148,13 @@ export default class Scafflater {
       `== PERSISTED PARAMETERS == \n ${JSON.stringify(
         targetConfig,
         null,
-        2
-      )} ========================== \n`
+        2,
+      )} ========================== \n`,
     );
 
     const maskedParameters = maskParameters(
       parameters,
-      localTemplate.parameters
+      localTemplate.parameters,
     );
 
     const ctx = {
@@ -171,7 +166,7 @@ export default class Scafflater {
     // Running Pre Script
     if (localTemplate.hooks?.preRun) {
       ctx.options.logger.info(
-        `Executing pre run script: "${localTemplate.hooks.preRun}"`
+        `Executing pre run script: "${localTemplate.hooks.preRun}"`,
       );
       await runCommand(localTemplate.hooks.preRun, {
         path: targetPath,
@@ -184,13 +179,13 @@ export default class Scafflater {
       parameters,
       localTemplate.folderPath,
       targetPath,
-      ctx
+      ctx,
     );
 
     const initPath = path.resolve(
       localTemplate.folderPath,
       localTemplate.options.scfFolderName,
-      localTemplate.options.initFolderName
+      localTemplate.options.initFolderName,
     );
     if (await fs.pathExists(initPath)) {
       this.options.logger.debug(`Run init on '${initPath}'`);
@@ -199,14 +194,14 @@ export default class Scafflater {
         parameters,
         localTemplate.folderPath,
         targetPath,
-        ctx
+        ctx,
       );
     }
 
     // Running Post Script
     if (localTemplate.hooks?.postRun) {
       ctx.options.logger.info(
-        `Executing post run script: "${localTemplate.hooks.postRun}"`
+        `Executing post run script: "${localTemplate.hooks.postRun}"`,
       );
       await runCommand(localTemplate.hooks.postRun, {
         path: targetPath,
@@ -222,8 +217,8 @@ export default class Scafflater {
         localTemplate.name,
         templateVersion === "last" ? localTemplate.version : templateVersion,
         this.#templateManager.templateSource.getSource(sourceKey),
-        maskedParameters
-      )
+        maskedParameters,
+      ),
     );
 
     targetConfig.setPersistedParameters(localTemplate, parameters);
@@ -232,7 +227,6 @@ export default class Scafflater {
 
   /**
    * Brief description of the function here.
-   *
    * @summary If the description is long, write your summary here. Otherwise, feel free to remove this.
    * @param {string} templateName The template name thar includes the partial
    * @param {string} partialName The partial name
@@ -246,53 +240,53 @@ export default class Scafflater {
     const targetConfigPath = path.resolve(
       targetPath,
       ".scafflater",
-      "scafflater.jsonc"
+      "scafflater.jsonc",
     );
     const targetConfig = (await Config.fromLocalPath(targetConfigPath))?.config;
     this.options.logger.debug(
       `== TARGET CONFIG == \n ${JSON.stringify(
         targetConfig,
         null,
-        2
-      )} =================== \n`
+        2,
+      )} =================== \n`,
     );
 
     const ranTemplate = targetConfig.templates.find(
-      (t) => t.name === templateName
+      (t) => t.name === templateName,
     );
     if (!ranTemplate) {
       throw new Error(
-        `${templateName}: no initialized template found. You must init it before using.`
+        `${templateName}: no initialized template found. You must init it before using.`,
       );
     }
 
     let localTemplate = await this.#templateManager.getTemplate(
       ranTemplate.name,
       ranTemplate.version,
-      ranTemplate.source
+      ranTemplate.source,
     );
     if (!localTemplate) {
       throw new Error(
-        `${templateName}: cannot load template from source ('${ranTemplate.source.name}': '${ranTemplate.source.key}').`
+        `${templateName}: cannot load template from source ('${ranTemplate.source.name}': '${ranTemplate.source.key}').`,
       );
     }
     this.options.logger.debug(
-      `Local Template Source: ${localTemplate.folderPath}`
+      `Local Template Source: ${localTemplate.folderPath}`,
     );
 
     let localPartial = localTemplate.partials.find(
-      (p) => p.name === partialName
+      (p) => p.name === partialName,
     );
     if (!localPartial) {
       localTemplate = await this.#templateManager.getTemplateFromSource(
-        ranTemplate.source.key
+        ranTemplate.source.key,
       );
       localPartial = localTemplate.partials.find((p) => p.name === partialName);
     }
 
     if (!localPartial) {
       throw new Error(
-        `${partialName}: cannot load partial from template '${templateName}' ('${ranTemplate.source.name}': '${ranTemplate.source.key}').`
+        `${partialName}: cannot load partial from template '${templateName}' ('${ranTemplate.source.name}': '${ranTemplate.source.key}').`,
       );
     }
 
@@ -301,8 +295,8 @@ export default class Scafflater {
       `== PERSISTED PARAMETERS == \n ${JSON.stringify(
         targetConfig,
         null,
-        2
-      )} ========================== \n`
+        2,
+      )} ========================== \n`,
     );
 
     const ctx = {
@@ -316,7 +310,7 @@ export default class Scafflater {
     // Running Pre Script
     if (localPartial.hooks?.preRun) {
       ctx.options.logger.info(
-        `Executing pre run script: "${localPartial.hooks.preRun}"`
+        `Executing pre run script: "${localPartial.hooks.preRun}"`,
       );
       await runCommand(localPartial.hooks.preRun, {
         path: targetPath,
@@ -329,13 +323,13 @@ export default class Scafflater {
       parameters,
       localTemplate.folderPath,
       targetPath,
-      ctx
+      ctx,
     );
 
     // Running Post Script
     if (localPartial.hooks?.postRun) {
       ctx.options.logger.info(
-        `Executing post run script: "${localPartial.hooks.postRun}"`
+        `Executing post run script: "${localPartial.hooks.postRun}"`,
       );
       await runCommand(localPartial.hooks.postRun, {
         path: targetPath,
@@ -347,15 +341,15 @@ export default class Scafflater {
       ranTemplate.partials.push(
         new RanPartial(
           partialName,
-          maskParameters(parameters, localTemplate.parameters)
-        )
+          maskParameters(parameters, localTemplate.parameters),
+        ),
       );
     }
 
     targetConfig.setPersistedParameters(
       localTemplate,
       parameters,
-      localPartial
+      localPartial,
     );
     await targetConfig.save(targetConfigPath);
   }

@@ -1,6 +1,5 @@
 /**
  * Validates input against an regex
- *
  * @param {object} question - Question used in inquirer
  * @param {string} input - The user entry
  * @returns {(boolean|string)} True if the input is valid or if the regex is not informed.

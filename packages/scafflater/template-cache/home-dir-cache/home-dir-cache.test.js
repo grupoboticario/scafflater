@@ -27,7 +27,7 @@ describe("Home Dir source", () => {
 
     // ASSERT
     expect(homeDirCache.storagePath).toBe(
-      "/User/Home/Dir/.scafflater/templates"
+      "/User/Home/Dir/.scafflater/templates",
     );
   });
 });

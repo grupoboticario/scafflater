@@ -33,7 +33,7 @@ describe("npmInstall", () => {
     expect(exec).toHaveBeenCalledWith(
       "npm install",
       { cwd: "some/folder" },
-      expect.anything()
+      expect.anything(),
     );
     await expect(callWithError).rejects.toThrow("one error ocurred");
   });

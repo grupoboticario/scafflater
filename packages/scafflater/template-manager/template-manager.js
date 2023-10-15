@@ -30,7 +30,6 @@ export default class TemplateManager {
 
   /**
    * Gets a TemplateManager from scafflater options
-   *
    * @param {ScafflaterOptions} options The Scafflater Options
    * @returns {Promise<TemplateManager>} A template manager constructed based on options
    */
@@ -43,7 +42,6 @@ export default class TemplateManager {
 
   /**
    * Gets the template from source and stores in the cache
-   *
    * @param {string} sourceKey - Source key
    * @param {string} version - Template version
    * @returns {Promise<LocalTemplate>} An object containing template config
@@ -52,21 +50,20 @@ export default class TemplateManager {
     const templateSource =
       await TemplateSource.resolveTemplateSourceFromSourceKey(
         this.options,
-        sourceKey
+        sourceKey,
       );
     const tempTemplateFolder = await templateSource.getTemplate(
       sourceKey,
-      version
+      version,
     );
     return this.templateCache.storeTemplate(
       tempTemplateFolder.folderPath,
-      version === "last" ? null : version
+      version === "last" ? null : version,
     );
   }
 
   /**
    * Gets the template path, if it is stored in the cache.
-   *
    * @param {string} templateName Template name
    * @param {string} templateVersion Template Version. If null, the latest stored version is returned.
    * @param {Source} source The template source. If the template is not cached, use this to try getting the template from source.
@@ -75,7 +72,7 @@ export default class TemplateManager {
   async getTemplate(templateName, templateVersion = "last", source = null) {
     const template = await this.templateCache.getTemplate(
       templateName,
-      templateVersion
+      templateVersion,
     );
 
     if (!template && source) {
@@ -87,7 +84,6 @@ export default class TemplateManager {
 
   /**
    * Gets the partial path, if it is stored in the cache.
-   *
    * @param {string} partialName - Partial name
    * @param {string} templateName - Template name
    * @param {string} templateVersion - Template Version. If null, the latest stored version is returned.
@@ -111,7 +107,6 @@ export default class TemplateManager {
 
   /**
    * List available partials in template.
-   *
    * @param {string} templateName - Template name
    * @param {string} templateVersion - Template Version. If null, the latest stored version is returned.
    * @returns {Promise<LocalPartial[]>} Array of objects containing the config and the path to partial.
@@ -119,7 +114,7 @@ export default class TemplateManager {
   async listPartials(templateName, templateVersion = "last") {
     const template = await this.templateCache.getTemplate(
       templateName,
-      templateVersion
+      templateVersion,
     );
     if (!template) {
       return Promise.resolve(null);

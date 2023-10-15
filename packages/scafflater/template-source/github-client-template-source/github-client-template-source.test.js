@@ -82,7 +82,7 @@ describe("getTemplate", () => {
     callBack(
       new Error("Command failed: asdasd\n/bin/sh: asdasd: command not found\n"),
       "",
-      "/bin/sh: asdasd: command not found\n"
+      "/bin/sh: asdasd: command not found\n",
     );
 
     await expect(promise).rejects.toThrow(GithubClientNotInstalledError);
@@ -97,10 +97,10 @@ describe("getTemplate", () => {
 
     callBack(
       new Error(
-        "Command failed: gh auth status\nYou are not logged into any GitHub hosts. Run gh auth login to authenticate.\n"
+        "Command failed: gh auth status\nYou are not logged into any GitHub hosts. Run gh auth login to authenticate.\n",
       ),
       "",
-      "You are not logged into any GitHub hosts. Run gh auth login to authenticate.\n"
+      "You are not logged into any GitHub hosts. Run gh auth login to authenticate.\n",
     );
 
     await expect(promise).rejects.toThrow(GithubClientUserNotLoggedError);
@@ -116,7 +116,7 @@ describe("getTemplate", () => {
     callBack(
       null,
       "",
-      "github.com\n  ✓ Logged in to github.com as chicoribas (/Users/ribasf/.config/gh/hosts.yml)\n  ✓ Git operations for github.com configured to use https protocol.\n  ✓ Token: *******************\n  \n"
+      "github.com\n  ✓ Logged in to github.com as chicoribas (/Users/ribasf/.config/gh/hosts.yml)\n  ✓ Git operations for github.com configured to use https protocol.\n  ✓ Token: *******************\n  \n",
     );
 
     // ASSERT
@@ -133,7 +133,7 @@ describe("getTemplate", () => {
     const promise = githuClientTemplateSource.getTemplate(
       "https://github.com/github/path",
       null,
-      "/some/virtual/folder"
+      "/some/virtual/folder",
     );
 
     // ACT && ASSERT
@@ -152,7 +152,7 @@ describe("getTemplate", () => {
     const promise = githubClientTemplateSource.getTemplate(
       "https://github.com/github/path",
       null,
-      "/some/virtual/folder"
+      "/some/virtual/folder",
     );
 
     // ACT && ASSERT
@@ -162,18 +162,18 @@ describe("getTemplate", () => {
   test("Valid source key", () => {
     expect(
       GithubClientTemplateSource.isValidSourceKey(
-        "https://github.com/some-org/some-repo"
-      )
+        "https://github.com/some-org/some-repo",
+      ),
     ).toBeTruthy();
     expect(
       GithubClientTemplateSource.isValidSourceKey(
-        "git@github.com:some-org/some-repo.git"
-      )
+        "git@github.com:some-org/some-repo.git",
+      ),
     ).toBeTruthy();
     expect(
       GithubClientTemplateSource.isValidSourceKey(
-        "https://dev.azure.com/some-org/some-repo"
-      )
+        "https://dev.azure.com/some-org/some-repo",
+      ),
     ).toBeFalsy();
   });
 
@@ -211,7 +211,7 @@ describe("getTemplate", () => {
           "0.0.0",
           [],
           {},
-          [{ name: "some-parameter" }]
+          [{ name: "some-parameter" }],
         ),
       ]);
 
@@ -223,7 +223,7 @@ describe("getTemplate", () => {
     const promise = githubClientTemplateSource.getTemplate(
       repo,
       null,
-      virtualFolder
+      virtualFolder,
     );
     const out = await promise;
 
@@ -235,13 +235,13 @@ describe("getTemplate", () => {
       "0.0.0",
       [],
       {},
-      [{ name: "some-parameter" }]
+      [{ name: "some-parameter" }],
     );
     expect(out).toBeInstanceOf(LocalTemplate);
     expect(out).toStrictEqual(expected);
     expect(childProcess.exec).toHaveBeenCalledWith(
       "gh repo clone some/repo temp/folder",
-      expect.anything()
+      expect.anything(),
     );
   });
 
@@ -260,7 +260,7 @@ describe("getTemplate", () => {
           "0.0.0",
           [],
           {},
-          [{ name: "some-parameter" }]
+          [{ name: "some-parameter" }],
         ),
       ]);
 
@@ -282,12 +282,12 @@ describe("getTemplate", () => {
         "0.0.0",
         [],
         {},
-        [{ name: "some-parameter" }]
-      )
+        [{ name: "some-parameter" }],
+      ),
     );
     expect(childProcess.exec).toHaveBeenCalledWith(
       "gh repo clone some/repo temp/folder",
-      expect.anything()
+      expect.anything(),
     );
   });
 });

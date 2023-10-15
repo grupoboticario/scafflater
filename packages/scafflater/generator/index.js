@@ -29,7 +29,6 @@ class PromisesHelper {
 
   /**
    * Executes a promise
-   *
    * @param {Context} ctx Context
    * @param {Promise} promise Promise to execute
    */
@@ -51,7 +50,6 @@ class PromisesHelper {
 export default class Generator {
   /**
    * Brief description of the function here.
-   *
    * @summary If the description is long, write your summary here. Otherwise, feel free to remove this.
    * @param {object} context - The context to generate
    */
@@ -87,26 +85,26 @@ export default class Generator {
     this.promisesHelper = new PromisesHelper();
     this.hooks = await fsUtil.loadScriptsAsObjects(
       this.context.hooksPath,
-      true
+      true,
     );
     this.context.options.logger.debug(
       `Hooks Loaded: ${
         Object.keys(this.hooks).length > 0
           ? "No hook defined"
           : Object.keys(this.hooks).join(", ")
-      }`
+      }`,
     );
 
     this.extensions = await fsUtil.loadScriptsAsObjects(
       this.context.extensionPath,
-      true
+      true,
     );
     this.context.options.logger.debug(
       `Extensions Loaded: ${
         Object.keys(this.extensions).length > 0
           ? "No extension defined"
           : Object.keys(this.extensions).join(", ")
-      }`
+      }`,
     );
 
     if (this.hooks.onGenerateStart) {
@@ -116,16 +114,16 @@ export default class Generator {
 
     // Loading handlebars js custom helper
     await HandlebarsProcessor.loadHelpersFolder(
-      path.resolve(this.context.templatePath, this.context.helpersPath)
+      path.resolve(this.context.templatePath, this.context.helpersPath),
     );
 
     this.context.prettierConfig = await this.loadPrettierOptions(
-      this.context.originPath
+      this.context.originPath,
     );
     this.context.options.logger.debug(
       `=== PRETTIER CONFIG === \n  Loaded from: ${
         this.context.originPath
-      }\n  ${JSON.stringify(this.context.prettierConfig, null, 2)}`
+      }\n  ${JSON.stringify(this.context.prettierConfig, null, 2)}`,
     );
 
     const tree = fsUtil.getDirTreeSync(this.context.originPath);
@@ -133,7 +131,7 @@ export default class Generator {
     if (tree.type === "file") {
       await this.promisesHelper.exec(
         this.context,
-        this._generate(this.context, tree)
+        this._generate(this.context, tree),
       );
     }
 
@@ -162,7 +160,7 @@ export default class Generator {
     const promisesHelper = new PromisesHelper();
     if (ignores(ctx.originPath, tree.path, this.ignoredPatterns)) {
       this.context.options.logger.info(
-        `Ignoring: ${tree.path.replace(ctx.templatePath, "")}`
+        `Ignoring: ${tree.path.replace(ctx.templatePath, "")}`,
       );
       return Promise.resolve();
     }
@@ -170,13 +168,13 @@ export default class Generator {
     const options = await this.loadOptions(tree, ctx);
     if (options.ignores(ctx.originPath, tree.path)) {
       this.context.options.logger.info(
-        `Ignoring: ${tree.path.replace(ctx.templatePath, "")}`
+        `Ignoring: ${tree.path.replace(ctx.templatePath, "")}`,
       );
       return Promise.resolve();
     }
 
     this.context.options.logger.info(
-      `Processing: ${tree.path.replace(ctx.templatePath, "")}`
+      `Processing: ${tree.path.replace(ctx.templatePath, "")}`,
     );
 
     let targetNameOption = tree.name;
@@ -191,10 +189,10 @@ export default class Generator {
     }
     if (targetNames.length > 1) {
       this.context.options.logger.info(
-        `\tMultiple targets detected. The result will be appended on multiple destinations:`
+        `\tMultiple targets detected. The result will be appended on multiple destinations:`,
       );
       targetNames.forEach((name) =>
-        this.context.options.logger.info(`\t\t${name}`)
+        this.context.options.logger.info(`\t\t${name}`),
       );
     }
 
@@ -236,16 +234,15 @@ export default class Generator {
           } else {
             if (ctx.options.appendStrategy === "appendIfExists") {
               _ctx.options.logger.info(
-                `\tIgnoring: appendStrategy = 'appendIfExists' and destination does not exists`
+                `\tIgnoring: appendStrategy = 'appendIfExists' and destination does not exists`,
               );
               return Promise.resolve();
             }
           }
 
           if (!(await isBinaryFile(originFilePath))) {
-            const originFileContent = await fsUtil.readFileContent(
-              originFilePath
-            );
+            const originFileContent =
+              await fsUtil.readFileContent(originFilePath);
 
             const processors = [];
             for (const processor of _ctx.options.processors) {
@@ -268,7 +265,7 @@ export default class Generator {
             const srcContent = await Processors.Processor.runProcessorsPipeline(
               processors,
               _ctx,
-              originFileContent
+              originFileContent,
             );
 
             const appenders = [];
@@ -294,7 +291,7 @@ export default class Generator {
                   appenders,
                   _ctx,
                   srcContent,
-                  targetContent
+                  targetContent,
                 )
               : srcContent;
 
@@ -312,23 +309,23 @@ export default class Generator {
 
             await promisesHelper.exec(
               _ctx,
-              fsUtil.saveFile(targetFilePath, result, false)
+              fsUtil.saveFile(targetFilePath, result, false),
             );
           } else {
             _ctx.options.logger.info(
-              `\tBinary file. Just copy to destination.`
+              `\tBinary file. Just copy to destination.`,
             );
             await fsUtil.ensureDir(path.dirname(targetFilePath));
             await promisesHelper.exec(
               _ctx,
-              fsUtil.copyFile(originFilePath, targetFilePath)
+              fsUtil.copyFile(originFilePath, targetFilePath),
             );
           }
         }
       } catch (error) {
         _ctx.options.logger.error(`\tError: ${error.message}`);
         throw new Error(
-          `${tree.path.replace(ctx.templatePath, "")}\t${error.message}`
+          `${tree.path.replace(ctx.templatePath, "")}\t${error.message}`,
         );
       }
     }
@@ -338,7 +335,6 @@ export default class Generator {
 
   /**
    * Loads and merge the options of file or folder with the context options
-   *
    * @param {object} tree The directory item to load options
    * @param {Context} context The context to load options
    * @returns {Promise<ScafflaterOptions>} Brief description of the returning value here.
@@ -378,7 +374,7 @@ export default class Generator {
       await Processors.Processor.runProcessorsPipeline(
         [this.handlebarsProcessor],
         context,
-        targetName
+        targetName,
       ),
     ];
   }

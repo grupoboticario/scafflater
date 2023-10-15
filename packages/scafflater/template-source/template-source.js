@@ -9,7 +9,6 @@ import { CannotGetSourceError } from "./errors/index.js";
 export default class TemplateSource {
   /**
    * Template Source constructor.
-   *
    * @param {?ScafflaterOptions} options - Scafflater Options. If null, will get the default options.
    */
   constructor(options = {}) {
@@ -22,14 +21,12 @@ export default class TemplateSource {
 
   /**
    * The source name.
-   *
    * @type {string}
    */
   source;
 
   /**
    * Resolves the template source from source key.
-   *
    * @param {ScafflaterOptions} options The Scafflater Options
    * @param {string} sourceKey - The key of source path. Ir can be a local folder path, a git url, or other path that is recognized by template source through isValidSourceKey function
    * @returns {Promise<TemplateSource>} An specialized instance of TemplateSource.
@@ -58,7 +55,6 @@ export default class TemplateSource {
 
   /**
    * Returns the template source instance to be used to get templates.
-   *
    * @param {?object} config - Scafflater configuration. If null, will get the default configuration.
    * @returns {Promise<TemplateSource>} An specialized instance of TemplateSource.
    */
@@ -75,7 +71,6 @@ export default class TemplateSource {
 
   /**
    * Gets the template and copies it in a local folder.
-   *
    * @param {string} sourceKey - The source key of template. Will vary, depending on template source
    * @param {string} version - The template version
    * @param {?string} outputDir - Folder where template must be copied. If null, a temp folder will be used.
@@ -87,7 +82,6 @@ export default class TemplateSource {
 
   /**
    * Checks if version is available.
-   *
    * @param {string} sourceKey - The source key of template. Will vary, depending on template source
    * @param {string} version - The template version
    * @returns {Promise<boolean>} true if the version is available
@@ -98,7 +92,6 @@ export default class TemplateSource {
 
   /**
    * Gets an Source object for this source
-   *
    * @param {string} key The source key
    * @returns {Source} An Source object
    */

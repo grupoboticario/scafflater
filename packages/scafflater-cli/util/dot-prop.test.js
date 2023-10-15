@@ -18,15 +18,15 @@ test("getProperty", () => {
   expect(getProperty({ foo: undefined }, "foo")).toBe(undefined);
   expect(getProperty({ foo: { bar: true } }, "foo.bar")).toBeTruthy();
   expect(
-    getProperty({ foo: { bar: { baz: true } } }, "foo.bar.baz")
+    getProperty({ foo: { bar: { baz: true } } }, "foo.bar.baz"),
   ).toBeTruthy();
   expect(getProperty({ foo: { bar: { baz: null } } }, "foo.bar.baz")).toBe(
-    null
+    null,
   );
   expect(getProperty({ foo: { bar: "a" } }, "foo.fake")).toBe(undefined);
   expect(getProperty({ foo: { bar: "a" } }, "foo.fake.fake2")).toBe(undefined);
   expect(
-    getProperty({ foo: { bar: "a" } }, "foo.fake.fake2", "some value")
+    getProperty({ foo: { bar: "a" } }, "foo.fake.fake2", "some value"),
   ).toBe("some value");
   expect(getProperty({ foo: {} }, "foo.fake", "some value")).toBe("some value");
   expect(getProperty({ "\\": true }, "\\")).toBeTruthy();
@@ -44,8 +44,8 @@ test("getProperty", () => {
           bar: true,
         },
       },
-      "foo\\\\.bar"
-    )
+      "foo\\\\.bar",
+    ),
   ).toBeTruthy();
   expect(getProperty({ foo: 1 }, "foo.bar")).toBe(undefined);
   expect(getProperty({ "foo\\": true }, "foo\\")).toBeTruthy();
@@ -57,7 +57,7 @@ test("getProperty", () => {
   });
   expect(getProperty(fixture2, "foo")).toBe("bar");
   expect(getProperty({}, "hasOwnProperty")).toBe(
-    Object.prototype.hasOwnProperty
+    Object.prototype.hasOwnProperty,
   );
 
   /**
@@ -74,10 +74,10 @@ test("getProperty", () => {
   expect(getProperty(f3, "foo.bar", "some value")).toBe("some value");
 
   expect(
-    getProperty({ "foo.baz": { bar: true } }, "foo\\.baz.bar")
+    getProperty({ "foo.baz": { bar: true } }, "foo\\.baz.bar"),
   ).toBeTruthy();
   expect(
-    getProperty({ "fo.ob.az": { bar: true } }, "fo\\.ob\\.az.bar")
+    getProperty({ "fo.ob.az": { bar: true } }, "fo\\.ob\\.az.bar"),
   ).toBeTruthy();
 
   expect(getProperty(null, "foo.bar", false)).toBeFalsy();
@@ -97,7 +97,7 @@ test("getProperty", () => {
 test("getProperty - with array indexes", () => {
   expect(getProperty([true, false, false], "[0]")).toBeTruthy();
   expect(
-    getProperty([[false, true, false], false, false], "[0][1]")
+    getProperty([[false, true, false], false, false], "[0][1]"),
   ).toBeTruthy();
   expect(getProperty([{ foo: [true] }], "[0].foo[0]")).toBeTruthy();
   expect(getProperty({ foo: [0, { bar: true }] }, "foo[1].bar")).toBeTruthy();
@@ -106,16 +106,16 @@ test("getProperty - with array indexes", () => {
   expect(getProperty([{ foo: [1] }], "[0].bar[0]", false)).toBeFalsy();
   expect(getProperty([{ foo: [1] }], "[0].foo[1]", false)).toBeFalsy();
   expect(
-    getProperty({ foo: [0, { bar: 2 }] }, "foo[0].bar", false)
+    getProperty({ foo: [0, { bar: 2 }] }, "foo[0].bar", false),
   ).toBeFalsy();
   expect(
-    getProperty({ foo: [0, { bar: 2 }] }, "foo[2].bar", false)
+    getProperty({ foo: [0, { bar: 2 }] }, "foo[2].bar", false),
   ).toBeFalsy();
   expect(
-    getProperty({ foo: [0, { bar: 2 }] }, "foo[1].biz", false)
+    getProperty({ foo: [0, { bar: 2 }] }, "foo[1].biz", false),
   ).toBeFalsy();
   expect(
-    getProperty({ foo: [0, { bar: 2 }] }, "bar[0].bar", false)
+    getProperty({ foo: [0, { bar: 2 }] }, "bar[0].bar", false),
   ).toBeFalsy();
   expect(
     getProperty(
@@ -124,8 +124,8 @@ test("getProperty - with array indexes", () => {
           "[0]": true,
         },
       },
-      "bar.\\[0]"
-    )
+      "bar.\\[0]",
+    ),
   ).toBeTruthy();
   expect(
     getProperty(
@@ -134,17 +134,17 @@ test("getProperty - with array indexes", () => {
           "": [true],
         },
       },
-      "bar.[0]"
-    )
+      "bar.[0]",
+    ),
   ).toBeTruthy();
   expect(() =>
     getProperty(
       {
         "foo[5[": true,
       },
-      "foo[5["
-    )
-  ).toThrowError("Invalid character in an index");
+      "foo[5[",
+    ),
+  ).toThrow("Invalid character in an index");
   expect(() =>
     getProperty(
       {
@@ -152,9 +152,9 @@ test("getProperty - with array indexes", () => {
           bar: true,
         },
       },
-      "foo[5.bar"
-    )
-  ).toThrowError("Invalid character in an index");
+      "foo[5.bar",
+    ),
+  ).toThrow("Invalid character in an index");
   expect(
     getProperty(
       {
@@ -162,8 +162,8 @@ test("getProperty - with array indexes", () => {
           bar: true,
         },
       },
-      "foo\\[5].bar"
-    )
+      "foo\\[5].bar",
+    ),
   ).toBeTruthy();
   expect(() =>
     getProperty(
@@ -172,28 +172,28 @@ test("getProperty - with array indexes", () => {
           bar: true,
         },
       },
-      "foo[5\\].bar"
-    )
-  ).toThrowError("Invalid character in an index");
+      "foo[5\\].bar",
+    ),
+  ).toThrow("Invalid character in an index");
   expect(() =>
     getProperty(
       {
         "foo[5": true,
       },
-      "foo[5"
-    )
-  ).toThrowError("Index was not closed");
+      "foo[5",
+    ),
+  ).toThrow("Index was not closed");
   expect(() =>
     getProperty(
       {
         "foo[bar]": true,
       },
-      "foo[bar]"
-    )
-  ).toThrowError("Invalid character in an index");
+      "foo[bar]",
+    ),
+  ).toThrow("Invalid character in an index");
   expect(getProperty({}, "constructor[0]", false)).toBeFalsy();
   expect(() => getProperty({}, "foo[constructor]", false)).toThrow(
-    "Invalid character in an index"
+    "Invalid character in an index",
   );
 
   expect(getProperty([], "foo[0].bar", false)).toBeFalsy();
@@ -210,8 +210,8 @@ test("getProperty - with array indexes", () => {
           0: true,
         },
       },
-      "foo.0"
-    )
+      "foo.0",
+    ),
   ).toBeTruthy();
 
   expect(
@@ -223,24 +223,24 @@ test("getProperty - with array indexes", () => {
         false,
         false,
       ],
-      "[0].\\[1]"
-    )
+      "[0].\\[1]",
+    ),
   ).toBeTruthy();
 
   expect(getProperty({ foo: { "[0]": true } }, "foo.\\[0]")).toBeTruthy();
-  expect(() => getProperty({ foo: { "[0]": true } }, "foo.[0\\]")).toThrowError(
-    "Invalid character in an index"
+  expect(() => getProperty({ foo: { "[0]": true } }, "foo.[0\\]")).toThrow(
+    "Invalid character in an index",
   );
   expect(getProperty({ foo: { "\\": [true] } }, "foo.\\\\[0]")).toBeTruthy();
-  expect(() => getProperty({ foo: { "[0]": true } }, "foo.[0\\]")).toThrowError(
-    "Invalid character in an index"
+  expect(() => getProperty({ foo: { "[0]": true } }, "foo.[0\\]")).toThrow(
+    "Invalid character in an index",
   );
 
-  expect(() =>
-    getProperty({ "foo[0": { "9]": true } }, "foo[0.9]")
-  ).toThrowError("Invalid character in an index");
-  expect(() => getProperty({ "foo[-1]": true }, "foo[-1]")).toThrowError(
-    "Invalid character in an index"
+  expect(() => getProperty({ "foo[0": { "9]": true } }, "foo[0.9]")).toThrow(
+    "Invalid character in an index",
+  );
+  expect(() => getProperty({ "foo[-1]": true }, "foo[-1]")).toThrow(
+    "Invalid character in an index",
   );
 });
 
@@ -315,12 +315,12 @@ test("setProperty", () => {
   setProperty(fixture5, "[0].foo[0]", true);
   expect(fixture5[0].foo[0]).toBe(true);
 
-  expect(() => setProperty(fixture5, "1", true)).toThrowError(
-    "Cannot use string index"
+  expect(() => setProperty(fixture5, "1", true)).toThrow(
+    "Cannot use string index",
   );
 
-  expect(() => setProperty(fixture5, "0.foo.0", true)).toThrowError(
-    "Cannot use string index"
+  expect(() => setProperty(fixture5, "0.foo.0", true)).toThrow(
+    "Cannot use string index",
   );
 
   const fixture6 = {};
@@ -411,8 +411,8 @@ test("deleteProperty", () => {
     },
   ];
 
-  expect(() => deleteProperty(fixture4, "0.top.dog")).toThrowError(
-    "Cannot use string index"
+  expect(() => deleteProperty(fixture4, "0.top.dog")).toThrow(
+    "Cannot use string index",
   );
   expect(deleteProperty(fixture4, "[0].top.dog")).toBeTruthy();
   expect(fixture4).toMatchObject([{ top: {} }]);
@@ -452,10 +452,10 @@ test("hasProperty", () => {
   expect(hasProperty({ foo: undefined }, "foo")).toBeTruthy();
   expect(hasProperty({ foo: { bar: true } }, "foo.bar")).toBeTruthy();
   expect(
-    hasProperty({ foo: { bar: { baz: true } } }, "foo.bar.baz")
+    hasProperty({ foo: { bar: { baz: true } } }, "foo.bar.baz"),
   ).toBeTruthy();
   expect(
-    hasProperty({ foo: { bar: { baz: null } } }, "foo.bar.baz")
+    hasProperty({ foo: { bar: { baz: null } } }, "foo.bar.baz"),
   ).toBeTruthy();
   expect(hasProperty({ foo: { bar: "a" } }, "foo.fake.fake2")).toBeFalsy();
   expect(hasProperty({ foo: null }, "foo.bar")).toBeFalsy();
@@ -471,10 +471,10 @@ test("hasProperty", () => {
   expect(hasProperty(fn, "foo.bar")).toBeTruthy();
 
   expect(
-    hasProperty({ "foo.baz": { bar: true } }, "foo\\.baz.bar")
+    hasProperty({ "foo.baz": { bar: true } }, "foo\\.baz.bar"),
   ).toBeTruthy();
   expect(
-    hasProperty({ "fo.ob.az": { bar: true } }, "fo\\.ob\\.az.bar")
+    hasProperty({ "fo.ob.az": { bar: true } }, "fo\\.ob\\.az.bar"),
   ).toBeTruthy();
   expect(hasProperty(undefined, "fo\\.ob\\.az.bar")).toBeFalsy();
 
@@ -483,24 +483,24 @@ test("hasProperty", () => {
       {
         foo: [{ bar: ["bar", "bizz"] }],
       },
-      "foo[0].bar.1"
-    )
+      "foo[0].bar.1",
+    ),
   ).toBeFalsy();
   expect(
     hasProperty(
       {
         foo: [{ bar: ["bar", "bizz"] }],
       },
-      "foo[0].bar.2"
-    )
+      "foo[0].bar.2",
+    ),
   ).toBeFalsy();
   expect(
     hasProperty(
       {
         foo: [{ bar: ["bar", "bizz"] }],
       },
-      "foo[1].bar.1"
-    )
+      "foo[1].bar.1",
+    ),
   ).toBeFalsy();
   expect(
     hasProperty(
@@ -513,8 +513,8 @@ test("hasProperty", () => {
           },
         ],
       },
-      "foo[0].bar.1"
-    )
+      "foo[0].bar.1",
+    ),
   ).toBeTruthy();
 });
 
@@ -524,7 +524,7 @@ test("escapePath", () => {
   expect(escapePath("foo\\.bar[0]")).toBe("foo\\\\\\.bar\\[0]"); // eslint-disable-line no-useless-escape
   expect(escapePath("foo\\\\.bar[0]")).toBe("foo\\\\\\\\\\.bar\\[0]");
   expect(escapePath("foo\\\\.bar\\\\[0]")).toBe(
-    "foo\\\\\\\\\\.bar\\\\\\\\\\[0]"
+    "foo\\\\\\\\\\.bar\\\\\\\\\\[0]",
   );
   expect(escapePath("foo[0].bar")).toBe("foo\\[0]\\.bar");
   expect(escapePath("foo.bar[0].baz")).toBe("foo\\.bar\\[0]\\.baz");
@@ -533,7 +533,7 @@ test("escapePath", () => {
 
   expect(() => {
     escapePath(0);
-  }).toThrowError("Expected a string");
+  }).toThrow("Expected a string");
 });
 
 test("deepKeys", () => {

@@ -8,7 +8,6 @@ import { exec as execSync } from "child_process";
 
 /**
  * Gets the template and copies it in a local folder.
- *
  * @param {string} sourceKey - The source key of template. Will vary, depending on template source
  * @param {?string} outputDir - Folder where template must be copied. If null, a temp folder will be used.
  * @returns {Promise<LocalTemplate>} The local template
@@ -23,14 +22,14 @@ export default class PackageTemplateSource extends LocalFolderTemplateSource {
         `cd ${tempPath} && npm pack ${sourceKey}`,
         {
           timeout: 30000,
-        }
+        },
       );
 
       await exec(
         `cd ${tempPath} && tar -xvzf ${packageStatus.stdout.replace("/n", "")}`,
         {
           timeout: 30000,
-        }
+        },
       );
 
       await exec(`cd ${tempPath}/package && npm install -D ${sourceKey}`, {
@@ -43,12 +42,12 @@ export default class PackageTemplateSource extends LocalFolderTemplateSource {
     } catch (error) {
       if (error instanceof ScafflaterFileNotFoundError) {
         throw new ScafflaterFileNotFoundError(
-          `${sourceKey}/.scafflater/scafflater.jsonc`
+          `${sourceKey}/.scafflater/scafflater.jsonc`,
         );
       }
       if (error instanceof TemplateDefinitionNotFound) {
         throw new TemplateDefinitionNotFound(
-          `${sourceKey}/.scafflater/scafflater.jsonc`
+          `${sourceKey}/.scafflater/scafflater.jsonc`,
         );
       }
       throw error;

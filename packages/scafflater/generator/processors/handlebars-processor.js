@@ -8,7 +8,6 @@ import echo from "./hbs-builtin-helpers/echo.js";
 
 /**
  * Compile and apply the handlebar js on input
- *
  * @augments Processor
  */
 export default class HandlebarsProcessor extends Processor {
@@ -24,7 +23,7 @@ export default class HandlebarsProcessor extends Processor {
     return {
       context,
       result: Handlebars.compile(parentResult.result, { noEscape: true })(
-        parentResult.context
+        parentResult.context,
       ),
     };
   }
@@ -36,7 +35,7 @@ export default class HandlebarsProcessor extends Processor {
 
     for (const js of await fsUtil.listFilesByExtensionDeeply(
       folderPath,
-      "js"
+      "js",
     )) {
       if (js.endsWith(".test.js")) continue;
       const helperFunction = fsUtil.require(js);

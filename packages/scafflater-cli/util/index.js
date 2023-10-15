@@ -14,7 +14,7 @@ export function parseParametersFlags(parameters) {
     const m = /(?<name>.+)(?::)(?<value>.+)/g.exec(param);
     if (m.length <= 0)
       throw new Error(
-        "The parameters is not in the expected pattern: <parameter-name>:<parameter-value>"
+        "The parameters is not in the expected pattern: <parameter-name>:<parameter-value>",
       );
 
     result[m.groups.name] = m.groups.value;
@@ -35,7 +35,7 @@ export async function promptMissingParameters(
   parameterFlags,
   requiredParameters,
   globalParameters = [],
-  templateParameters = []
+  templateParameters = [],
 ) {
   const flags = parseParametersFlags(parameterFlags);
   if (!requiredParameters) return flags;

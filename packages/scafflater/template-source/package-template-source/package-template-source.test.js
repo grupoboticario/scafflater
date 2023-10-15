@@ -44,14 +44,14 @@ describe("getTemplate", () => {
           "0.0.0",
           [],
           {},
-          [{ name: "some-parameter" }]
+          [{ name: "some-parameter" }],
         ),
       ]);
     jest.spyOn(util, "promisify").mockReturnValue(() => {
       return { stdout: "username", stderr: "" };
     });
     await expect(
-      packageTemplateSource.getTemplate("template-fastify", virtualFolder)
+      packageTemplateSource.getTemplate("template-fastify", virtualFolder),
     ).rejects.toBeInstanceOf(ScafflaterFileNotFoundError);
   });
 });

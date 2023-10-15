@@ -60,9 +60,9 @@
     "winston": "3.3.3"
   },
   "devDependencies": {
-    "@types/fs-extra": "9.0.12",
+    "@types/fs-extra": "11.0.2",
     "@types/unzipper": "0.10.7",
-    "mock-fs": "5.0.0",
+    "mock-fs": "5.2.0",
     "@jest/globals": "29.7.0"
   }
 }

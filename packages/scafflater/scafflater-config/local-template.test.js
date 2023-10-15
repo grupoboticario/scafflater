@@ -50,9 +50,9 @@ describe("Local Template", () => {
 
       // ACT & ASSERT
       await expect(
-        LocalPartial.loadFromPath("/some/valid/path/.scafflater")
-      ).rejects.toThrowError(
-        "'/some/valid/path/.scafflater': the scafflater file does not describe a partial."
+        LocalPartial.loadFromPath("/some/valid/path/.scafflater"),
+      ).rejects.toThrow(
+        "'/some/valid/path/.scafflater': the scafflater file does not describe a partial.",
       );
     });
 
@@ -89,8 +89,8 @@ describe("Local Template", () => {
           "the-partial-name",
           "The Partial Description",
           mockedConfig.fileContent.partial.options,
-          mockedConfig.fileContent.partial.parameters
-        )
+          mockedConfig.fileContent.partial.parameters,
+        ),
       );
       expect(partial.options.targetName).toBe("the-target");
       expect(partial.parameters.length).toBe(1);
@@ -120,8 +120,8 @@ describe("Local Template", () => {
         new LocalPartial(
           "/some/valid/path",
           "the-partial-name",
-          "The Partial Description"
-        )
+          "The Partial Description",
+        ),
       );
       expect(partial.options).toStrictEqual(new ScafflaterOptions());
       expect(partial.parameters).toStrictEqual([]);
@@ -259,9 +259,9 @@ describe("Local Template", () => {
 
       // ACT & ASSERT
       await expect(
-        LocalTemplate.loadFromPath("/some/valid/path")
-      ).rejects.toThrowError(
-        "/some-other/partial-1-1/scafflater.jsonc: partial does not belong to any template."
+        LocalTemplate.loadFromPath("/some/valid/path"),
+      ).rejects.toThrow(
+        "/some-other/partial-1-1/scafflater.jsonc: partial does not belong to any template.",
       );
     });
 
@@ -284,27 +284,27 @@ describe("Local Template", () => {
           new ParameterConfig("the-parameter", "partial"),
           new ParameterConfig("the-global-parameter", "global"),
           new ParameterConfig("the-template-parameter", "template"),
-        ]
+        ],
       );
 
       // ACT
       const globals = template.getParameterConfigsByScope("global");
       const globalsWithPartialName = template.getParameterConfigsByScope(
         "global",
-        "the-partial"
+        "the-partial",
       );
       const globalsWithPartialObj = template.getParameterConfigsByScope(
         "global",
-        localPartial
+        localPartial,
       );
       const templaters = template.getParameterConfigsByScope("template");
       const templateWithPartialName = template.getParameterConfigsByScope(
         "template",
-        "the-partial"
+        "the-partial",
       );
       const templateWithPartialObj = template.getParameterConfigsByScope(
         "template",
-        localPartial
+        localPartial,
       );
 
       // ASSERT

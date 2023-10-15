@@ -20,13 +20,7 @@
     "requireConfigFile": false
   },
   "rules": {
-    "space-before-function-parent": 0,
-    "node/no-extraneous-require": [
-      "error",
-      {
-        "allowModules": ["@scafflater/scafflater"]
-      }
-    ]
+    "space-before-function-parent": 0
   },
   "settings": {
     "jsdoc": {

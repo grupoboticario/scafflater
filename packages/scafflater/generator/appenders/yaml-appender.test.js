@@ -25,7 +25,7 @@ metadata:
   const result = await yamlAppender.append(
     { options: new ScafflaterOptions() },
     srcYaml,
-    destYaml
+    destYaml,
   );
 
   // ASSERT
@@ -55,7 +55,7 @@ spec:
   const result = await yamlAppender.append(
     { options: new ScafflaterOptions() },
     srcYaml,
-    destYaml
+    destYaml,
   );
 
   // ASSERT
@@ -123,7 +123,7 @@ spec:
   const result = await yamlAppender.append(
     { options: new ScafflaterOptions() },
     srcYaml,
-    destinYaml
+    destinYaml,
   );
 
   // ASSERT
@@ -147,7 +147,7 @@ spec:
   owner: pdd-team
   system: pdd
   providesApis:
-    - flask-2`)
+    - flask-2`),
   );
 });
 
@@ -184,7 +184,7 @@ spec:
   const result = await yamlAppender.append(
     { options: new ScafflaterOptions() },
     srcYaml,
-    destinYaml
+    destinYaml,
   );
 
   // ASSERT
@@ -206,7 +206,7 @@ spec:
   type: service
   lifecycle: experimental
   owner: pdd-team
-  system: pdd`)
+  system: pdd`),
   );
 });
 
@@ -244,7 +244,7 @@ spec:
   const result = await yamlAppender.append(
     { options: new ScafflaterOptions() },
     srcYaml,
-    destinyYaml
+    destinyYaml,
   );
 
   // ASSERT
@@ -266,7 +266,7 @@ spec:
   type: service
   lifecycle: experimental
   owner: pdd-team
-  system: pdd`)
+  system: pdd`),
   );
 });
 
@@ -303,7 +303,7 @@ app:
   const result = await yamlAppender.append(
     { options: new ScafflaterOptions({ arrayAppendStrategy: "key(name)" }) },
     srcYaml,
-    destinyYaml
+    destinyYaml,
   );
 
   // ASSERT
@@ -325,6 +325,6 @@ app:
       - name: POETRY_VIRTUALENVS_CREATE
         value: 'false'
       - name: LOG_LEVEL_ENABLED
-        value: ERROR`)
+        value: ERROR`),
   );
 });

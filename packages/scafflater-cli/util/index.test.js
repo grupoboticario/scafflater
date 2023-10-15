@@ -12,7 +12,7 @@ jest.unstable_mockModule("inquirer", () => {
 jest.unstable_mockModule("@scafflater/scafflater", () => {
   return {
     Scafflater: jest.fn(),
-    PersistedParameter: PersistedParameter,
+    PersistedParameter,
     ParameterConfig: jest.fn(),
   };
 });
@@ -60,7 +60,7 @@ describe("promptMissingParameters", () => {
     // ACT
     const result = await promptMissingParameters(
       parameterFlags,
-      templateParameters
+      templateParameters,
     );
 
     // ASSERT
@@ -109,7 +109,7 @@ describe("promptMissingParameters", () => {
       parameterFlags,
       templateParameters,
       globalParameters,
-      persistedTemplateParameters
+      persistedTemplateParameters,
     );
 
     // ASSERT

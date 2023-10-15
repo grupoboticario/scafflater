@@ -54,7 +54,7 @@ test("Parse content with not started region, should throw an exception", () => {
   // ACT
   expect(() => {
     regionProvider.getRegions(str);
-  }).toThrowError();
+  }).toThrow();
 });
 
 test("Parse content with not finished region, should throw an exception", () => {
@@ -72,7 +72,7 @@ test("Parse content with not finished region, should throw an exception", () => 
   // ACT
   expect(() => {
     regionProvider.getRegions(str);
-  }).toThrowError();
+  }).toThrow();
 });
 
 test("Appends an simple region", async () => {
@@ -82,7 +82,7 @@ test("Appends an simple region", async () => {
     null,
     new RegionTag("some-region", 0, 0, RegionTagType.Start),
     RegionTag.unknown(),
-    "some content"
+    "some content",
   );
 
   // ACT
@@ -103,13 +103,13 @@ test("Build a nested region", async () => {
     null,
     new RegionTag("parent-region", 0, 0, RegionTagType.Start),
     RegionTag.unknown(),
-    "some content"
+    "some content",
   );
   const region = new Region(
     parentRegion,
     new RegionTag("child-region", 0, 0, RegionTagType.Start),
     RegionTag.unknown(),
-    "some content"
+    "some content",
   );
 
   // ACT

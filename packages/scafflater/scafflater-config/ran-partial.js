@@ -5,7 +5,6 @@
 export default class RanPartial {
   /**
    * Creates a template
-   *
    * @param {string} name - Template name
    * @param {object[]} parameters - Template parameters
    */
@@ -16,7 +15,6 @@ export default class RanPartial {
 
   /**
    * Template name
-   *
    * @description The template name must follow the pattern [a-z-]{3,}
    * @type {string}
    */
@@ -24,7 +22,6 @@ export default class RanPartial {
 
   /**
    * Parameters used to generate partial.
-   *
    * @type {object}
    */
   parameters;

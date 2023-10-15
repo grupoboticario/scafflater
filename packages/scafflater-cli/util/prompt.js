@@ -7,7 +7,6 @@ import regexValidate from "./validators/regex.js";
 export default class Prompt {
   /**
    * Prompts the user values the questions in config.prompt.
-   *
    * @param {object[]} questions The questions to be collected from hte user
    * @param {object} answers - Contains values of already answered questions. Inquirer will avoid asking answers already provided here. Defaults {}.
    * @returns {Promise<object>} Answers.

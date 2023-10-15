@@ -43,8 +43,8 @@ describe("getTemplate", () => {
       isomorphicGitTemplateSource.getTemplate(
         "http://some/github/path",
         null,
-        "/some/virtual/folder"
-      )
+        "/some/virtual/folder",
+      ),
     ).rejects.toThrow(ScafflaterFileNotFoundError);
   });
   test("Template definition not found on .scafflater", async () => {
@@ -59,26 +59,26 @@ describe("getTemplate", () => {
       isomorphicGitTemplateSource.getTemplate(
         "http://some/github/path",
         null,
-        "/some/virtual/folder"
-      )
+        "/some/virtual/folder",
+      ),
     ).rejects.toThrow(TemplateDefinitionNotFound);
   });
 
   test("Valid source key", () => {
     expect(
       IsomorphicGitTemplateSource.isValidSourceKey(
-        "https://github.com/some-org/some-repo"
-      )
+        "https://github.com/some-org/some-repo",
+      ),
     ).toBeTruthy();
     expect(
       IsomorphicGitTemplateSource.isValidSourceKey(
-        "http://github.com/some-org/some-repo"
-      )
+        "http://github.com/some-org/some-repo",
+      ),
     ).toBeTruthy();
     expect(
       IsomorphicGitTemplateSource.isValidSourceKey(
-        "https://dev.azure.com/some-org/some-repo"
-      )
+        "https://dev.azure.com/some-org/some-repo",
+      ),
     ).toBeFalsy();
   });
 
@@ -100,7 +100,7 @@ describe("getTemplate", () => {
           "0.0.0",
           [],
           {},
-          [{ name: "some-parameter" }]
+          [{ name: "some-parameter" }],
         ),
       ]);
     fsUtil.pathExists.mockResolvedValue(true);
@@ -114,14 +114,14 @@ describe("getTemplate", () => {
     expect(ts.options.githubPassword).toBe("the-secret-password");
     expect(ts.options.githubBaseUrlApi).toBe("https://api.github.com");
     expect(ts.options.githubBaseUrl).toBe("https://github.com");
-    expect(git.clone).toBeCalledWith(
+    expect(git.clone).toHaveBeenCalledWith(
       expect.objectContaining({
         headers: {
           Authorization: `Basic ${Buffer.from(
-            "some-user:the-secret-password"
+            "some-user:the-secret-password",
           ).toString("base64")}`,
         },
-      })
+      }),
     );
   });
 
@@ -141,7 +141,7 @@ describe("getTemplate", () => {
           "0.0.0",
           [],
           {},
-          [{ name: "some-parameter" }]
+          [{ name: "some-parameter" }],
         ),
       ]);
     jest.spyOn(git, "clone").mockResolvedValue(true);
@@ -149,7 +149,7 @@ describe("getTemplate", () => {
     // ACT
     const out = await isomorphicGitTemplateSource.getTemplate(
       repo,
-      virtualFolder
+      virtualFolder,
     );
 
     // ASSERT
@@ -160,11 +160,13 @@ describe("getTemplate", () => {
       "0.0.0",
       [],
       {},
-      [{ name: "some-parameter" }]
+      [{ name: "some-parameter" }],
     );
     expect(out).toBeInstanceOf(LocalTemplate);
     expect(out).toStrictEqual(expected);
-    expect(git.clone).toBeCalledWith(expect.objectContaining({ url: repo }));
+    expect(git.clone).toHaveBeenCalledWith(
+      expect.objectContaining({ url: repo }),
+    );
   });
 
   test("Should clone to a temp folder", async () => {
@@ -182,7 +184,7 @@ describe("getTemplate", () => {
           "0.0.0",
           [],
           {},
-          [{ name: "some-parameter" }]
+          [{ name: "some-parameter" }],
         ),
       ]);
     jest.spyOn(git, "clone").mockResolvedValue(true);
@@ -200,9 +202,11 @@ describe("getTemplate", () => {
         "0.0.0",
         [],
         {},
-        [{ name: "some-parameter" }]
-      )
+        [{ name: "some-parameter" }],
+      ),
     );
-    expect(git.clone).toBeCalledWith(expect.objectContaining({ url: repo }));
+    expect(git.clone).toHaveBeenCalledWith(
+      expect.objectContaining({ url: repo }),
+    );
   });
 });

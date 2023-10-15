@@ -43,7 +43,7 @@ describe("Config Provider", () => {
 
     // ACT & ASSERT
     await expect(
-      new ScafflaterOptions().getFolderOptions(null, config)
+      new ScafflaterOptions().getFolderOptions(null, config),
     ).rejects.toThrow();
   });
 
@@ -79,7 +79,7 @@ describe("Config Provider", () => {
 
     // ACT
     const newConfig = await new ScafflaterOptions().getFolderOptions(
-      "some-folder-path"
+      "some-folder-path",
     );
 
     // ASSERT
@@ -98,7 +98,7 @@ describe("Config Provider", () => {
     // ACT
     const newConfig = await new ScafflaterOptions().getFolderOptions(
       "some-folder-path",
-      config
+      config,
     );
 
     // ASSERT
@@ -122,7 +122,7 @@ describe("Config Provider", () => {
     // ACT
     const newConfig = await new ScafflaterOptions().getFileOptions(
       "some/path",
-      { options: new ScafflaterOptions() }
+      { options: new ScafflaterOptions() },
     );
 
     // ASSERT
@@ -180,7 +180,7 @@ describe("Config Provider", () => {
     // ACT
     const newConfig = new ScafflaterOptions().getConfigFromString(
       "some-path",
-      config
+      config,
     );
 
     // ASSERT
@@ -194,19 +194,19 @@ describe("Config Provider", () => {
     // ACT
     const shouldIgnore1 = options.ignores(
       "/base/path",
-      "/base/path/some-path-to-ignore"
+      "/base/path/some-path-to-ignore",
     );
     const shouldIgnore2 = options.ignores(
       "/base/path",
-      "/base/path/some-path-to-ignore/some-file.txt"
+      "/base/path/some-path-to-ignore/some-file.txt",
     );
     const shouldNotIgnore1 = options.ignores(
       "/base/path",
-      "/base/path/some-path"
+      "/base/path/some-path",
     );
     const shouldNotIgnore2 = options.ignores(
       "/base/path",
-      "/base/path/some-path/some-file.txt"
+      "/base/path/some-path/some-file.txt",
     );
     const shouldNotIgnore3 = options.ignores("/base/path", "/base/path");
 
@@ -222,11 +222,11 @@ describe("Config Provider", () => {
     // ARRANGE & ACT
     const shouldIgnore = new ScafflaterOptions({ ignore: true }).ignores(
       "/base/path",
-      "/base/path/some-path-to-ignore"
+      "/base/path/some-path-to-ignore",
     );
     const shouldNotIgnore = new ScafflaterOptions({ ignore: false }).ignores(
       "/base/path",
-      "/base/path/some-path"
+      "/base/path/some-path",
     );
 
     // ASSERT

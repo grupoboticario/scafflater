@@ -62,7 +62,7 @@ describe("Template Manager tests", () => {
   test("getTemplateFromSource", async () => {
     // ARRANGE
     TemplateSource.resolveTemplateSourceFromSourceKey.mockResolvedValue(
-      templateSource
+      templateSource,
     );
     const templateManager = new TemplateManager(templateCache, templateSource);
     templateManager.options = new ScafflaterOptions();
@@ -72,8 +72,8 @@ describe("Template Manager tests", () => {
         "/cached/some/path/scafflater.jsonc",
         "template",
         "Template",
-        "0.0.1"
-      )
+        "0.0.1",
+      ),
     );
     templateSource.getTemplate.mockResolvedValue(
       new LocalTemplate(
@@ -81,8 +81,8 @@ describe("Template Manager tests", () => {
         "/some/path/scafflater.jsonc",
         "template",
         "Template",
-        "0.0.1"
-      )
+        "0.0.1",
+      ),
     );
 
     // ACT
@@ -97,8 +97,8 @@ describe("Template Manager tests", () => {
         "/cached/some/path/scafflater.jsonc",
         "template",
         "Template",
-        "0.0.1"
-      )
+        "0.0.1",
+      ),
     );
   });
 
@@ -122,8 +122,8 @@ describe("Template Manager tests", () => {
         "template",
         "A template",
         "0.0.1",
-        [new LocalPartial("the/partial/path", "partial-name", "A partial")]
-      )
+        [new LocalPartial("the/partial/path", "partial-name", "A partial")],
+      ),
     );
     const templateManager = new TemplateManager(templateCache, null, {});
 
@@ -142,7 +142,7 @@ describe("Template Manager tests", () => {
     // ACT
     const out = await templateManager.getPartial(
       "the-partial-name",
-      "template"
+      "template",
     );
 
     // ASSERT
@@ -158,15 +158,15 @@ describe("Template Manager tests", () => {
         "template",
         "A template",
         "0.0.1",
-        [new LocalPartial("the/partial/path", "partial-name", "A partial")]
-      )
+        [new LocalPartial("the/partial/path", "partial-name", "A partial")],
+      ),
     );
     const templateManager = new TemplateManager(templateCache, null, {});
 
     // ACT
     const out = await templateManager.getPartial(
       "some-other-partial-name",
-      "template"
+      "template",
     );
 
     // ASSERT
@@ -182,8 +182,8 @@ describe("Template Manager tests", () => {
         "template",
         "A template",
         "0.0.1",
-        [new LocalPartial("the/partial/path", "partial-name", "A partial")]
-      )
+        [new LocalPartial("the/partial/path", "partial-name", "A partial")],
+      ),
     );
     const templateManager = new TemplateManager(templateCache, null, {});
 

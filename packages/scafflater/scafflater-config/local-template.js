@@ -11,7 +11,6 @@ import PartialNotFoundError from "../errors/partial-not-found-error.js";
 export class LocalTemplateHooks {
   /**
    * Pre Run script
-   *
    * @description Script to be run before template init
    * @type {string}
    */
@@ -19,7 +18,6 @@ export class LocalTemplateHooks {
 
   /**
    * Pot Run script
-   *
    * @description Script to be run after template init
    * @type {string}
    */
@@ -32,7 +30,6 @@ export class LocalTemplateHooks {
 export class LocalTemplate {
   /**
    * Creates a template stored locally
-   *
    * @param {string} folderPath - Template path
    * @param {string} configPath - Template config file path
    * @param {string} name - Template name
@@ -52,7 +49,7 @@ export class LocalTemplate {
     partials = [],
     options = {},
     parameters = [],
-    hooks = {}
+    hooks = {},
   ) {
     this.name = name;
     this.description = description;
@@ -67,14 +64,12 @@ export class LocalTemplate {
 
   /**
    * Template config file path
-   *
    * @type {string}
    */
   configPath;
 
   /**
    * Template path
-   *
    * @description The template path
    * @type {string}
    */
@@ -82,7 +77,6 @@ export class LocalTemplate {
 
   /**
    * Template name
-   *
    * @description The template name must follow the pattern [a-z-]{3,}
    * @type {string}
    */
@@ -90,14 +84,12 @@ export class LocalTemplate {
 
   /**
    * Template description
-   *
    * @type {string}
    */
   description;
 
   /**
    * Template version
-   *
    * @description Should follow the semver patterns (https://semver.org/)
    * @type {string}
    */
@@ -105,21 +97,18 @@ export class LocalTemplate {
 
   /**
    * Partials of the template
-   *
    * @type {LocalPartial[]}
    */
   partials;
 
   /**
    * Scafflater Options to generate template
-   *
    * @type {ScafflaterOptions}
    */
   options;
 
   /**
    * Parameters to generate template.
-   *
    * @description Scafflater uses Inquirer to get the parameters through scafflater-cli. The objects in this list must be assigned to inquirer question object(https://github.com/SBoudrias/Inquirer.js#questions).
    * @type {ParameterConfig[]}
    */
@@ -127,7 +116,6 @@ export class LocalTemplate {
 
   /**
    * Template hooks
-   *
    * @description Template hooks scripts
    * @type {LocalTemplateHooks}
    */
@@ -135,7 +123,6 @@ export class LocalTemplate {
 
   /**
    * List all parameter config with the specified scope
-   *
    * @param {"global"|"template"|"partial"} scope The scope to look for
    * @param {?string|LocalPartial} partial The name or the local partial if scoped parameters of partial must be included
    * @returns {ParameterConfig[]} A list of the parameters with the requested scope
@@ -150,7 +137,7 @@ export class LocalTemplate {
           : partial.name;
 
       const partialIndex = this.partials.findIndex(
-        (p) => p.name === partialName
+        (p) => p.name === partialName,
       );
 
       if (partialIndex < 0) {
@@ -160,7 +147,7 @@ export class LocalTemplate {
       return [
         ...parameters,
         ...this.partials[partialIndex].parameters.filter(
-          (p) => p.scope === scope
+          (p) => p.scope === scope,
         ),
       ];
     }
@@ -169,7 +156,6 @@ export class LocalTemplate {
 
   /**
    * Loads local template from a localPath
-   *
    * @param {string} localPath Folder or .scafflater file path of partial
    * @returns {Promise<LocalTemplate[]>} A list of loaded templates from local path
    */
@@ -180,7 +166,7 @@ export class LocalTemplate {
     }
 
     const templateConfigs = configs.filter(
-      (c) => c.config.template && c.config.template.name
+      (c) => c.config.template && c.config.template.name,
     );
     if (templateConfigs.length <= 0) {
       return null;
@@ -198,21 +184,21 @@ export class LocalTemplate {
           [],
           templateConfig.config.template.options,
           templateConfig.config.template.parameters,
-          templateConfig.config.template.hooks
-        )
+          templateConfig.config.template.hooks,
+        ),
       );
     }
 
     const partialConfigs = configs.filter(
-      (c) => c.config.partial && c.config.partial.name
+      (c) => c.config.partial && c.config.partial.name,
     );
     for (const partialConfig of partialConfigs) {
       const template = result.find((t) =>
-        partialConfig.folderPath.startsWith(path.dirname(t.configPath))
+        partialConfig.folderPath.startsWith(path.dirname(t.configPath)),
       );
       if (!template) {
         throw new Error(
-          `${partialConfig.filePath}: partial does not belong to any template.`
+          `${partialConfig.filePath}: partial does not belong to any template.`,
         );
       }
 
@@ -223,8 +209,8 @@ export class LocalTemplate {
           partialConfig.config.partial.description,
           partialConfig.config.partial.options,
           partialConfig.config.partial.parameters,
-          partialConfig.config.partial.hooks
-        )
+          partialConfig.config.partial.hooks,
+        ),
       );
     }
 
@@ -239,7 +225,6 @@ export class LocalTemplate {
 export class LocalPartialHooks {
   /**
    * Pre Run script
-   *
    * @description Script to be run before partial run
    * @type {string}
    */
@@ -247,7 +232,6 @@ export class LocalPartialHooks {
 
   /**
    * Pot Run script
-   *
    * @description Script to be run after partial run
    * @type {string}
    */
@@ -260,7 +244,6 @@ export class LocalPartialHooks {
 export class LocalPartial {
   /**
    * Creates a Partial stored locally
-   *
    * @param {string} folderPath - Partial path
    * @param {string} name - Partial name
    * @param {string} description - Partial description
@@ -274,7 +257,7 @@ export class LocalPartial {
     description,
     options = {},
     parameters = [],
-    hooks = {}
+    hooks = {},
   ) {
     this.name = name;
     this.description = description;
@@ -286,7 +269,6 @@ export class LocalPartial {
 
   /**
    * Partial path
-   *
    * @description The partial path
    * @type {string}
    */
@@ -294,7 +276,6 @@ export class LocalPartial {
 
   /**
    * Partial name
-   *
    * @description The Partial name must follow the pattern [a-z-]{3,}
    * @type {string}
    */
@@ -302,21 +283,18 @@ export class LocalPartial {
 
   /**
    * Partial description
-   *
    * @type {string}
    */
   description;
 
   /**
    * Scafflater Options to generate partial
-   *
    * @type {ScafflaterOptions}
    */
   options;
 
   /**
    * Partial hooks
-   *
    * @description Partial hooks scripts
    * @type {LocalPartialHooks}
    */
@@ -324,7 +302,6 @@ export class LocalPartial {
 
   /**
    * Loads local partial from a localPath
-   *
    * @param {string} localPath Folder or .scafflater file path of partial
    * @returns {Promise<LocalPartial>} The partial in the localPath, if it exists.
    */
@@ -332,7 +309,7 @@ export class LocalPartial {
     const configLoadResult = await Config.fromLocalPath(localPath);
     if (!configLoadResult.fileContent.partial) {
       throw new Error(
-        `'${configLoadResult.filePath}': the scafflater file does not describe a partial.`
+        `'${configLoadResult.filePath}': the scafflater file does not describe a partial.`,
       );
     }
 
@@ -342,8 +319,8 @@ export class LocalPartial {
         configLoadResult.fileContent.partial.name,
         configLoadResult.fileContent.partial.description,
         configLoadResult.fileContent.partial.options ?? {},
-        configLoadResult.fileContent.partial.parameters ?? []
-      )
+        configLoadResult.fileContent.partial.parameters ?? [],
+      ),
     );
   }
 }

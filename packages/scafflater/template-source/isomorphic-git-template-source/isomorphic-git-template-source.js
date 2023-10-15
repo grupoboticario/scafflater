@@ -13,7 +13,6 @@ import {
 
 /**
  * Clones a repo to a local path.
- *
  * @param {string} repo - Repository (<owner>/<repository>)
  * @param {string} localPath - Local path where the repos will be cloned
  * @param {string} username The github user
@@ -40,7 +39,7 @@ async function clone(repo, localPath, username = null, password = null) {
     });
   } catch (error) {
     throw new Error(
-      `Clone failed: ${error} (Authorization Header: '${headers.Authorization}')`
+      `Clone failed: ${error} (Authorization Header: '${headers.Authorization}')`,
     );
   }
 }
@@ -48,7 +47,6 @@ async function clone(repo, localPath, username = null, password = null) {
 export default class IsomorphicGitTemplateSource extends LocalFolderTemplateSource {
   /**
    * Checks if the sourceKey is valid for this TemplateSource
-   *
    * @param {string} sourceKey - The source key to be validated.
    * @returns {boolean} Returns true if the key is valid
    */
@@ -58,7 +56,6 @@ export default class IsomorphicGitTemplateSource extends LocalFolderTemplateSour
 
   /**
    * Template Source constructor.
-   *
    * @param {?ScafflaterOptions} options - Scafflater options. If null, will get the default configuration.
    */
   constructor(options = {}) {
@@ -67,7 +64,6 @@ export default class IsomorphicGitTemplateSource extends LocalFolderTemplateSour
 
   /**
    * Gets the template and copies it in a local folder.
-   *
    * @param {string} sourceKey - The source key (<OWNER>/<REPOSITORY>) of template.
    * @param {string} version - The template version.
    * @param {?string} outputDir - Folder where template must be copied. If null, a temp folder will be used.
@@ -80,7 +76,7 @@ export default class IsomorphicGitTemplateSource extends LocalFolderTemplateSour
       sourceKey,
       pathToClone,
       this.options.githubUsername,
-      this.options.githubPassword
+      this.options.githubPassword,
     );
 
     try {
@@ -98,7 +94,6 @@ export default class IsomorphicGitTemplateSource extends LocalFolderTemplateSour
 
   /**
    * Gets an Source object for this source
-   *
    * @param {string} key The source key
    * @returns {Source} An Source object
    */

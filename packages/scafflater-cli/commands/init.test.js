@@ -73,8 +73,8 @@ describe("InitCommand", () => {
         new LocalTemplate(
           "/some/path",
           "/some/path/.scafflater/scafflater.jsonc",
-          "some-new-template"
-        )
+          "some-new-template",
+        ),
       );
   });
 
@@ -91,7 +91,7 @@ describe("InitCommand", () => {
 
     // ASSERT
     expect(scafflater.logger.info).toHaveBeenCalledWith(
-      "The template is already initialized!"
+      "The template is already initialized!",
     );
   });
 
@@ -106,11 +106,11 @@ describe("InitCommand", () => {
       "https://github.com/some/repo",
       {},
       "last",
-      "./"
+      "./",
     );
     expect(scafflater.logger.log).toHaveBeenCalledWith(
       "notice",
-      "Template initialized. Fell free to run partials. 🥳"
+      "Template initialized. Fell free to run partials. 🥳",
     );
   });
 

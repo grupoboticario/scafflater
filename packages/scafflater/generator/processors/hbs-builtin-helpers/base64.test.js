@@ -6,6 +6,6 @@ test("Handlebars call", () => {
   expect(
     Handlebars.compile('{{base64 "warning456" }}', {
       noEscape: true,
-    })({})
+    })({}),
   ).toBe("d2FybmluZzQ1Ng==");
 });

@@ -21,19 +21,17 @@ import { exec } from "child_process";
 export default class GitTemplateSource extends LocalFolderTemplateSource {
   /**
    * Checks if the sourceKey is valid for this TemplateSource
-   *
    * @param {string} sourceKey - The source key to be validated.
    * @returns {boolean} Returns true if the key is valid
    */
   static isValidSourceKey(sourceKey) {
     return /((https?:\/\/(www.)?github.com\/)|(git@github.com:))([^/]+)\/([^/]+)/.test(
-      sourceKey
+      sourceKey,
     );
   }
 
   /**
    * Template Source constructor.
-   *
    * @param {?ScafflaterOptions} options - Scafflater options. If null, will get the default configuration.
    */
   constructor(options = {}) {
@@ -42,7 +40,6 @@ export default class GitTemplateSource extends LocalFolderTemplateSource {
 
   /**
    * Checks if the GH client is installed and authenticated
-   *
    * @returns {Promise<boolean>} True if the authentication is ok.
    */
   static async checkGitClient() {
@@ -68,7 +65,6 @@ export default class GitTemplateSource extends LocalFolderTemplateSource {
 
   /**
    * Gets the template and copies it in a local folder.
-   *
    * @param {string} sourceKey - The source key of template. Will vary, depending on template source
    * @param {string} version - The template version.
    * @param {?string} outputDir - Folder where template must be copied. If null, a temp folder will be used.
@@ -89,7 +85,7 @@ export default class GitTemplateSource extends LocalFolderTemplateSource {
       `git clone${tagArgument} ${sourceKey} ${pathToClone} -c core.protectNTFS=false`,
       {
         timeout: 15000,
-      }
+      },
     );
 
     try {
@@ -97,12 +93,12 @@ export default class GitTemplateSource extends LocalFolderTemplateSource {
     } catch (error) {
       if (error instanceof ScafflaterFileNotFoundError) {
         throw new ScafflaterFileNotFoundError(
-          `${sourceKey}/.scafflater/scafflater.jsonc`
+          `${sourceKey}/.scafflater/scafflater.jsonc`,
         );
       }
       if (error instanceof TemplateDefinitionNotFound) {
         throw new TemplateDefinitionNotFound(
-          `${sourceKey}/.scafflater/scafflater.jsonc`
+          `${sourceKey}/.scafflater/scafflater.jsonc`,
         );
       }
       throw error;
@@ -111,7 +107,6 @@ export default class GitTemplateSource extends LocalFolderTemplateSource {
 
   /**
    * Resolves the template version to be fetched.
-   *
    * @param {string} sourceKey - The source key of template. Will vary, depending on template source
    * @param {string} version - The template version
    * @returns {Promise<string>} The string to be fetched
@@ -141,7 +136,6 @@ export default class GitTemplateSource extends LocalFolderTemplateSource {
 
   /**
    * Gets the last version.
-   *
    * @param {string} sourceKey - The source key of template. Will vary, depending on template source
    * @returns {Promise<string>} Returns the string with the last version
    * @throws {NoVersionAvailableError} Theres no version available for this sourceKey
@@ -150,7 +144,7 @@ export default class GitTemplateSource extends LocalFolderTemplateSource {
     const execPromise = util.promisify(exec);
 
     const { stdout } = await execPromise(
-      `git ls-remote --tags --sort="v:refname" ${sourceKey}`
+      `git ls-remote --tags --sort="v:refname" ${sourceKey}`,
     );
 
     const lines = stdout.split(EOL);
@@ -167,7 +161,6 @@ export default class GitTemplateSource extends LocalFolderTemplateSource {
 
   /**
    * Checks if version is available.
-   *
    * @param {string} sourceKey - The source key of template. Will vary, depending on template source
    * @param {string} version - The template version
    * @returns {Promise<boolean>} true if version is available
@@ -180,7 +173,7 @@ export default class GitTemplateSource extends LocalFolderTemplateSource {
 
     const execPromise = util.promisify(exec);
     const { stdout } = await execPromise(
-      `git ls-remote --tags --sort="v:refname" ${sourceKey}`
+      `git ls-remote --tags --sort="v:refname" ${sourceKey}`,
     );
 
     for (const line of stdout.split(EOL)) {
@@ -198,7 +191,6 @@ export default class GitTemplateSource extends LocalFolderTemplateSource {
 
   /**
    * Gets an Source object for this source
-   *
    * @param {string} key The source key
    * @returns {Source} An Source object
    */

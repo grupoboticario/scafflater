@@ -22,7 +22,7 @@ describe("Mock glob", () => {
 
     // ACT & ASSERT
     await expect(
-      listFilesDeeply("folderPath", "__...........__")
+      listFilesDeeply("folderPath", "__...........__"),
     ).rejects.toThrow();
   });
 

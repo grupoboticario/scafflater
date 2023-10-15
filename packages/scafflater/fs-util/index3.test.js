@@ -29,7 +29,7 @@ describe("Mock glob", () => {
       folderPath,
       `{
   "prop": "prop value"
-}`
+}`,
     );
   });
 
@@ -44,7 +44,7 @@ describe("Mock glob", () => {
     // ASSERT
     expect(fs.writeFile).toHaveBeenCalledWith(
       folderPath,
-      '{"prop":"prop value"}'
+      '{"prop":"prop value"}',
     );
   });
 });

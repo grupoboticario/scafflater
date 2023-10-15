@@ -6,7 +6,6 @@ import arrayMerge from "./utils/array-merger.js";
 export default class YamlAppender extends Appender {
   /**
    * Combine arrays
-   *
    * @param {object[]} target The target array
    * @param {object[]} source Source array
    * @param {object} options options
@@ -19,7 +18,7 @@ export default class YamlAppender extends Appender {
       if (typeof destination[index] === "undefined") {
         destination[index] = options.cloneUnlessOtherwiseSpecified(
           item,
-          options
+          options,
         );
       } else if (options.isMergeableObject(item)) {
         destination[index] = merge(target[index], item, options);
@@ -32,7 +31,6 @@ export default class YamlAppender extends Appender {
 
   /**
    * Process the input.
-   *
    * @param {object} context The context of generation
    * @param {string} srcStr The string to be appended
    * @param {string} destStr The string where srcStr must be appended

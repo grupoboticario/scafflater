@@ -54,7 +54,7 @@ export default class ListPartialCommand extends Command {
 
       const outputConfig = (
         await Config.fromLocalPath(
-          path.resolve(listFlags.output, ".scafflater")
+          path.resolve(listFlags.output, ".scafflater"),
         )
       )?.config;
 
@@ -62,8 +62,8 @@ export default class ListPartialCommand extends Command {
         logger.info(`No initialized template found!`);
         logger.info(
           `Run ${chalk.bgBlack.yellowBright(
-            "scafflater-cli init [TEMPLATE_ADDRESS]"
-          )} to initialize one template.`
+            "scafflater-cli init [TEMPLATE_ADDRESS]",
+          )} to initialize one template.`,
         );
         return;
       }
@@ -75,7 +75,7 @@ export default class ListPartialCommand extends Command {
         const localTemplate = await templateManager.getTemplate(
           template.name,
           template.version,
-          template.source
+          template.source,
         );
 
         ui.div({
@@ -101,8 +101,8 @@ export default class ListPartialCommand extends Command {
                 `  ${currentTemplate.name}  \t${
                   chalk.gray(currentTemplate.description) ?? ""
                 }\n`,
-              ""
-            )
+              "",
+            ),
           );
         }
       }

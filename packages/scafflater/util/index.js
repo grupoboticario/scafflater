@@ -3,7 +3,6 @@ import ignore from "ignore";
 
 /**
  * Checks on template or partial parameters which must be masked, and mask it
- *
  * @param {object} parameters The parameters received for generation
  * @param {object[]} templateParameters The parameters of template or partial
  * @returns {object} The an object with masked parameters
@@ -22,7 +21,6 @@ export function maskParameters(parameters, templateParameters) {
 
 /**
  * Builds a line comment based on config.lineCommentTemplate.
- *
  * @param {import("../options").ScafflaterOptions} options - The configuration
  * @param {string} comment - The comment content
  * @returns {string} The comment

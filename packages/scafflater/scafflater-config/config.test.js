@@ -94,7 +94,7 @@ describe("ConfigLoader", () => {
         },
       },
       null,
-      2
+      2,
     );
 
     // ACT
@@ -103,7 +103,7 @@ describe("ConfigLoader", () => {
     // ASSERT
     expect(fs.writeFile).toHaveBeenCalledWith(
       "/to/some/path/.scafflater",
-      expected
+      expected,
     );
   });
 
@@ -112,9 +112,9 @@ describe("ConfigLoader", () => {
     fs.pathExists.mockResolvedValueOnce(false);
 
     // ACT & ASSERT
-    await expect(
-      Config.fromLocalPath("/some/invalid/path")
-    ).rejects.toThrowError("'/some/invalid/path': the path does not exist.");
+    await expect(Config.fromLocalPath("/some/invalid/path")).rejects.toThrow(
+      "'/some/invalid/path': the path does not exist.",
+    );
   });
 
   test("fromLocalPath: the path is folder and the .scafflater file does not exist, should return null", async () => {
@@ -168,9 +168,9 @@ describe("ConfigLoader", () => {
 
     // ACT & ASSERT
     await expect(
-      Config.fromLocalPath("/some/valid/path/.scafflater")
-    ).rejects.toThrowError(
-      "'/some/valid/path/.scafflater': failed to load. Could not load as Json."
+      Config.fromLocalPath("/some/valid/path/.scafflater"),
+    ).rejects.toThrow(
+      "'/some/valid/path/.scafflater': failed to load. Could not load as Json.",
     );
   });
 
@@ -207,7 +207,7 @@ describe("ConfigLoader", () => {
               ]
             }
           ]
-        }`
+        }`,
     );
 
     // ACT
@@ -226,9 +226,9 @@ describe("ConfigLoader", () => {
     fs.pathExists.mockResolvedValue(false);
 
     // ACT & ASSERT
-    await expect(
-      Config.scanLocalPath("/some/invalid/path")
-    ).rejects.toThrowError("'/some/invalid/path': the path does not exist.");
+    await expect(Config.scanLocalPath("/some/invalid/path")).rejects.toThrow(
+      "'/some/invalid/path': the path does not exist.",
+    );
   });
 
   test("scanLocalPath > fromLocalPath: the path is file, should look for files in the parent folder", async () => {
@@ -313,12 +313,12 @@ describe("ConfigLoader", () => {
     expect(configs[0].folderPath).toBe("/some/path");
     expect(configs[0].filePath).toBe("/some/path/.scafflater");
     expect(configs[0].config).toStrictEqual(
-      new Config(new TemplateConfig("template-name", "0.0.1"))
+      new Config(new TemplateConfig("template-name", "0.0.1")),
     );
     expect(configs[1].folderPath).toBe("/some/path/inside/path");
     expect(configs[1].filePath).toBe("/some/path/inside/path/.scafflater");
     expect(configs[1].config).toStrictEqual(
-      new Config(null, new PartialConfig("partial-name"))
+      new Config(null, new PartialConfig("partial-name")),
     );
   });
 
@@ -329,7 +329,7 @@ describe("ConfigLoader", () => {
       null,
       null,
       null,
-      [new PersistedParameter("global1", "the global parameter")]
+      [new PersistedParameter("global1", "the global parameter")],
     );
     const parameters = {
       param1: 123,
@@ -357,11 +357,11 @@ describe("ConfigLoader", () => {
           new Source("some-source", "key"),
           [],
           [],
-          [new PersistedParameter("template1", "the template parameter")]
+          [new PersistedParameter("template1", "the template parameter")],
         ),
       ],
       null,
-      [new PersistedParameter("global1", "the global parameter")]
+      [new PersistedParameter("global1", "the global parameter")],
     );
     const parameters = {
       param1: 123,
@@ -394,7 +394,7 @@ describe("ConfigLoader", () => {
       [
         new ParameterConfig("template-param", "template"),
         new ParameterConfig("global-param", "global"),
-      ]
+      ],
     );
     const parameters = {
       "template-param": "the-template-value",

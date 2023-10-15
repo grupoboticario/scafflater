@@ -31,7 +31,7 @@ test("Append Json", async () => {
   const result = await jsonAppender.append(
     { options: new ScafflaterOptions() },
     srcJson,
-    destJson
+    destJson,
   );
 
   // ASSERT
@@ -47,7 +47,7 @@ test("Append Json", async () => {
       "array item",
       "new array item"
     ]
-  }`)
+  }`),
   );
 });
 
@@ -74,7 +74,7 @@ test("Empty Source Json", async () => {
     { options: new ScafflaterOptions() },
     srcJson,
     `// @scf-option { "some": "config" }
-// some comment`
+// some comment`,
   );
 
   // ASSERT
@@ -87,7 +87,7 @@ test("Empty Source Json", async () => {
       "arrayProperty": [
         "new array item"
       ]
-    }`)
+    }`),
   );
 });
 
@@ -102,7 +102,7 @@ test("Empty Destiny Json", async () => {
   const result = await jsonAppender.append(
     { options: new ScafflaterOptions() },
     srcJson,
-    destJson
+    destJson,
   );
 
   // ASSERT
@@ -115,7 +115,7 @@ test("Empty Destiny Json", async () => {
     "arrayProperty": [
       "array item"
     ]
-  }`)
+  }`),
   );
 });
 
@@ -136,7 +136,7 @@ test("Strip comments", async () => {
   const result = await jsonAppender.append(
     { options: new ScafflaterOptions() },
     srcJson,
-    destJson
+    destJson,
   );
 
   // ASSERT
@@ -150,6 +150,6 @@ test("Strip comments", async () => {
     "arrayProperty": [
       "array item"
     ]
-  }`)
+  }`),
   );
 });

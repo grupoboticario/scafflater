@@ -32,7 +32,7 @@ describe("Dir template Cache", () => {
       "/some/path/template/scafflater.jsonc",
       "template",
       "Template",
-      "0.0.1"
+      "0.0.1",
     );
     jest.spyOn(LocalTemplate, "loadFromPath").mockResolvedValue([t]);
     fsUtil.pathExists.mockResolvedValue(true);
@@ -40,7 +40,7 @@ describe("Dir template Cache", () => {
     const templateOk = await dirCache.getTemplate("template", "0.0.1");
     const templateNotFound = await dirCache.getTemplate(
       "template-does-not-exists",
-      "0.0.2"
+      "0.0.2",
     );
 
     // ASSERT
@@ -50,8 +50,8 @@ describe("Dir template Cache", () => {
         "/some/path/template/scafflater.jsonc",
         "template",
         "Template",
-        "0.0.1"
-      )
+        "0.0.1",
+      ),
     );
     expect(templateNotFound).toBeNull();
   });
@@ -67,21 +67,21 @@ describe("Dir template Cache", () => {
           "/some/path/template/scafflater.jsonc",
           "template",
           "Template",
-          "0.0.1"
+          "0.0.1",
         ),
         new LocalTemplate(
           "/some/path/template",
           "/some/path/template/scafflater.jsonc",
           "template",
           "Template",
-          "0.0.2"
+          "0.0.2",
         ),
         new LocalTemplate(
           "/some/path/other-template",
           "/some/path/template/scafflater.jsonc",
           "other-template",
           "Template",
-          "0.0.3"
+          "0.0.3",
         ),
       ]);
     fsUtil.pathExists.mockResolvedValue(true);
@@ -89,7 +89,7 @@ describe("Dir template Cache", () => {
     // ACT
     const templateOk = await dirCache.getTemplate("template");
     const templateNotFound = await dirCache.getTemplate(
-      "template-does-not-exists"
+      "template-does-not-exists",
     );
 
     // ASSERT
@@ -99,8 +99,8 @@ describe("Dir template Cache", () => {
         "/some/path/template/scafflater.jsonc",
         "template",
         "Template",
-        "0.0.2"
-      )
+        "0.0.2",
+      ),
     );
     expect(templateNotFound).toBeNull();
   });
@@ -121,7 +121,7 @@ describe("Dir template Cache", () => {
           "path/to/some/template/some-name/some-version/scafflater.jsonc",
           "some-name",
           "Template",
-          "some-version"
+          "some-version",
         ),
       ]);
 
@@ -131,7 +131,7 @@ describe("Dir template Cache", () => {
     // ASSERT
     expect(fsUtil.copy.mock.calls[0][0]).toBe(p);
     expect(fsUtil.copy.mock.calls[0][1]).toBe(
-      "path/to/some/cached-template/some-name/some-version"
+      "path/to/some/cached-template/some-name/some-version",
     );
   });
 
@@ -146,21 +146,21 @@ describe("Dir template Cache", () => {
           "/some/path/template/scafflater.jsonc",
           "template",
           "Template",
-          "0.0.1"
+          "0.0.1",
         ),
         new LocalTemplate(
           "/some/path/template",
           "/some/path/template/scafflater.jsonc",
           "template",
           "Template",
-          "0.0.2"
+          "0.0.2",
         ),
         new LocalTemplate(
           "/some/path/other-template",
           "/some/path/template/scafflater.jsonc",
           "other-template",
           "Template",
-          "0.0.3"
+          "0.0.3",
         ),
       ]);
 

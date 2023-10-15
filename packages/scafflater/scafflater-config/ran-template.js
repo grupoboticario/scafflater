@@ -9,7 +9,6 @@ import PersistedParameter from "./persisted-parameter.js";
 export default class RanTemplate {
   /**
    * Creates a template
-   *
    * @param {string} name - Template name
    * @param {string} version - Template version
    * @param {Source} source - Generated Template Source
@@ -23,7 +22,7 @@ export default class RanTemplate {
     source,
     parameters = {},
     partials = [],
-    templateParameters = []
+    templateParameters = [],
   ) {
     this.name = name;
     this.version = version;
@@ -35,7 +34,6 @@ export default class RanTemplate {
 
   /**
    * Template name
-   *
    * @description The template name must follow the pattern [a-z-]{3,}
    * @type {string}
    */
@@ -43,7 +41,6 @@ export default class RanTemplate {
 
   /**
    * Template version
-   *
    * @description Should follow the semver patterns (https://semver.org/)
    * @type {string}
    */
@@ -51,28 +48,24 @@ export default class RanTemplate {
 
   /**
    * Generated template source
-   *
    * @type {Source}
    */
   source;
 
   /**
    * Generated partials for this template.
-   *
    * @type {RanPartial[]}
    */
   partials;
 
   /**
    * Parameters used to generate template.
-   *
    * @type {object}
    */
   parameters;
 
   /**
    * Saved template parameters to be used on future executions.
-   *
    * @type {object}
    */
   templateParameters;
