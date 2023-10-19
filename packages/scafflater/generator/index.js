@@ -370,7 +370,13 @@ export default class Generator {
     const targetGlobPattern = /glob<(?<pattern>.*)>/gi;
     const e = targetGlobPattern.exec(targetName);
     if (e?.groups.pattern) {
-      return glob(e.groups.pattern, { cwd: context.targetPath });
+      const pattern = await Processors.Processor.runProcessorsPipeline(
+        [this.handlebarsProcessor],
+        context,
+        e?.groups.pattern,
+      );
+
+      return glob(pattern, { cwd: context.targetPath });
     }
 
     return [

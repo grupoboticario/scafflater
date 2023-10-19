@@ -707,4 +707,26 @@ describe("Resolve Target Name", () => {
     // ASSERT
     expect(glob).toHaveBeenCalledWith("/some/glob/pattern", expect.anything());
   });
+
+  test("Receive a glob pattern with handlebars. Should render and use it to resolve", async () => {
+    // ARRANGE
+    glob.mockResolvedValue([]);
+    const generator = new Generator({
+      targetPath: ".",
+      templatePath: ".",
+      options: new ScafflaterOptions(),
+    });
+
+    // ACT
+    await generator.resolveTargetNames(
+      "glob</some/{{parameters.name}}/pattern>",
+      { parameters: { name: "my-name" } },
+    );
+
+    // ASSERT
+    expect(glob).toHaveBeenCalledWith(
+      "/some/my-name/pattern",
+      expect.anything(),
+    );
+  });
 });
