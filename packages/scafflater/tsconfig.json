@@ -1,21 +1,25 @@
 {
   // Change this to match your project
   "include": ["*.js", "./**/*.js"],
-  "exclude": ["*.test.js", "./**/*.test.js"],
+  "exclude": ["*.test.js", "**/*.test.js", "dist"],
   "compilerOptions": {
-    // Tells TypeScript to read JS files, as
-    // normally they are ignored as source files
     "allowJs": true,
-    // Generate d.ts files
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
     "declaration": true,
-    // This compiler run should
-    // only output d.ts files
-    "emitDeclarationOnly": true,
-    // Types should go into this directory.
-    // Removing this would place the .d.ts files
-    // next to the .js files
-    "outDir": "types",
-    "target": "es2021",
-    "moduleResolution": "Node"
+    "esModuleInterop": true,
+    "inlineSourceMap": false,
+    "lib": ["esnext"],
+    "listEmittedFiles": false,
+    "listFiles": false,
+    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
+    "pretty": true,
+    "resolveJsonModule": true,
+    "rootDir": ".",
+    "skipLibCheck": true,
+    "strict": true,
+    "traceResolution": false,
+    "types": ["node", "jest"]
   }
 }

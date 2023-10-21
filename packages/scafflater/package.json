@@ -2,12 +2,18 @@
   "name": "@scafflater/scafflater",
   "description": "Scafflater - Scaffold using templates",
   "version": "0.0.79",
-  "exports": "./index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/mjs/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
   "type": "module",
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --collectCoverage",
     "types": "tsc --declaration --allowJs --emitDeclarationOnly --outDir types",
-    "prepack": "npm shrinkwrap && cp ../../README.md ."
+    "prepack": "npm shrinkwrap && cp ../../README.md .",
+    "build": "rm -fr dist/* && tsc -p tsconfig-esm.json && tsc -p tsconfig-cjs.json && ./fixup"
   },
   "repository": {
     "type": "git",
@@ -28,11 +34,14 @@
   "engines": {
     "node": ">=18"
   },
+  "files": [
+    "/dist"
+  ],
   "dependencies": {
     "@ltd/j-toml": "1.38.0",
     "@octokit/rest": "20.0.2",
     "@prettier/plugin-xml": "3.2.1",
-    "chalk": "5.3.0",
+    "chalk": "4.1.2",
     "change-case": "4.1.2",
     "deepmerge": "4.3.1",
     "directory-tree": "3.5.1",
@@ -42,14 +51,15 @@
     "handlebars": "4.7.8",
     "ignore": "5.2.4",
     "isbinaryfile": "5.0.0",
-    "isomorphic-git": "1.24.5",
+    "isomorphic-git": "1.23.0",
     "js-yaml": "4.1.0",
     "lodash.mergewith": "4.6.2",
     "lower-case": "3.0.0",
     "prettier": "3.0.3",
     "semver": "7.5.4",
-    "strip-json-comments": "5.0.1",
-    "title-case": "4.0.1",
+    "strip-json-comments": "3.1.1",
+    "title-case": "3.0.3",
+    "tsup": "7.2.0",
     "typescript": "5.2.2",
     "unzipper": "0.10.14",
     "version-sort": "0.1.1",

@@ -1,6 +1,6 @@
 import fsUtil from "../../fs-util/index.js";
 import git from "isomorphic-git";
-import http from "isomorphic-git/http/node/index.js";
+import http from "isomorphic-git/http/node/index.cjs";
 import fs from "fs-extra";
 import LocalFolderTemplateSource from "../local-folder-template-source/local-folder-template-source.js";
 import ScafflaterOptions from "../../options/index.js";
