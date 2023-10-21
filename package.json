@@ -40,7 +40,8 @@
     "transform": {},
     "timeout": 30000,
     "modulePaths": [
-      "<rootDir>/packages/"
+      "<rootDir>/packages/scafflater",
+      "<rootDir>/packages/scafflater-cli"
     ]
   }
 }
