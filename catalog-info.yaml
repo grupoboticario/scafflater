@@ -1,0 +1,22 @@
+#
+# ATENÇÃO: Não apague esse arquivo
+# Ele é usado pelo time do gb.tech para termos o catalogo dinâmico de aplicações
+#
+
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: 'scafflater'
+  description: 'Templater and Scafflater tool used by Alquimia'
+  tags:
+    - 'templater'
+    - 'scaffold'
+  annotations:
+    github.com/project-slug: 'grupoboticario/scafflater'
+    github.com/team-slug: 'grupoboticario/alquimia'
+spec:
+  type: service
+  lifecycle: 'production'
+  owner: 'alquimia'
+  system: 'alquimia'
+  domain: 'platform-engineering'

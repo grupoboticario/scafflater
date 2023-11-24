@@ -1,0 +1,439 @@
+{
+  "templates": [
+    {
+      "name": "alquimia-template-backstage",
+      "version": "1.0.0",
+      "source": {
+        "name": "github",
+        "key": "https://github.com/grupoboticario/alquimia-template-backstage",
+        "options": {
+          "baseUrl": "https://github.com",
+          "baseUrlApi": "https://api.github.com"
+        }
+      },
+      "parameters": {
+        "bucketSuffix": "47jly",
+        "sonarOrganization": "gboticario",
+        "cloudProviderTemplateName": "alquimia-template-crossplane-aws",
+        "name": "scafflater",
+        "url": "https://github.com/grupoboticario/scafflater",
+        "nameWithOwner": "grupoboticario/scafflater",
+        "owner": {
+          "login": "grupoboticario"
+        },
+        "defaultBranchRef": {
+          "name": "main"
+        },
+        "tags": [
+          "templater",
+          "scaffold"
+        ],
+        "domain": "platform-engineering",
+        "system": "alquimia",
+        "team": "alquimia",
+        "component": "scafflater",
+        "componentDescription": "Templater and Scafflater tool used by Alquimia",
+        "lifecycle": "production",
+        "sonarProjects": [
+          "plat-eng-alquimia-scafflater"
+        ],
+        "github": {
+          "repoName": "scafflater",
+          "orgName": "grupoboticario"
+        },
+        "domainInfo": {
+          "name": "platform-engineering",
+          "acronym": "plat-eng",
+          "description": "Engenharia de Plataforma",
+          "serverlessBackendHostedZoneId": "Z1NEFL80AFKMHP",
+          "github": {
+            "team": "arquitetura-de-solucoes",
+            "devops-team": "devops-alquimia",
+            "runner-group": "vs-platform-engineering"
+          },
+          "argocd": {
+            "url": "https://argocd.core.grupoboticario.digital"
+          },
+          "crossplane": {
+            "dev": {
+              "awsProviderVersion": "v0.42.0"
+            },
+            "hml": {
+              "awsProviderVersion": "v0.42.0"
+            },
+            "prd": {
+              "awsProviderVersion": "v0.42.0"
+            }
+          },
+          "helm-charts": {
+            "gb-app": {
+              "dev": {
+                "revision": "gb-app-0.4.1"
+              },
+              "hml": {
+                "revision": "gb-app-0.4.1"
+              },
+              "prd": {
+                "revision": "gb-app-0.4.1"
+              }
+            },
+            "gb-infra": {
+              "dev": {
+                "revision": "gb-infra-0.1.131"
+              },
+              "hml": {
+                "revision": "gb-infra-0.1.131"
+              },
+              "prd": {
+                "revision": "gb-infra-0.1.131"
+              }
+            }
+          },
+          "aws": {
+            "dev": {
+              "account-id": "310258239805",
+              "default-region": "us-east-1",
+              "waf": {
+                "webAclFrontendDefaultArn": "arn:aws:wafv2:us-east-1:310258239805:global/webacl/acl-frontend/5eafc0a8-20e7-4ff0-9468-ea6abac4ff11",
+                "webAclBackendDefaultArn": "arn:aws:wafv2:us-east-1:310258239805:regional/webacl/webacl-backend/6035dec4-c13a-4fae-8596-787470aca80b"
+              },
+              "eks": {
+                "clusters": {
+                  "default": {
+                    "name": "eks-core-dev",
+                    "oidc": "EB0BDFBB63815CEDD5C230D0DA99A0A2"
+                  }
+                }
+              },
+              "cloudfront": {
+                "oai": "E65NB1OV4M092"
+              },
+              "security-groups": {
+                "rds-instance-mysql": "sg-014ee4b81436701d6",
+                "rds-instance-postgres": "sg-014ee4b81436701d6",
+                "lambda-internal": "sg-0e4c79f221f9807b1"
+              },
+              "subnets": {
+                "private": {
+                  "subnet-1": "subnet-06a20cbfd262eda12",
+                  "subnet-2": "subnet-07d1dfae13d49a925"
+                }
+              }
+            },
+            "hml": {
+              "account-id": "369529575778",
+              "default-region": "us-east-1",
+              "waf": {
+                "webAclFrontendDefaultArn": "arn:aws:wafv2:us-east-1:369529575778:global/webacl/acl-frontend/97045b93-04f2-4eab-9efe-c559c573f3b2",
+                "webAclBackendDefaultArn": "arn:aws:wafv2:us-east-1:369529575778:regional/webacl/webacl-backend/af11db3b-a62c-4c66-9b07-d41724113997"
+              },
+              "eks": {
+                "clusters": {
+                  "default": {
+                    "name": "eks-core-hml",
+                    "oidc": "7975B29DC234532D5BC4A361B0931FDC"
+                  }
+                }
+              },
+              "cloudfront": {
+                "oai": "E1HLOICC0R5OKY"
+              },
+              "security-groups": {
+                "rds-instance-mysql": "sg-0552502ef6d3ba621",
+                "rds-instance-postgres": "sg-0552502ef6d3ba621",
+                "lambda-internal": "sg-021c9f2b1b7e09f21"
+              },
+              "subnets": {
+                "private": {
+                  "subnet-1": "subnet-0cc90b933a42faf3e",
+                  "subnet-2": "subnet-0ce94860422e05185"
+                }
+              }
+            },
+            "prd": {
+              "account-id": "955796109453",
+              "kms-cmk-arn": "arn:aws:kms:us-east-1:154548531805:key/mrk-405cfa67c4f443c68df8d76bec4f6d33",
+              "default-region": "us-east-1",
+              "waf": {
+                "webAclFrontendDefaultArn": "arn:aws:wafv2:us-east-1:955796109453:global/webacl/acl-frontend/dc04969d-786e-4dba-8cd0-35ba6275513d",
+                "webAclBackendDefaultArn": "arn:aws:wafv2:us-east-1:955796109453:regional/webacl/webacl-backend/cd089385-90de-4db2-9029-0da2bea592e5"
+              },
+              "eks": {
+                "clusters": {
+                  "default": {
+                    "name": "eks-core-prd",
+                    "oidc": "476C759E27C67AFEFF438EC78CCF69D7"
+                  }
+                }
+              },
+              "cloudfront": {
+                "oai": "E1FQK0RID5OQBT"
+              },
+              "security-groups": {
+                "rds-instance-mysql": "sg-0c44ff0e883cbf1a5",
+                "rds-instance-postgres": "sg-0c44ff0e883cbf1a5",
+                "lambda-internal": "sg-0d734b333a81b06ec"
+              },
+              "subnets": {
+                "private": {
+                  "subnet-1": "subnet-08af59bc5d4d67815",
+                  "subnet-2": "subnet-03fd0da3117f3780f",
+                  "subnet-3": "subnet-0b300a5b77f830a13"
+                }
+              }
+            },
+            "shr": {
+              "account-id": "414700354900",
+              "default-region": "us-east-1"
+            }
+          },
+          "newrelic": {
+            "trusted-account-key": "3080127",
+            "dev": {
+              "account-id": "3398439"
+            },
+            "hml": {
+              "account-id": "3396072"
+            },
+            "prd": {
+              "account-id": "3396073"
+            },
+            "shr": {
+              "account-id": "3160132"
+            }
+          }
+        },
+        "resources": {
+          "cpu": "80m",
+          "memory": "80Mi"
+        }
+      },
+      "partials": [
+        {
+          "name": "catalog:configure",
+          "parameters": {
+            "component": "scafflater",
+            "componentDescription": "Templater and Scafflater tool used by Alquimia",
+            "domain": "platform-engineering",
+            "system": "alquimia",
+            "team": "alquimia",
+            "bucketSuffix": "47jly",
+            "sonarOrganization": "gboticario",
+            "cloudProviderTemplateName": "alquimia-template-crossplane-aws",
+            "name": "scafflater",
+            "url": "https://github.com/grupoboticario/scafflater",
+            "nameWithOwner": "grupoboticario/scafflater",
+            "owner": {
+              "login": "grupoboticario"
+            },
+            "defaultBranchRef": {
+              "name": "main"
+            },
+            "tags": [
+              "templater",
+              "scaffold"
+            ],
+            "lifecycle": "production",
+            "sonarProjects": [
+              "plat-eng-alquimia-scafflater"
+            ],
+            "github": {
+              "repoName": "scafflater",
+              "orgName": "grupoboticario"
+            },
+            "domainInfo": {
+              "name": "platform-engineering",
+              "acronym": "plat-eng",
+              "description": "Engenharia de Plataforma",
+              "backstage": {},
+              "serverlessBackendHostedZoneId": "Z1NEFL80AFKMHP",
+              "github": {
+                "team": "arquitetura-de-solucoes",
+                "devops-team": "devops-alquimia",
+                "runner-group": "vs-platform-engineering"
+              },
+              "argocd": {
+                "url": "https://argocd.core.grupoboticario.digital"
+              },
+              "crossplane": {
+                "dev": {
+                  "awsProviderVersion": "v0.42.0"
+                },
+                "hml": {
+                  "awsProviderVersion": "v0.42.0"
+                },
+                "prd": {
+                  "awsProviderVersion": "v0.42.0"
+                }
+              },
+              "helm-charts": {
+                "gb-app": {
+                  "dev": {
+                    "revision": "gb-app-0.4.1"
+                  },
+                  "hml": {
+                    "revision": "gb-app-0.4.1"
+                  },
+                  "prd": {
+                    "revision": "gb-app-0.4.1"
+                  }
+                },
+                "gb-infra": {
+                  "dev": {
+                    "revision": "gb-infra-0.1.131"
+                  },
+                  "hml": {
+                    "revision": "gb-infra-0.1.131"
+                  },
+                  "prd": {
+                    "revision": "gb-infra-0.1.131"
+                  }
+                }
+              },
+              "aws": {
+                "dev": {
+                  "account-id": "310258239805",
+                  "default-region": "us-east-1",
+                  "waf": {
+                    "webAclFrontendDefaultArn": "arn:aws:wafv2:us-east-1:310258239805:global/webacl/acl-frontend/5eafc0a8-20e7-4ff0-9468-ea6abac4ff11",
+                    "webAclBackendDefaultArn": "arn:aws:wafv2:us-east-1:310258239805:regional/webacl/webacl-backend/6035dec4-c13a-4fae-8596-787470aca80b"
+                  },
+                  "eks": {
+                    "clusters": {
+                      "default": {
+                        "name": "eks-core-dev",
+                        "oidc": "EB0BDFBB63815CEDD5C230D0DA99A0A2"
+                      }
+                    }
+                  },
+                  "cloudfront": {
+                    "oai": "E65NB1OV4M092"
+                  },
+                  "security-groups": {
+                    "rds-instance-mysql": "sg-014ee4b81436701d6",
+                    "rds-instance-postgres": "sg-014ee4b81436701d6",
+                    "lambda-internal": "sg-0e4c79f221f9807b1"
+                  },
+                  "subnets": {
+                    "private": {
+                      "subnet-1": "subnet-06a20cbfd262eda12",
+                      "subnet-2": "subnet-07d1dfae13d49a925"
+                    }
+                  }
+                },
+                "hml": {
+                  "account-id": "369529575778",
+                  "default-region": "us-east-1",
+                  "waf": {
+                    "webAclFrontendDefaultArn": "arn:aws:wafv2:us-east-1:369529575778:global/webacl/acl-frontend/97045b93-04f2-4eab-9efe-c559c573f3b2",
+                    "webAclBackendDefaultArn": "arn:aws:wafv2:us-east-1:369529575778:regional/webacl/webacl-backend/af11db3b-a62c-4c66-9b07-d41724113997"
+                  },
+                  "eks": {
+                    "clusters": {
+                      "default": {
+                        "name": "eks-core-hml",
+                        "oidc": "7975B29DC234532D5BC4A361B0931FDC"
+                      }
+                    }
+                  },
+                  "cloudfront": {
+                    "oai": "E1HLOICC0R5OKY"
+                  },
+                  "security-groups": {
+                    "rds-instance-mysql": "sg-0552502ef6d3ba621",
+                    "rds-instance-postgres": "sg-0552502ef6d3ba621",
+                    "lambda-internal": "sg-021c9f2b1b7e09f21"
+                  },
+                  "subnets": {
+                    "private": {
+                      "subnet-1": "subnet-0cc90b933a42faf3e",
+                      "subnet-2": "subnet-0ce94860422e05185"
+                    }
+                  }
+                },
+                "prd": {
+                  "account-id": "955796109453",
+                  "kms-cmk-arn": "arn:aws:kms:us-east-1:154548531805:key/mrk-405cfa67c4f443c68df8d76bec4f6d33",
+                  "default-region": "us-east-1",
+                  "waf": {
+                    "webAclFrontendDefaultArn": "arn:aws:wafv2:us-east-1:955796109453:global/webacl/acl-frontend/dc04969d-786e-4dba-8cd0-35ba6275513d",
+                    "webAclBackendDefaultArn": "arn:aws:wafv2:us-east-1:955796109453:regional/webacl/webacl-backend/cd089385-90de-4db2-9029-0da2bea592e5"
+                  },
+                  "eks": {
+                    "clusters": {
+                      "default": {
+                        "name": "eks-core-prd",
+                        "oidc": "476C759E27C67AFEFF438EC78CCF69D7"
+                      }
+                    }
+                  },
+                  "cloudfront": {
+                    "oai": "E1FQK0RID5OQBT"
+                  },
+                  "security-groups": {
+                    "rds-instance-mysql": "sg-0c44ff0e883cbf1a5",
+                    "rds-instance-postgres": "sg-0c44ff0e883cbf1a5",
+                    "lambda-internal": "sg-0d734b333a81b06ec"
+                  },
+                  "subnets": {
+                    "private": {
+                      "subnet-1": "subnet-08af59bc5d4d67815",
+                      "subnet-2": "subnet-03fd0da3117f3780f",
+                      "subnet-3": "subnet-0b300a5b77f830a13"
+                    }
+                  }
+                },
+                "shr": {
+                  "account-id": "414700354900",
+                  "default-region": "us-east-1"
+                }
+              },
+              "newrelic": {
+                "trusted-account-key": "3080127",
+                "dev": {
+                  "account-id": "3398439"
+                },
+                "hml": {
+                  "account-id": "3396072"
+                },
+                "prd": {
+                  "account-id": "3396073"
+                },
+                "shr": {
+                  "account-id": "3160132"
+                }
+              }
+            },
+            "resources": {
+              "cpu": "80m",
+              "memory": "80Mi"
+            },
+            "probe": {}
+          }
+        }
+      ]
+    }
+  ],
+  "globalParameters": [
+    {
+      "name": "component",
+      "value": "scafflater"
+    },
+    {
+      "name": "componentDescription",
+      "value": "Templater and Scafflater tool used by Alquimia"
+    },
+    {
+      "name": "domain",
+      "value": "platform-engineering"
+    },
+    {
+      "name": "system",
+      "value": "alquimia"
+    },
+    {
+      "name": "team",
+      "value": "alquimia"
+    }
+  ]
+}
