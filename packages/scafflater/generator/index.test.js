@@ -729,4 +729,51 @@ describe("Resolve Target Name", () => {
       expect.anything(),
     );
   });
+
+  test("Receive a each. Should use it to resolve", async () => {
+    // ARRANGE
+    glob.mockResolvedValue([]);
+    const generator = new Generator({
+      targetPath: ".",
+      templatePath: ".",
+      options: new ScafflaterOptions(),
+    });
+
+    // ACT
+    const targetPaths = await generator.resolveTargetNames(
+      "each<folder/file1,folder/file2>",
+      {},
+    );
+
+    // ASSERT
+    expect(targetPaths.length).toBe(2);
+    expect(targetPaths[0]).toBe("folder/file1");
+    expect(targetPaths[1]).toBe("folder/file2");
+  });
+
+  test("Receive a each with handlebars. Should render and use it to resolve", async () => {
+    // ARRANGE
+    glob.mockResolvedValue([]);
+    const generator = new Generator({
+      targetPath: ".",
+      templatePath: ".",
+      options: new ScafflaterOptions(),
+    });
+
+    // ACT
+    const targetPaths = await generator.resolveTargetNames(
+      "each<{{#each parameters.files}}{{this}},{{/each}}>",
+      {
+        parameters: {
+          name: "my-name",
+          files: ["folder/file1", "folder/file2"],
+        },
+      },
+    );
+
+    // ASSERT
+    expect(targetPaths.length).toBe(2);
+    expect(targetPaths[0]).toBe("folder/file1");
+    expect(targetPaths[1]).toBe("folder/file2");
+  });
 });

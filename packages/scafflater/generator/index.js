@@ -379,6 +379,18 @@ export default class Generator {
       return glob(pattern, { cwd: context.targetPath });
     }
 
+    const eachPattern = /each<(?<array>.*)>/gi;
+    const eachRegexResult = eachPattern.exec(targetName);
+    if (eachRegexResult?.groups.array) {
+      const strArray = await Processors.Processor.runProcessorsPipeline(
+        [this.handlebarsProcessor],
+        context,
+        eachRegexResult?.groups.array,
+      );
+
+      return strArray.split(",").filter((s) => s.trim() !== "");
+    }
+
     return [
       await Processors.Processor.runProcessorsPipeline(
         [this.handlebarsProcessor],
