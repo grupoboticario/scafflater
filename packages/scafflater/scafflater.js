@@ -146,7 +146,7 @@ export default class Scafflater {
     parameters = targetConfig.getPersistedParameters(parameters);
     this.options.logger.debug(
       `== PERSISTED PARAMETERS == \n ${JSON.stringify(
-        targetConfig,
+        parameters,
         null,
         2,
       )} ========================== \n`,
