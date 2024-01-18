@@ -58,6 +58,6 @@
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --collectCoverage"
   },
   "devDependencies": {
-    "oclif": "4.0.2"
+    "oclif": "4.3.6"
   }
 }
