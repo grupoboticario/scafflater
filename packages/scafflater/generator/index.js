@@ -225,6 +225,8 @@ export default class Generator {
 
           const targetFilePath = path.join(ctx.targetPath, targetName);
           let targetContent;
+          // TODO: Add all appendStrategy options (https://alquimia.gb.tech/docs/default/component/scafflater/Options/#append-strategies)
+
           if (await fsUtil.pathExists(targetFilePath)) {
             if (ctx.options.appendStrategy === "ignore") {
               _ctx.options.logger.info(`\tIgnoring: appendStrategy = 'ignore'`);

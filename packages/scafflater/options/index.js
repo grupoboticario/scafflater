@@ -65,9 +65,10 @@ export default class ScafflaterOptions {
    *  - appendIfExists: The content will be appended only if destination already exists
    *  - replace: The content will replace the target content
    *  - ignore: If the destination exists and is not empty, will ignore the generated code.
+   *  - replaceIfExists: The content will replace the target content only if destination already exists
    *
    * Available for: File Content
-   * @type {('append'|'replace'|'ignore'|'appendIfExists')}
+   * @type {('append'|'replace'|'ignore'|'appendIfExists'|'replaceIfExists')}
    */
   appendStrategy = "append";
 

@@ -119,6 +119,111 @@ test("Replace an existing region", async () => {
   And this one is not in region too`);
 });
 
+test("Replace if exist region", async () => {
+  // ARRANGE
+  const src = `
+  # @scf-region test-region
+  # @scf-option {"appendStrategy":"replaceIfExists"}
+
+  some new content
+
+  # @end-scf-region`;
+  const existingDst = `This content is not in regions
+  # @scf-region test-region
+
+  This is the existing content
+
+  # @end-scf-region
+
+  And this one is not in region too`;
+
+  const notExistingDst = `This content is not in regions
+
+  And this one is not in region too`;
+
+  const context = {
+    options: new ScafflaterOptions({ annotate: false }),
+  };
+  const regionAppender = new RegionAppender();
+
+  // ACT
+  const resultExisting = await regionAppender.append(context, src, existingDst);
+  const resultNotExisting = await regionAppender.append(
+    context,
+    src,
+    notExistingDst,
+  );
+
+  // ASSERT
+  expect(resultExisting.result).toEqual(`This content is not in regions
+  # @scf-region test-region
+  # @scf-option {"appendStrategy":"replaceIfExists"}
+
+  some new content
+
+  # @end-scf-region
+
+  And this one is not in region too`);
+
+  expect(resultNotExisting.result).toEqual(`This content is not in regions
+
+  And this one is not in region too`);
+});
+
+test("Ignore", async () => {
+  // ARRANGE
+  const src = `
+  # @scf-region test-region
+  # @scf-option {"appendStrategy":"ignore"}
+
+  some new content
+
+  # @end-scf-region`;
+  const existingDst = `This content is not in regions
+  # @scf-region test-region
+
+  This is the existing content
+
+  # @end-scf-region
+
+  And this one is not in region too`;
+
+  const notExistingDst = `This content is not in regions`;
+
+  const context = {
+    options: new ScafflaterOptions({ annotate: false }),
+  };
+  const regionAppender = new RegionAppender();
+
+  // ACT
+  const resultExisting = await regionAppender.append(context, src, existingDst);
+  const resultNotExisting = await regionAppender.append(
+    context,
+    src,
+    notExistingDst,
+  );
+
+  // ASSERT
+  expect(resultExisting.result).toEqual(`This content is not in regions
+  # @scf-region test-region
+
+  This is the existing content
+
+  # @end-scf-region
+
+  And this one is not in region too`);
+
+  expect(resultNotExisting.result).toEqual(`This content is not in regions
+# @scf-region test-region
+
+  # @scf-option {"appendStrategy":"ignore"}
+
+  some new content
+
+# @end-scf-region
+`);
+});
+
 test("Append to non existing region, should create region", async () => {
   // ARRANGE
   const src = `

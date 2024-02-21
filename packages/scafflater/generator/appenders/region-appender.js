@@ -41,7 +41,9 @@ export default class RegionAppender extends Appender {
           destContent +
           destStr.substring(destRegion.endRegionTag.startPosition);
       } else {
-        destStr = await regionProvider.appendRegion(srcRegion, destStr);
+        if (["append", "replace", "ignore"].includes(options.appendStrategy)) {
+          destStr = await regionProvider.appendRegion(srcRegion, destStr);
+        }
       }
 
       // Removing region from srcStr, since it was appended
@@ -55,6 +57,7 @@ export default class RegionAppender extends Appender {
       srcRegion = srcRegions[0];
     }
 
+    // Remove empty lines
     destStr = destStr.replace(/^(\s*\r?\n){2,}/gm, "\n");
     srcStr = srcStr.replace(/^(\s*\r?\n){2,}/gm, "\n").trim();
 

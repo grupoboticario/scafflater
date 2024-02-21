@@ -22,6 +22,25 @@ describe("Appender", () => {
 some new content`);
   });
 
+  test("Append if exists", async () => {
+    // ARRANGE
+    const ctx = {
+      options: {
+        appendStrategy: "appendIfExists",
+      },
+    };
+
+    // ACT
+    const result1 = await appender.append(ctx, newContent, "");
+    const result2 = await appender.append(ctx, newContent, existingContent);
+
+    // ASSERT
+    expect(result1.result).toBe("");
+    expect(result2.result).toBe(`some existing content
+
+some new content`);
+  });
+
   test("Replace content", async () => {
     // ARRANGE
     const ctx = {
@@ -35,6 +54,40 @@ some new content`);
 
     // ASSERT
     expect(result.result).toBe(`some new content`);
+  });
+
+  test("Replace content if exists", async () => {
+    // ARRANGE
+    const ctx = {
+      options: {
+        appendStrategy: "replaceIfExists",
+      },
+    };
+
+    // ACT
+    const result1 = await appender.append(ctx, newContent, "");
+    const result2 = await appender.append(ctx, newContent, existingContent);
+
+    // ASSERT
+    expect(result1.result).toBe("");
+    expect(result2.result).toBe(`some new content`);
+  });
+
+  test("Ignore", async () => {
+    // ARRANGE
+    const ctx = {
+      options: {
+        appendStrategy: "ignore",
+      },
+    };
+
+    // ACT
+    const result1 = await appender.append(ctx, newContent, existingContent);
+    const result2 = await appender.append(ctx, newContent, "");
+
+    // ASSERT
+    expect(result1.result).toBe(`some existing content`);
+    expect(result2.result).toBe(`some new content`);
   });
 
   test("String to be appended is empty", async () => {

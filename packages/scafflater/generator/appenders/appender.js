@@ -20,10 +20,34 @@ export default class Appender {
     let result = destStr;
 
     if (srcStr && srcStr.trim().length > 0) {
-      result =
-        context.options.appendStrategy === "append"
-          ? `${destStr}${EOL}${EOL}${annotated}`
-          : annotated;
+      switch (context.options.appendStrategy) {
+        case "append":
+          result = `${destStr}${EOL}${EOL}${annotated}`;
+          break;
+        case "appendIfExists":
+          if (destStr && destStr.trim().length > 0) {
+            result = `${destStr}${EOL}${EOL}${annotated}`;
+          }
+          break;
+        case "replaceIfExists":
+          if (destStr && destStr.trim().length > 0) {
+            result = annotated;
+          }
+          break;
+        case "replace":
+          result = annotated;
+          break;
+        case "ignore":
+          if (destStr && destStr.trim().length > 0) {
+            result = destStr;
+          } else {
+            result = annotated;
+          }
+          break;
+        default:
+          result = annotated;
+          break;
+      }
     }
 
     return Promise.resolve({
