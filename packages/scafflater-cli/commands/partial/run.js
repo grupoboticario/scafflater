@@ -186,7 +186,7 @@ export default class RunPartialCommand extends Command {
         );
       }
 
-      if (availablePartials.length > 1 || runFlags.template) {
+      if (availablePartials.length > 1) {
         const availableTemplateNames = availablePartials
           .map((ap) => ap.templateName)
           .filter((value, index, self) => self.indexOf(value) === index);
@@ -226,10 +226,37 @@ export default class RunPartialCommand extends Command {
       }
 
       if (availablePartials.length !== 1) {
+        if (runArgs.PARTIAL_NAME && runFlags.template) {
+          logger.error(
+            `The partial '${chalk.bold(
+              runArgs.PARTIAL_NAME,
+            )}' is not available on the template '${chalk.bold(
+              runFlags.template,
+            )}'`,
+          );
+          return;
+        }
+
+        if (runArgs.PARTIAL_NAME) {
+          logger.error(
+            `The partial '${chalk.bold(
+              runArgs.PARTIAL_NAME,
+            )}' is not available on any initialized template`,
+          );
+          return;
+        }
+
+        if (runFlags.template) {
+          logger.error(
+            `The partial is not available on the template '${chalk.bold(
+              runFlags.template,
+            )}'`,
+          );
+          return;
+        }
+
         logger.error(
-          `The partial '${chalk.bold(
-            runArgs.PARTIAL_NAME,
-          )}' is not available on any initialized template`,
+          `Could not execute partial. No partial found on the initialized templates.`,
         );
         return;
       }
