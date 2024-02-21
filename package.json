@@ -49,6 +49,9 @@
     "modulePaths": [
       "<rootDir>/packages/scafflater",
       "<rootDir>/packages/scafflater-cli"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/packages/scafflater-cli"
     ]
   }
 }
