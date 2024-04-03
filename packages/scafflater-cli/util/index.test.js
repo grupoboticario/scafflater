@@ -24,14 +24,24 @@ const { prompt } = (await import("inquirer")).default;
 
 test("Parse Parameters Flags", () => {
   // ARRANGE
-  const parameters = ["name1:value1", "name2:value2"];
+  const parameters = [
+    "name1:value1",
+    "name2:value2",
+    "github.repoUrl:https://github.com/grupoboticario/alquimia-template-flutter-lib",
+    "github.repo.other.url:https://other.url.com",
+  ];
 
   // ACT
   const result = parseParametersFlags(parameters);
 
   // ASSERT
+  console.log(result);
   expect(result.name1).toBe("value1");
   expect(result.name2).toBe("value2");
+  expect(result.github.repoUrl).toBe(
+    "https://github.com/grupoboticario/alquimia-template-flutter-lib",
+  );
+  expect(result.github.repo.other.url).toBe("https://other.url.com");
 });
 
 describe("promptMissingParameters", () => {

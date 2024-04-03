@@ -56,7 +56,8 @@ export default class InitCommand extends Command {
     }),
     parameters: Flags.string({
       char: "p",
-      description: "The parameters to init template",
+      description:
+        "The parameters to init template. If the parameter is a dot separated name, it will be parsed as an object.",
       default: [],
       multiple: true,
     }),

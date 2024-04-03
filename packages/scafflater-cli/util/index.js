@@ -11,13 +11,20 @@ export function parseParametersFlags(parameters) {
   const result = {};
 
   parameters.forEach((param) => {
-    const m = /(?<name>.+)(?::)(?<value>.+)/g.exec(param);
+    const m = /(?<name>[^:]+)(?::)(?<value>.+)/g.exec(param);
     if (m.length <= 0)
       throw new Error(
         "The parameters is not in the expected pattern: <parameter-name>:<parameter-value>",
       );
 
-    result[m.groups.name] = m.groups.value;
+    // build an object if the parameter name is a dot separated name
+    const nameSplit = m.groups.name.split(".");
+    let current = result;
+    for (let i = 0; i < nameSplit.length - 1; i++) {
+      if (!current[nameSplit[i]]) current[nameSplit[i]] = {};
+      current = current[nameSplit[i]];
+    }
+    current[nameSplit[nameSplit.length - 1]] = m.groups.value;
   });
 
   return result;
