@@ -9,12 +9,12 @@
 
 Scafflater is a solution to turn scaffold easier, through a small pieces of code templates, that can appended to the solution in a way the developer wants, building a new and customized solution for every single project.
 
-# Contents
+## Contents
 
-- [Why?](#-why)
-- [How does it work?](#-how-does-it-work)
-- [Using Scafflater](#-using-scafflater)
-- [Related](#-related)
+- [Why?](#why)
+- [How does it work?](#how-does-it-work)
+- [Using Scafflater](#using-scafflater)
+- [Related](#related)
 
 ### Why?
 

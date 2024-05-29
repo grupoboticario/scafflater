@@ -1,5 +1,5 @@
-site_name: 'Scafflater'
-edit_uri: 'https://github.com/grupoboticario/scafflater/edit/main/docs/'
+site_name: "Scafflater"
+edit_uri: "https://github.com/grupoboticario/scafflater/edit/main/docs/"
 
 nav:
   - Overview: README.md
@@ -11,5 +11,5 @@ nav:
 plugins:
   - techdocs-core
   - kroki:
-      ServerURL: 'https://dev.gb.tech/api/proxy/kroki'
-      FencePrefix: ''
+      ServerURL: "https://dev.gb.tech/api/proxy/kroki"
+      FencePrefix: ""
