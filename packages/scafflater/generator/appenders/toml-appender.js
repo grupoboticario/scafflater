@@ -72,8 +72,8 @@ export default class TomlAppender extends Appender {
             value = TOML.isSection(value)
               ? TOML.Section({ ...value })
               : TOML.isInline(value)
-              ? TOML.inline({ ...value })
-              : { ...value };
+                ? TOML.inline({ ...value })
+                : { ...value };
             for (const key of Object.getOwnPropertyNames(value)) {
               value[key] = multipify(value[key]);
             }
