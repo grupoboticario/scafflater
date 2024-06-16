@@ -148,6 +148,9 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Remove package.json
+        run: rm -f package.json
+
       - name: Publishing packages
         run: npm publish --access=public
         working-directory: ./packages/scafflater-cli
