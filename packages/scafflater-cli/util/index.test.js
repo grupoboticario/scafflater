@@ -29,19 +29,26 @@ test("Parse Parameters Flags", () => {
     "name2:value2",
     "github.repoUrl:https://github.com/grupoboticario/alquimia-template-flutter-lib",
     "github.repo.other.url:https://other.url.com",
+    "arr[]:arr_value1",
+    "arr[]:arr_value2",
+    "otherArr[0]:other_value1",
+    "otherArr[1]:other_value2",
   ];
 
   // ACT
   const result = parseParametersFlags(parameters);
 
   // ASSERT
-  console.log(result);
   expect(result.name1).toBe("value1");
   expect(result.name2).toBe("value2");
   expect(result.github.repoUrl).toBe(
     "https://github.com/grupoboticario/alquimia-template-flutter-lib",
   );
   expect(result.github.repo.other.url).toBe("https://other.url.com");
+  expect(result["arr[0]"]).toBe("arr_value1");
+  expect(result["arr[1]"]).toBe("arr_value2");
+  expect(result["otherArr[0]"]).toBe("other_value1");
+  expect(result["otherArr[1]"]).toBe("other_value2");
 });
 
 describe("promptMissingParameters", () => {

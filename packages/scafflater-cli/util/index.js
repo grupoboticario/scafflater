@@ -5,11 +5,27 @@ import { setProperty } from "./dot-prop.js";
 import { ParameterConfig, PersistedParameter } from "@scafflater/scafflater";
 
 /**
+ *
+ * @param arrayIndexes
+ * @param name
+ */
+function parseUnindexedArray(arrayIndexes, name) {
+  if (name.endsWith("[]")) {
+    name = name.slice(0, -2);
+    if (arrayIndexes[name] === undefined) arrayIndexes[name] = 0;
+    else arrayIndexes[name] += 1;
+    return `${name}[${arrayIndexes[name]}]`;
+  }
+  return name;
+}
+
+/**
  * @param parameters
  */
 export function parseParametersFlags(parameters) {
   const result = {};
 
+  const arrayIndexes = {};
   parameters.forEach((param) => {
     const m = /(?<name>[^:]+)(?::)(?<value>.+)/g.exec(param);
     if (m.length <= 0)
@@ -21,10 +37,16 @@ export function parseParametersFlags(parameters) {
     const nameSplit = m.groups.name.split(".");
     let current = result;
     for (let i = 0; i < nameSplit.length - 1; i++) {
-      if (!current[nameSplit[i]]) current[nameSplit[i]] = {};
-      current = current[nameSplit[i]];
+      const name = parseUnindexedArray(arrayIndexes, nameSplit[i]);
+      if (!current[name]) current[name] = {};
+      current = current[name];
     }
-    current[nameSplit[nameSplit.length - 1]] = m.groups.value;
+
+    const name = parseUnindexedArray(
+      arrayIndexes,
+      nameSplit[nameSplit.length - 1],
+    );
+    current[name] = m.groups.value;
   });
 
   return result;
