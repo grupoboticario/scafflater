@@ -50,7 +50,7 @@
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --collectCoverage"
   },
   "dependencies": {
-    "@oclif/core": "3.27.0",
+    "@oclif/core": "4.0.6",
     "@oclif/plugin-help": "6.2.3",
     "chalk": "5.3.0",
     "cliui": "8.0.1",
