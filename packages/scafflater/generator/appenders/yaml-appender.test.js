@@ -42,6 +42,40 @@ test-prop: testing
 `);
 });
 
+test("Append with comments", async () => {
+  // ARRANGE
+  const srcYaml = `
+test-prop: testing
+metadata:
+  #some-comment
+  some-child-prop: this is a child property
+  property-with-comment: #{KEDA_VALUE}`;
+
+  const yamlAppender = new YamlAppender();
+
+  // ACT
+  const result = await yamlAppender.append(
+    { options: new ScafflaterOptions() },
+    srcYaml,
+    destYaml,
+  );
+
+  // ASSERT
+  expect(result.result).toBe(`apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  #some-comment
+  name: domains-and-systems
+  some-child-prop: this is a child property
+  property-with-comment: #{KEDA_VALUE}
+spec:
+  type: url
+  targets:
+    - array
+test-prop: testing
+`);
+});
+
 test("Append array item", async () => {
   // ARRANGE
   const srcYaml = `

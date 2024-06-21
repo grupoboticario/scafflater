@@ -1,6 +1,8 @@
 import Appender from "./appender.js";
 import yaml from "js-yaml";
+import YAML from "yaml";
 import merge from "deepmerge";
+
 import arrayMerge from "./utils/array-merger.js";
 
 export default class YamlAppender extends Appender {
@@ -39,19 +41,21 @@ export default class YamlAppender extends Appender {
   append(context, srcStr, destStr) {
     return new Promise((resolve, reject) => {
       try {
-        let src = yaml.load(srcStr);
-        let dst = yaml.load(destStr);
+        let src = YAML.parseDocument(srcStr);
+        // const t = YAML.parseDocument(srcStr);
+        let dst = YAML.parseDocument(destStr);
         src = src ?? {};
         dst = dst ?? {};
 
-        src = merge(dst, src, {
+        const result = merge(dst.contents, src.contents, {
           arrayMerge,
           strategy: context.options.arrayAppendStrategy,
         });
 
+        src.contents = result;
         resolve({
           context,
-          result: yaml.dump(src),
+          result: src.toString(),
           notAppended: "",
         });
       } catch (e) {
