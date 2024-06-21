@@ -58,6 +58,6 @@
     "ora": "8.0.1"
   },
   "devDependencies": {
-    "oclif": "4.13.0"
+    "oclif": "4.13.8"
   }
 }
