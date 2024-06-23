@@ -1,9 +1,39 @@
 import Appender from "./appender.js";
 import yaml from "js-yaml";
-import YAML from "yaml";
+import YAML, { Pair } from "yaml";
 import merge from "deepmerge";
 
 import arrayMerge from "./utils/array-merger.js";
+
+const mergeYamlDocuments = (target, source, context) => {
+  const options = {
+    arrayMerge: mergeYamlDocuments,
+    context,
+  };
+  if (source instanceof Array && source[0] instanceof Pair) {
+    const result = target;
+
+    source.forEach((item) => {
+      const targetItem = target.find((i) => i.key.value === item.key.value);
+      if (targetItem) {
+        targetItem.value = merge(targetItem.value, item.value, options);
+      } else {
+        result.push(item);
+      }
+    });
+
+    return result;
+  }
+
+  if (source instanceof Array) {
+    return arrayMerge(target, source, {
+      arrayMerge,
+      strategy: context.context.options.arrayAppendStrategy,
+    });
+  }
+
+  return merge(target, source, options);
+};
 
 export default class YamlAppender extends Appender {
   /**
@@ -47,12 +77,18 @@ export default class YamlAppender extends Appender {
         src = src ?? {};
         dst = dst ?? {};
 
-        const result = merge(dst.contents, src.contents, {
-          arrayMerge,
-          strategy: context.options.arrayAppendStrategy,
-        });
+        // const result = merge(dst.contents, src.contents, {
+        //   arrayMerge: mergeYamlDocuments,
+        //   strategy: context.options.arrayAppendStrategy,
+        // });
 
-        src.contents = result;
+        const result = mergeYamlDocuments(
+          dst.contents.items,
+          src.contents.items,
+          options,
+        );
+
+        src.contents.items = result;
         resolve({
           context,
           result: src.toString(),
