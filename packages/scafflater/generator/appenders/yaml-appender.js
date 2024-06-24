@@ -1,66 +1,156 @@
 import Appender from "./appender.js";
-import yaml from "js-yaml";
-import YAML, { Pair } from "yaml";
+import YAML, { YAMLMap, Scalar, YAMLSeq } from "yaml";
 import merge from "deepmerge";
 
-import arrayMerge from "./utils/array-merger.js";
+/**
+ * Combine arrays. Combine the array item by item.
+ * @param {object[]} target The target array
+ * @param {object[]} source Source array
+ * @param context
+ * @returns {object[]} The result array
+ */
+const combineMerge = (target, source, context) => {
+  const destination = target.slice();
 
-const mergeYamlDocuments = (target, source, context) => {
-  const options = {
-    arrayMerge: mergeYamlDocuments,
-    context,
-  };
-  if (source instanceof Array && source[0] instanceof Pair) {
-    const result = target;
+  source.forEach((item, index) => {
+    if (typeof destination[index] === "undefined") {
+      destination[index] = item;
+    } else if (
+      destination[index] instanceof YAMLMap &&
+      item instanceof YAMLMap
+    ) {
+      destination[index] = deepMerge(target[index], item, context);
+    } else {
+      if (item instanceof Scalar) {
+        const targetItem = target.find((t) => t.value === item.value);
+        if (!targetItem) {
+          destination.push(item);
+        }
+      }
+    }
+  });
+  return destination;
+};
 
-    source.forEach((item) => {
-      const targetItem = target.find((i) => i.key.value === item.key.value);
+const concatMerge = (target, source, context) => {
+  return target.slice().concat(source.slice());
+};
+
+const replaceMerge = (target, source, context) => {
+  return source;
+};
+
+const keyMerge = (target, source, context) => {
+  const reKeyName = /key\((?<keyName>.*)\)/gi;
+  const m = reKeyName.exec(context.options.arrayAppendStrategy);
+  const keyName =
+    m && m.length > 0 ? m.groups.keyName : context.options.arrayAppendStrategy;
+
+  const destination = target.slice();
+
+  source.forEach((item) => {
+    const keyValue = item.items.find((i) => i.key.value === keyName)?.value;
+    if (!keyValue) {
+      destination.push(item);
+      return;
+    }
+
+    const index = destination.findIndex(
+      (d) =>
+        d.items.find((i) => i.key.value === keyName)?.value.value ===
+        keyValue.value,
+    );
+
+    if (index <= -1) {
+      destination.push(item);
+    } else {
+      destination[index] = deepMerge(item, destination[index], context);
+    }
+  });
+  return destination;
+};
+
+const concatComments = (...comments) => {
+  comments = comments.filter((c) => c && c.length > 0);
+  if (comments.length <= 0) return undefined;
+  return comments.join("\n");
+};
+
+const deepMerge = (target, source, context) => {
+  if (source == null) return target;
+  if (target == null) return source;
+
+  if (source instanceof YAMLMap && target instanceof YAMLMap) {
+    const result = new YAMLMap();
+
+    // including comments
+    result.commentBefore = concatComments(
+      source.commentBefore,
+      target.commentBefore,
+    );
+    result.comment = concatComments(source.comment, target.comment);
+
+    source.items.forEach((item) => {
+      const targetItem = target.items.find(
+        (i) => i.key.value === item.key.value,
+      );
       if (targetItem) {
-        targetItem.value = merge(targetItem.value, item.value, options);
+        targetItem.value = deepMerge(targetItem.value, item.value, context);
+        result.items.push(targetItem);
       } else {
-        result.push(item);
+        result.items.push(item);
+      }
+    });
+
+    // including items from target that are not in source
+    target.items.forEach((item) => {
+      const sourceItem = source.items.find(
+        (i) => i.key.value === item.key.value,
+      );
+      if (!sourceItem) {
+        result.items.push(item);
       }
     });
 
     return result;
   }
 
-  if (source instanceof Array) {
-    return arrayMerge(target, source, {
-      arrayMerge,
-      strategy: context.context.options.arrayAppendStrategy,
-    });
+  if (source instanceof YAMLSeq && target instanceof YAMLSeq) {
+    const result = new YAMLSeq();
+
+    // including comments
+    result.commentBefore = source.commentBefore ?? target.commentBefore;
+    result.comment = source.comment ?? target.comment;
+
+    switch (context.options.arrayAppendStrategy) {
+      case "combine":
+        result.items = combineMerge(target.items, source.items, context);
+        break;
+      case "concat":
+        result.items = concatMerge(target.items, source.items, context);
+        break;
+      case "replace":
+        result.items = replaceMerge(target.items, source.items, context);
+        break;
+      case "ignore":
+        if (target.items.length > 0) {
+          result.items = target.items;
+        } else {
+          result.items = source.items;
+        }
+        break;
+      default:
+        result.items = keyMerge(target.items, source.items, context);
+        break;
+    }
+
+    return result;
   }
 
-  return merge(target, source, options);
+  return source;
 };
 
 export default class YamlAppender extends Appender {
-  /**
-   * Combine arrays
-   * @param {object[]} target The target array
-   * @param {object[]} source Source array
-   * @param {object} options options
-   * @returns {object[]} The result array
-   */
-  combineMerge(target, source, options) {
-    const destination = target.slice();
-
-    source.forEach((item, index) => {
-      if (typeof destination[index] === "undefined") {
-        destination[index] = options.cloneUnlessOtherwiseSpecified(
-          item,
-          options,
-        );
-      } else if (options.isMergeableObject(item)) {
-        destination[index] = merge(target[index], item, options);
-      } else if (target.indexOf(item) === -1) {
-        destination.push(item);
-      }
-    });
-    return destination;
-  }
-
   /**
    * Process the input.
    * @param {object} context The context of generation
@@ -72,23 +162,13 @@ export default class YamlAppender extends Appender {
     return new Promise((resolve, reject) => {
       try {
         let src = YAML.parseDocument(srcStr);
-        // const t = YAML.parseDocument(srcStr);
         let dst = YAML.parseDocument(destStr);
         src = src ?? {};
         dst = dst ?? {};
 
-        // const result = merge(dst.contents, src.contents, {
-        //   arrayMerge: mergeYamlDocuments,
-        //   strategy: context.options.arrayAppendStrategy,
-        // });
+        const result = deepMerge(dst.contents, src.contents, context);
 
-        const result = mergeYamlDocuments(
-          dst.contents.items,
-          src.contents.items,
-          options,
-        );
-
-        src.contents.items = result;
+        src.contents = result;
         resolve({
           context,
           result: src.toString(),

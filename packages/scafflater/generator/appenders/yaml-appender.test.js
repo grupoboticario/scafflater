@@ -1,13 +1,16 @@
 import YamlAppender from "./yaml-appender";
-import yaml from "js-yaml";
+import YAML from "yaml";
 import ScafflaterOptions from "../../options";
 
 const destYaml = `apiVersion: backstage.io/v1alpha1
+# doc comment
 kind: Location
 metadata:
+  # metadata original
   name: domains-and-systems
 spec:
-  type: url
+  # spec body
+  type: url # an url
   targets:
     - array
     `;
@@ -29,7 +32,8 @@ metadata:
   );
 
   // ASSERT
-  expect(result.result).toBe(`apiVersion: backstage.io/v1alpha1
+  expect(YAML.parse(result.result)).toStrictEqual(
+    YAML.parse(`apiVersion: backstage.io/v1alpha1
 kind: Location
 metadata:
   name: domains-and-systems
@@ -39,7 +43,8 @@ spec:
   targets:
     - array
 test-prop: testing
-`);
+`),
+  );
 });
 
 test("Append with comments", async () => {
@@ -61,7 +66,14 @@ metadata:
   );
 
   // ASSERT
-  expect(result.result).toBe(`apiVersion: backstage.io/v1alpha1
+  expect(result.result).toContain("# an url");
+  expect(result.result).toContain("#some-comment");
+  expect(result.result).toContain("# metadata original");
+  expect(result.result).toContain("#{KEDA_VALUE}");
+  expect(result.result).toContain("# spec body");
+  expect(result.result).toContain("# doc comment");
+  expect(YAML.parse(result.result)).toStrictEqual(
+    YAML.parse(`apiVersion: backstage.io/v1alpha1
 kind: Location
 metadata:
   #some-comment
@@ -73,7 +85,8 @@ spec:
   targets:
     - array
 test-prop: testing
-`);
+`),
+  );
 });
 
 test("Append array item", async () => {
@@ -93,7 +106,8 @@ spec:
   );
 
   // ASSERT
-  expect(result.result).toBe(`apiVersion: backstage.io/v1alpha1
+  expect(YAML.parse(result.result)).toStrictEqual(
+    YAML.parse(`apiVersion: backstage.io/v1alpha1
 kind: Location
 metadata:
   name: domains-and-systems
@@ -102,7 +116,8 @@ spec:
   targets:
     - array
     - new array item
-`);
+`),
+  );
 });
 
 test("Catalog info merge", async () => {
@@ -161,8 +176,8 @@ spec:
   );
 
   // ASSERT
-  expect(yaml.load(result.result)).toStrictEqual(
-    yaml.load(`apiVersion: backstage.io/v1alpha1
+  expect(YAML.parse(result.result)).toStrictEqual(
+    YAML.parse(`apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: flask-2
@@ -222,8 +237,8 @@ spec:
   );
 
   // ASSERT
-  expect(yaml.load(result.result)).toStrictEqual(
-    yaml.load(`apiVersion: backstage.io/v1alpha1
+  expect(YAML.parse(result.result)).toStrictEqual(
+    YAML.parse(`apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: flask-2
@@ -282,8 +297,8 @@ spec:
   );
 
   // ASSERT
-  expect(yaml.load(result.result)).toStrictEqual(
-    yaml.load(`apiVersion: backstage.io/v1alpha1
+  expect(YAML.parse(result.result)).toStrictEqual(
+    YAML.parse(`apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: flask-2
@@ -329,7 +344,9 @@ app:
 app:
   env:
     - name: DOCKER_CMD
-      value: sudo execute`;
+      value: sudo execute
+    - name: LOG_LEVEL_ENABLED
+      value: DEBUG`;
 
   const yamlAppender = new YamlAppender();
 
@@ -341,11 +358,13 @@ app:
   );
 
   // ASSERT
-  expect(yaml.load(result.result)).toStrictEqual(
-    yaml.load(`app:
+  expect(YAML.parse(result.result)).toStrictEqual(
+    YAML.parse(`app:
     env:
       - name: DOCKER_CMD
         value: sudo execute
+      - name: LOG_LEVEL_ENABLED
+        value: DEBUG
       - name: NEW_RELIC_ENV
         value: dev
       - name: NEW_RELIC_CONFIG_FILE
@@ -357,8 +376,6 @@ app:
       - name: PYTHONDONTWRITEBYTECODE
         value: '1'
       - name: POETRY_VIRTUALENVS_CREATE
-        value: 'false'
-      - name: LOG_LEVEL_ENABLED
-        value: ERROR`),
+        value: 'false'`),
   );
 });
