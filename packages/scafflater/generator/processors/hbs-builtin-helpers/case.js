@@ -20,12 +20,12 @@ const customCases = {
   noCaseAndTitle: (str) => {
     return titleCase(changeCase.noCase(str));
   },
-  paramCase: (str) => {
-    return changeCase.kebabCase(str);
-  },
-  headerCase: (str) => {
-    return changeCase.trainCase(str);
-  },
+  // paramCase: (str) => {
+  //   return changeCase.kebabCase(str);
+  // },
+  // headerCase: (str) => {
+  //   return changeCase.trainCase(str);
+  // },
 };
 
 export default (op, string) => {
