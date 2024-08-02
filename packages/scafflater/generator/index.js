@@ -357,6 +357,21 @@ export default class Generator {
   }
 
   async loadPrettierOptions(path) {
+    // Check if path is file
+    const stats = await fsUtil.stat(path);
+    if (!stats.isFile()) {
+      // getting the first file of the folder
+      const files = await fsUtil.readdir(path);
+      for (const file of files) {
+        const filePath = path + "/" + file;
+        const fileStats = await fsUtil.stat(filePath);
+        if (fileStats.isFile()) {
+          path = filePath;
+          break;
+        }
+      }
+    }
+
     let config = await prettier.resolveConfig(path);
 
     if (!config) config = {};
