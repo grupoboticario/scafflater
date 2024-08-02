@@ -10,6 +10,7 @@ jest.unstable_mockModule("../fs-util", async () => {
     getDirTreeSync: jest.fn(),
     loadScriptsAsObjects: jest.fn(),
     listFilesByExtensionDeeply: jest.fn(),
+    stat: jest.fn(),
     require: (jsPath) => {
       try {
         const p = path.resolve(import.meta.url);
@@ -99,6 +100,7 @@ describe("Generator Tests", () => {
     });
     fsUtil.listFilesByExtensionDeeply.mockResolvedValue(["lineComment.js"]);
     fsUtil.loadScriptsAsObjects.mockResolvedValue([]);
+    fsUtil.stat.mockResolvedValue({ isFile: () => true });
     isBinaryFile.mockResolvedValue(false);
     const generator = new Generator(ctx);
 
